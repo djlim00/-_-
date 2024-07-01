@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Register</title>
+</head>
+<body>
+<h1>Register</h1>
+<form action="/register" method="post">
+  <input type="hidden" name="email" th:value="${email}" />
+  <input type="hidden" name="profileImage" th:value="${profileImage}" />
+  <p>Email: <span th:text="${email}"></span></p>
+  <p>Profile Image: <img th:src="${profileImage}" alt="Profile Image"></p>
+  <label for="nickname">Nickname:</label>
+  <input type="text" id="nickname" name="nickname" required />
+  <button type="submit">Register</button>
+</form>
+</body>
+</html>

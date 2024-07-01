@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: remetic
+  # profile yml?? ????
+  # application-[?????].ymp
+  # application-oath-kakao.yml???
+  profiles:
+    include: oauth-kakao
+
+---
+
+spring:
+  datasource:
+    url: 'jdbc:mysql://localhost:3306/remetic?useSSL=false&allowPublicKeyRetrieval=true'
+    username: 'remetic_user'
+    password: 'remetic123'
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+
+

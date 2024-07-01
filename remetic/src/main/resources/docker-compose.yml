@@ -1,0 +1,15 @@
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: 'remetic'
+      MYSQL_USER: 'remetic_user'
+      MYSQL_PASSWORD: 'remetic123'
+      MYSQL_ROOT_PASSWORD: 'aa15113988!!'
+    ports:
+      - '3306:3306'
+    volumes:
+      - 'mysqldata:/var/lib/mysql'
+volumes:
+  mysqldata:
+
