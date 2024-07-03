@@ -11,4 +11,5 @@ import lombok.Setter;
 public class CreateUserDTO {
     private String email;
     private String nickname;
+    private String profile_image_url;
 }

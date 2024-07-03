@@ -24,6 +24,7 @@ public class KakaoUserInfoResponse {
     @JsonIgnoreProperties(ignoreUnknown = true)
     static class KakaoProfile {
         private String nickname;
+        private String profile_image_url;
     }
 
     public String getEmail() {
@@ -31,6 +32,9 @@ public class KakaoUserInfoResponse {
     }
 
     public String getNickname() {
-        return kakaoAccount.profile.nickname;
+        return kakaoAccount.profile.profile_image_url;
     }
+
+    public String getProfile_image_url() { return kakaoAccount.profile.profile_image_url; }
+
 }

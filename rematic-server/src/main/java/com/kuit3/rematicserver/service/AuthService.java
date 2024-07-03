@@ -37,6 +37,7 @@ public class AuthService {
             userId = userDao.createUser(CreateUserDTO.builder()
                     .email(userInfoResponse.getEmail())
                     .nickname(userInfoResponse.getNickname())
+                    .profile_image_url(userInfoResponse.getProfile_image_url())
                     .build());
         }
         else{

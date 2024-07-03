@@ -29,7 +29,7 @@ public class UserDao {
     }
 
     public long createUser(CreateUserDTO dto) {
-        String sql = "insert into User(user_email, nickname) values(:email, :nickname)";
+        String sql = "insert into User(user_email, nickname, profile_image_url) values(:email, :nickname, :profile_image_url)";
         SqlParameterSource param = new BeanPropertySqlParameterSource(dto);
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(sql, param, keyHolder);
