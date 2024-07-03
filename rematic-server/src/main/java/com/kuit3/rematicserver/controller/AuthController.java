@@ -19,4 +19,9 @@ public class AuthController {
         log.info("AuthController::kakaoLogin()");
         return new BaseResponse<>(authService.kakaoLogin(request));
     }
+
+    @PostMapping("naver")
+    public BaseResponse<LoginResponse> naverLogin(){
+
+    }
 }

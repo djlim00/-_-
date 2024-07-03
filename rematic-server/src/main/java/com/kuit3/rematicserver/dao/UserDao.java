@@ -1,7 +1,6 @@
 package com.kuit3.rematicserver.dao;
 
 import com.kuit3.rematicserver.dto.CreateUserDTO;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -37,9 +36,15 @@ public class UserDao {
         return Objects.requireNonNull(keyHolder.getKey()).longValue();
     }
 
-    public long findUserByEmail(String email) {
+    public long getUserIdByEmail(String email) {
         String sql = "select user_id from User where user_email = :email and status = 'active'";
         Map<String, String> param = Map.of("email", email);
         return jdbcTemplate.queryForObject(sql, param, Long.class);
+    }
+
+    public int changeUserNickname(Long userId, String newNickname) {
+        String sql = "update User set nickname= :nickname where user_id = :userId";
+        Map<String, Object> param = Map.of("nickname", newNickname, "userId", userId);
+        return jdbcTemplate.update(sql, param);
     }
 }

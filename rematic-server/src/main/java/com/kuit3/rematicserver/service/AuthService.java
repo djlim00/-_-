@@ -1,5 +1,6 @@
 package com.kuit3.rematicserver.service;
 
+import com.kuit3.rematicserver.common.exception.jwt.unauthorized.JwtInvalidTokenException;
 import com.kuit3.rematicserver.dao.UserDao;
 import com.kuit3.rematicserver.dto.CreateUserDTO;
 import com.kuit3.rematicserver.dto.LoginResponse;
@@ -12,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.TOKEN_MISMATCH;
 
 @Slf4j
 @Service
@@ -39,9 +40,18 @@ public class AuthService {
                     .build());
         }
         else{
-            userId = userDao.findUserByEmail(userInfoResponse.getEmail());
+            userId = getUserIdByEmail(userInfoResponse.getEmail());
         }
         String token = jwtProvider.createToken(userInfoResponse.getEmail(), userId);
         return new LoginResponse(token, userId);
+    }
+
+    public long getUserIdByEmail(String email){
+        try{
+            return userDao.getUserIdByEmail(email);
+        }
+        catch (Exception e){
+            throw new JwtInvalidTokenException(TOKEN_MISMATCH);
+        }
     }
 }

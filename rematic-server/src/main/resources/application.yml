@@ -9,8 +9,8 @@ spring:
 oauth:
   kakao:
     url:
-      auth: ${OAUTH_KAKAO_AUTH_URL}
-      api : ${OAUTH_KAKAO_API_URL}
+      auth: "https://kauth.kakao.com/oauth/token"
+      api : "https://kapi.kakao.com/v2/user/me"
     client-id : ${OAUTH_KAKAO_CLIENT_ID}
 
 
