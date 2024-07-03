@@ -22,6 +22,7 @@ public class AuthController {
 
     @PostMapping("naver")
     public BaseResponse<LoginResponse> naverLogin(){
-
+        return null;
     }
+
 }
