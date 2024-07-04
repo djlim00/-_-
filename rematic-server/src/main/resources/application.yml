@@ -12,6 +12,7 @@ oauth:
       auth: "https://kauth.kakao.com/oauth/token"
       api : "https://kapi.kakao.com/v2/user/me"
     client-id : ${OAUTH_KAKAO_CLIENT_ID}
+    redirect-url: ${OAUTH_KAKAO_REDIRECT_URL}
 
 
 ---

@@ -30,6 +30,9 @@ public class KakaoAuthApiClient {
     @Value("${oauth.kakao.client-id}")
     private String clientId;
 
+    @Value("${oauth.kakao.redirect-url}")
+    private String redirectUrl;
+
     private final RestTemplate restTemplate;
 
     public String requestAccessToken(String code) {
@@ -41,7 +44,7 @@ public class KakaoAuthApiClient {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("code", code);
         body.add("grant_type", "authorization_code");
-        body.add("redirect_uri", "http://localhost:9000/auth/kakao");
+        body.add("redirect_uri", redirectUrl);
         body.add("client_id", clientId);
         HttpEntity<?> request = new HttpEntity<>(body, headers);
         KakaoTokens response;
