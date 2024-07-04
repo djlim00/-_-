@@ -33,18 +33,21 @@ public class AuthService {
         log.info("email = "  + userInfoResponse.getEmail());
 
         long userId;
+        Boolean isNewUser;
         if(!userDao.hasUserWithDuplicateEmail(userInfoResponse.getEmail())){
             userId = userDao.createUser(CreateUserDTO.builder()
                     .email(userInfoResponse.getEmail())
                     .nickname(userInfoResponse.getNickname())
                     .profile_image_url(userInfoResponse.getProfile_image_url())
                     .build());
+            isNewUser = true;
         }
         else{
             userId = getUserIdByEmail(userInfoResponse.getEmail());
+            isNewUser = false;
         }
         String token = jwtProvider.createToken(userInfoResponse.getEmail(), userId);
-        return new LoginResponse(token, userId);
+        return new LoginResponse(token, userId, isNewUser);
     }
 
     public long getUserIdByEmail(String email){
