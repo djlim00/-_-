@@ -15,9 +15,14 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
     @PostMapping("kakao")
-    public BaseResponse<LoginResponse> kakaoLogin(@RequestBody KakaoLoginRequest request){
+    public BaseResponse<LoginResponse> kakaoLoginPost(@RequestBody KakaoLoginRequest request){
+           log.info("AuthController::kakaoLogin()");
+        return new BaseResponse<>(authService.kakaoLoginPost(request));
+}
+//    @GetMapping("kakao")
+    public BaseResponse<LoginResponse> kakaoLogin(@RequestParam String code){
         log.info("AuthController::kakaoLogin()");
-        return new BaseResponse<>(authService.kakaoLogin(request));
+        return new BaseResponse<>(authService.kakaoLogin(code));
     }
 
     @PostMapping("naver")

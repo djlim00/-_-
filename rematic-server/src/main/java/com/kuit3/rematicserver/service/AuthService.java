@@ -23,9 +23,11 @@ public class AuthService {
     private final KakaoAuthApiClient kakaoAuthApiClient;
     private final UserDao userDao;
     private final JwtProvider jwtProvider;
-    public LoginResponse kakaoLogin(KakaoLoginRequest request) {
+//    public LoginResponse kakaoLogin(KakaoLoginRequest request) {
+    public LoginResponse kakaoLogin(String code) {
         log.info("AuthService::kakaoLogin()");
-        String accessToken = kakaoAuthApiClient.requestAccessToken(request.getCode());
+//        String accessToken = kakaoAuthApiClient.requestAccessToken(request.getCode());
+        String accessToken = kakaoAuthApiClient.requestAccessToken(code);
         log.info("accessToken = " + accessToken);
 
         KakaoUserInfoResponse userInfoResponse = kakaoAuthApiClient.requestAuthInfo(accessToken);
@@ -57,5 +59,31 @@ public class AuthService {
         catch (Exception e){
             throw new JwtInvalidTokenException(TOKEN_MISMATCH);
         }
+    }
+
+    public LoginResponse kakaoLoginPost(KakaoLoginRequest request) {log.info("AuthService::kakaoLogin()");
+        String accessToken = kakaoAuthApiClient.requestAccessToken(request.getCode());
+        log.info("accessToken = " + accessToken);
+
+        KakaoUserInfoResponse userInfoResponse = kakaoAuthApiClient.requestAuthInfo(accessToken);
+        log.info("userInfoResponse = " + userInfoResponse);
+        log.info("email = "  + userInfoResponse.getEmail());
+
+        long userId;
+        Boolean isNewUser;
+        if(!userDao.hasUserWithDuplicateEmail(userInfoResponse.getEmail())){
+            userId = userDao.createUser(CreateUserDTO.builder()
+                    .email(userInfoResponse.getEmail())
+                    .nickname(userInfoResponse.getNickname())
+                    .profile_image_url(userInfoResponse.getProfile_image_url())
+                    .build());
+            isNewUser = true;
+        }
+        else{
+            userId = getUserIdByEmail(userInfoResponse.getEmail());
+            isNewUser = false;
+        }
+        String token = jwtProvider.createToken(userInfoResponse.getEmail(), userId);
+        return new LoginResponse(token, userId, isNewUser);
     }
 }
