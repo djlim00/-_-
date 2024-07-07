@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("auth")
 public class AuthController {
     private final AuthService authService;
-    @PostMapping("kakao")
+//    @PostMapping("kakao")
     public BaseResponse<LoginResponse> kakaoLoginPost(@RequestBody KakaoLoginRequest request){
            log.info("AuthController::kakaoLogin()");
         return new BaseResponse<>(authService.kakaoLoginPost(request));
 }
-//    @GetMapping("kakao")
+    @GetMapping("kakao")
     public BaseResponse<LoginResponse> kakaoLogin(@RequestParam String code){
         log.info("AuthController::kakaoLogin()");
         return new BaseResponse<>(authService.kakaoLogin(code));
