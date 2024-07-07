@@ -32,7 +32,7 @@ public class KakaoUserInfoResponse {
     }
 
     public String getNickname() {
-        return kakaoAccount.profile.profile_image_url;
+        return kakaoAccount.profile.nickname;
     }
 
     public String getProfile_image_url() { return kakaoAccount.profile.profile_image_url; }
