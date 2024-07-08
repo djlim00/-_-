@@ -21,4 +21,8 @@ spring:
       dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
 
+jwt:
+  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+
+
 

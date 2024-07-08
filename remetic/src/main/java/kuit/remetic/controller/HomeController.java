@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import kuit.remetic.model.User;
 import kuit.remetic.service.UserService;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class HomeController {
@@ -27,7 +30,7 @@ public class HomeController {
     }
 
     @GetMapping("/loginSuccess")
-    public String loginSuccess(@AuthenticationPrincipal OAuth2User principal, Model model) {
+    public String loginSuccess(@AuthenticationPrincipal OAuth2User principal, Model model, HttpServletResponse response) {
         Map<String, Object> attributes = principal.getAttributes();
         System.out.println("Attributes: " + attributes);
 
@@ -40,13 +43,16 @@ public class HomeController {
         System.out.println("Email: " + email);
         System.out.println("Profile Image: " + profileImage);
 
-        User user = userService.findUserByEmail(email).orElse(null);
+        Optional<User> optionalUser = userService.findUserByEmail(email);
 
-        if (user == null) {
+        if (optionalUser.isEmpty()) {
             model.addAttribute("email", email);
             model.addAttribute("profileImage", profileImage);
             return "register";
         } else {
+            User user = optionalUser.get();
+            String token = userService.generateJwtToken(user.getEmail());
+            response.setHeader("Authorization", "Bearer " + token);
             model.addAttribute("nickname", user.getNickname());
             model.addAttribute("email", user.getEmail());
             model.addAttribute("profileImage", user.getProfileImageUrl());
@@ -54,9 +60,8 @@ public class HomeController {
         }
     }
 
-
     @PostMapping("/register")
-    public String register(@RequestParam String email, @RequestParam String nickname, @RequestParam String profileImage, Model model) {
+    public String register(@RequestParam String email, @RequestParam String nickname, @RequestParam String profileImage, Model model, HttpServletResponse response) {
         User user = new User();
         user.setEmail(email);
         user.setNickname(nickname);
@@ -64,6 +69,8 @@ public class HomeController {
         user.setStatus("active");
         userService.saveUser(user);
 
+        String token = userService.generateJwtToken(user.getEmail());
+        response.setHeader("Authorization", "Bearer " + token);
         model.addAttribute("nickname", user.getNickname());
         model.addAttribute("email", user.getEmail());
         model.addAttribute("profileImage", user.getProfileImageUrl());
@@ -78,19 +85,5 @@ public class HomeController {
     @GetMapping("/loginFailure")
     public String loginFailure() {
         return "loginFailure";
-    }
-
-
-    @GetMapping("/saveUser")
-    public String saveUser(@RequestParam String email, @RequestParam String nickname, @RequestParam String profileImage) {
-        User user = new User();
-        user.setEmail(email);
-        user.setNickname(nickname);
-        user.setProfileImageUrl(profileImage);
-        user.setStatus("active");
-
-        userService.saveUser(user);
-
-        return "userSaved";
     }
 }

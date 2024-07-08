@@ -1,9 +1,10 @@
 package kuit.remetic.service;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import kuit.remetic.model.User;
 import kuit.remetic.repository.UserRepository;
+import kuit.remetic.util.JwtUtil;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -11,9 +12,11 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
     }
 
     @Transactional
@@ -26,5 +29,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-
+    public String generateJwtToken(String email) {
+        return jwtUtil.generateToken(email);
+    }
 }
