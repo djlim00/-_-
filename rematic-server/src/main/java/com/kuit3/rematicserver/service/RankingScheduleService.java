@@ -1,6 +1,6 @@
 package com.kuit3.rematicserver.service;
 
-import com.kuit3.rematic_server.dao.RankingDao;
+import com.kuit3.rematicserver.dao.RankingDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
