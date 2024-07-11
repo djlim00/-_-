@@ -1,6 +1,6 @@
 package com.kuit3.rematicserver.controller;
 
-import com.kuit3.rematicserver.common.argument_resolver.UserPreAuthorize;
+import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.response.BaseResponse;
 import com.kuit3.rematicserver.dto.PutNickNameRequest;
 import com.kuit3.rematicserver.service.UserService;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
     @PutMapping("/nickname")
-    public BaseResponse<Object> changeNickname(@UserPreAuthorize long userId, @RequestBody PutNickNameRequest request){
+    public BaseResponse<Object> changeNickname(@PreAuthorizedUser long userId, @RequestBody PutNickNameRequest request){
         log.info("UserController::changeNickname()");
         log.info("userid = " + userId);
         log.info("newNickname = " + request.getNickname());

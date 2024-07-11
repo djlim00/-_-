@@ -47,4 +47,10 @@ public class UserDao {
         Map<String, Object> param = Map.of("nickname", newNickname, "userId", userId);
         return jdbcTemplate.update(sql, param);
     }
+
+    public boolean hasUserWithDuplicateNickname(String nickname) {
+        String sql = "select exists(select * from User where nickname = :nickname)";
+        Map<String, String> param = Map.of("nickname", nickname);
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, Boolean.class));
+    }
 }

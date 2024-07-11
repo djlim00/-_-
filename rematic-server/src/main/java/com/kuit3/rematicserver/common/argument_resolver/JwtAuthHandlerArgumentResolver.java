@@ -14,7 +14,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class JwtAuthHandlerArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        boolean hasAnnotation = parameter.hasParameterAnnotation(UserPreAuthorize.class);
+        boolean hasAnnotation = parameter.hasParameterAnnotation(PreAuthorizedUser.class);
         boolean hasType = long.class.isAssignableFrom(parameter.getParameterType());
         log.info("hasAnnotation={}, hasType={}, hasAnnotation && hasType={}", hasAnnotation, hasType, hasAnnotation&&hasType);
         return hasAnnotation && hasType;
