@@ -36,4 +36,11 @@ public class PostService {
         }
         return hasNext;
     }
+
+    public GetSearchResultResponse searchPageByKeywordAndCategory_guestmode(String keyword, String category, Long lastId) {
+        log.info("PostService::getPageByKeywordAndCategory()");
+        List<GetPostDto> page = postDaoImpl.getPage(keyword, category, lastId);
+        boolean hasNext = checkNextPage(keyword, category, page);
+        return new GetSearchResultResponse(page, hasNext);
+    }
 }
