@@ -17,6 +17,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     BAD_REQUEST(2000, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 요청입니다."),
     URL_NOT_FOUND(2001, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 URL 입니다."),
     METHOD_NOT_ALLOWED(2002, HttpStatus.METHOD_NOT_ALLOWED.value(), "해당 URL에서는 지원하지 않는 HTTP Method 입니다."),
+    MISSING_PARAM(2003, HttpStatus.BAD_REQUEST.value(), "필요한 파라미터가 누락되었습니다"),
 
     /**
      * 3000: Server, Database 오류 (INTERNAL_SERVER_ERROR)
@@ -36,12 +37,15 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     EXPIRED_TOKEN(4005, HttpStatus.UNAUTHORIZED.value(), "만료된 토큰입니다."),
     TOKEN_MISMATCH(4006, HttpStatus.UNAUTHORIZED.value(), "로그인 정보가 토큰 정보와 일치하지 않습니다."),
 
-    OAUTH_API_REQUEST_FAILED(4007, HttpStatus.INTERNAL_SERVER_ERROR.value(), "OAuth 서버에 요청하는 데 실패했습니다." );
+    OAUTH_API_REQUEST_FAILED(4007, HttpStatus.INTERNAL_SERVER_ERROR.value(), "OAuth 서버에 요청하는 데 실패했습니다." ),
 
     /**
      * 5000: User 오류
      */
-
+    INVALID_USER_VALUE(5000, HttpStatus.BAD_REQUEST.value(), "회원가입 요청에서 잘못된 값이 존재합니다."),
+    DUPLICATE_EMAIL(5001, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 이메일입니다."),
+    DUPLICATE_NICKNAME(5002, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 닉네임입니다."),
+    USER_NOT_FOUND(5003, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 계정입니다.");
 
     private final int code;
     private final int status;

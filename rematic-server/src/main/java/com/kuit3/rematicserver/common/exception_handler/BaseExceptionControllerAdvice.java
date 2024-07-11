@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -65,4 +66,11 @@ public class BaseExceptionControllerAdvice {
         return new BaseErrorResponse(SERVER_ERROR);
     }
 
+    // 컨트롤러 파라미터 누락 예외 핸들러
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public BaseErrorResponse handle_MissingServletRequestParameterException(Exception e){
+        log.error("[handle_MissingServletRequestParameterException]", e);
+        return new BaseErrorResponse(MISSING_PARAM);
+    }
 }
