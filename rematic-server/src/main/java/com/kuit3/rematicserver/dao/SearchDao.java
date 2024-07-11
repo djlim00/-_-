@@ -1,7 +1,7 @@
 package com.kuit3.rematicserver.dao;
 
-import com.kuit3.rematicserver.domain.Work;
 import com.kuit3.rematicserver.dto.search.UserRecentKeywordResponse;
+import com.kuit3.rematicserver.dto.search.UserRecommendableKeywordsResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -20,6 +20,7 @@ public class SearchDao {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
     public List<UserRecentKeywordResponse> getKeywordsByUserId(long userId) {
+        log.info("SearchDao.getKeywordsByUserId");
         String sql = "select keyword from recent_keyword where user_id = :userId and status = 'active' order by created_at DESC limit 10";
         Map<String, Object> param = Map.of("userId", userId);
         return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
@@ -31,6 +32,7 @@ public class SearchDao {
     }
 
     public Integer modifyUserRecentKeyword(long userId, long keywordId) {
+        log.info("SearchDao.modifyUserRecentKeyword");
         String sql = "update Recent_Keyword set status = 'dormant' where user_id = :userId and recent_keyword_id = :keywordId;";
         Map<String, Object> param = Map.of(
                 "userId", userId,
@@ -38,23 +40,49 @@ public class SearchDao {
         return jdbcTemplate.update(sql, param);
     }
 
-    //TODO : 실시간 인기글의 사진이 있으면 그걸 가져오고, 없다면 인기글이 쓰인 작품의 대표 사진 가져오게 수정하기
-    public String getTopPostPicUrl() {
-        String sql = "select profile_image_url from User where user_id = :userId limit 1";
-        Map<String, Object> param = Map.of("userId", 1);
-        return jdbcTemplate.queryForObject(sql, param, String.class);
+
+    public Long hasUserRecentVisitedBulletin(long userId) {
+        log.info("SearchDao.hasUserRecentVisitedBulletin");
+        String sql = "select bulletin_id from user where user_id = :userId";
+        Map<String, Object> param = Map.of("userId", userId);
+        return jdbcTemplate.queryForObject(sql, param, Long.class);
     }
 
-    //TODO : 실시간 인기글의 제목과 카테고리를 불러오도록 수정하기
-    public List<Work> getTopPostWorkInfo() {
-        String sql = "select user_eamil, nickname from User where user_id = :userId limit 1";
-        Map<String, Object> param = Map.of("userId", 1);
+    public List<UserRecommendableKeywordsResponse> getFourRandomWorks() {
+        log.info("SearchDao.getFourRandomWorks");
+        String sql = "select name, category from Bulletin order by rand() limit :cnt";
+        Map<String, Object> param = Map.of("cnt", 4);
         return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
-            Work work = new Work(
-                    rs.getString("user_email"),
-                    rs.getString("nickname")
+            return new UserRecommendableKeywordsResponse(
+                    rs.getString("name"),
+                    rs.getString("category")
             );
-            return work;
+        });
+    }
+
+    public List<UserRecommendableKeywordsResponse> getSameBulletinList(Long userRecentVisitedBulletin) {
+        log.info("SearchDao.getSameBulletinList");
+        String sql = "select b2.name, b2.category from Bulletin as b1 join Bulletin as b2 on b1.category = b2.category " +
+                "where b1.bulletin_id = :bulletin_id and b2.bulletin_id <> :bulletin_id order by rand() limit 2;";
+        Map<String, Object> param = Map.of("bulletin_id", userRecentVisitedBulletin);
+        return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
+            return new UserRecommendableKeywordsResponse(
+                    rs.getString("name"),
+                    rs.getString("category")
+            );
+        });
+    }
+
+    public List<UserRecommendableKeywordsResponse> getSameGenreList(Long userRecentVisitedBulletin) {
+        log.info("SearchDao.getSameGenreList");
+        String sql = "SELECT name, category FROM Bulletin WHERE genre = (SELECT genre FROM Bulletin " +
+                "WHERE bulletin_id = :bulletin_id) AND bulletin_id <> :bulletin_id ORDER BY RAND() LIMIT 2;";
+        Map<String, Object> param = Map.of("bulletin_id", userRecentVisitedBulletin);
+        return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
+            return new UserRecommendableKeywordsResponse(
+                    rs.getString("name"),
+                    rs.getString("category")
+            );
         });
     }
 }

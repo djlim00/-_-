@@ -2,6 +2,7 @@ package com.kuit3.rematicserver.controller;
 
 import com.kuit3.rematicserver.common.response.BaseResponse;
 import com.kuit3.rematicserver.dto.search.UserRecentKeywordResponse;
+import com.kuit3.rematicserver.dto.search.UserRecommendableKeywordsResponse;
 import com.kuit3.rematicserver.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,13 +26,13 @@ public class SearchController {
         return new BaseResponse<>(searchService.getUserRecentKeywords(userId));
     }
 
-//    @GetMapping("/recommendation")
+    //    @GetMapping("/recommendation")
 //    public BaseResponse<> getUserRecommendableKeywords(@UserPreAuthorize long userId) {
-//    @GetMapping("/recommendation/{userId}")
-//    public BaseResponse<UserRecommendableKeywordsResponse> getUserRecommendableKeywords(@PathVariable long userId) {
-//        log.info("SearchController.getUserRecommendableKeywords");
-//        return new BaseResponse<>(searchService.getUserRecommendableKeywords(userId));
-//    }
+    @GetMapping("/recommendation/{userId}")
+    public BaseResponse<List<UserRecommendableKeywordsResponse>> getUserRecommendableKeywords(@PathVariable long userId) {
+        log.info("SearchController.getUserRecommendableKeywords");
+        return new BaseResponse<>(searchService.getUserRecommendableKeywords(userId));
+    }
 
     //    @PostMapping("/keyword/{keyword_id}/delete")
 //    public BaseResponse<String> deactivateUserKeyword(@UserPreAuthorize long userId, @PathVariable long keyword_id) {
