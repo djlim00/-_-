@@ -10,5 +10,4 @@ import lombok.Setter;
 public class LoginResponse {
     private String jwt;
     private Long user_id;
-    private Boolean is_new_user;
 }

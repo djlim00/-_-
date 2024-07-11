@@ -1,6 +1,6 @@
 package com.kuit3.rematicserver.controller;
 
-import com.kuit3.rematicserver.common.argument_resolver.UserPreAuthorize;
+import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.response.BaseResponse;
 import com.kuit3.rematicserver.dto.GetSearchResultResponse;
 import com.kuit3.rematicserver.service.PostService;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
     private final PostService postService;
     @GetMapping("search")
-    public BaseResponse<GetSearchResultResponse> searchPosts(@RequestParam(required = false, defaultValue = "1") long userId, @RequestParam String keyword, @RequestParam String category, @RequestParam Long lastId){
+    public BaseResponse<GetSearchResultResponse> searchPosts(@PreAuthorizedUser long userId, @RequestParam String keyword, @RequestParam String category, @RequestParam Long lastId){
         log.info("PostController::search()");
         return new BaseResponse<>(postService.searchPageByKeywordAndCategory(userId, keyword, category, lastId));
     }
