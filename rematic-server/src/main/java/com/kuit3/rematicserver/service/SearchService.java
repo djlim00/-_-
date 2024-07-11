@@ -3,10 +3,12 @@ package com.kuit3.rematicserver.service;
 import com.kuit3.rematicserver.common.exception.DatabaseException;
 import com.kuit3.rematicserver.dao.SearchDao;
 import com.kuit3.rematicserver.dto.search.UserRecentKeywordResponse;
+import com.kuit3.rematicserver.dto.search.UserRecommendableKeywordsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.DATABASE_ERROR;
@@ -23,14 +25,27 @@ public class SearchService {
         return searchDao.getKeywordsByUserId(userId);
     }
 
-//    public UserRecommendableKeywordsResponse getUserRecommendableKeywords(long userId) {
-//        log.info("SearchService.getUserRecommendableKeywords");
-//        UserRecommendableKeywordsResponse keywordsResponse = new UserRecommendableKeywordsResponse();
-//        keywordsResponse.setImageUrl(searchDao.getTopPostPicUrl());
-//        List<Work> works = new ArrayList<>();
-//        List<Work> topPostInfo = searchDao.getTopPostWorkInfo();
-//        works.add(topPostInfo);
-//    }
+    public List<UserRecommendableKeywordsResponse> getUserRecommendableKeywords(long userId) {
+        log.info("SearchService.getUserRecommendableKeywords");
+        Long userRecentVisitedBulletin = validateUserRecentVisitedBulletin(userId);
+        if(userRecentVisitedBulletin != null) {
+            List<UserRecommendableKeywordsResponse> sameBulletinList = searchDao.getSameBulletinList(userRecentVisitedBulletin);
+            List<UserRecommendableKeywordsResponse> sameGenreList = searchDao.getSameGenreList(userRecentVisitedBulletin);
+            List<UserRecommendableKeywordsResponse> finalList = new ArrayList<>();
+            finalList.addAll(sameBulletinList);
+            finalList.addAll(sameGenreList);
+            return finalList;
+        }
+        else {
+            return searchDao.getFourRandomWorks();
+        }
+    }
+
+    private Long validateUserRecentVisitedBulletin(long userId) {
+        log.info("SearchService.validateUserRecentVisitedBulletin");
+        return searchDao.hasUserRecentVisitedBulletin(userId);
+    }
+
 
     public String deactivateUserKeyword(long userId, long keywordId) {
         log.info("SearchService.deactivateUserKeyword");
@@ -42,6 +57,4 @@ public class SearchService {
             throw new DatabaseException(DATABASE_ERROR);
         }
     }
-
-
 }
