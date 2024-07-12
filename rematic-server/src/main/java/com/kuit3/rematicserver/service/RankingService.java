@@ -20,14 +20,14 @@ public class RankingService {
     }
 
     public List<GetRankedPostDto> getWebtoonRanking() {
-        return rankingDao.getRankingByCategory("웹툰");
+        return rankingDao.getRankingByCategory("webtoon");
     }
 
     public List<GetRankedPostDto> getWebnovelRanking() {
-        return rankingDao.getRankingByCategory("웹소설");
+        return rankingDao.getRankingByCategory("webnovel");
     }
 
     public List<GetRankedPostDto> getNovelRanking() {
-        return rankingDao.getRankingByCategory("소설");
+        return rankingDao.getRankingByCategory("novel");
     }
 }
