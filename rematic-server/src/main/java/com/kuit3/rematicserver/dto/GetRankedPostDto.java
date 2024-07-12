@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class GetRankedPostDto {
+    private int rank;
     private Long post_id;
     private String title;
     private String content;
