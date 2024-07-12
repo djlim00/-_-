@@ -28,7 +28,7 @@ public class SearchController {
     }
 
     @GetMapping("/recommendation")
-    public BaseResponse<> getUserRecommendableKeywords(@PreAuthorizedUser long userId) {
+    public BaseResponse<List<UserRecommendableKeywordsResponse>> getUserRecommendableKeywords(@PreAuthorizedUser long userId) {
 //    @GetMapping("/recommendation/{userId}")
 //    public BaseResponse<List<UserRecommendableKeywordsResponse>> getUserRecommendableKeywords(@PathVariable long userId) {
         log.info("SearchController.getUserRecommendableKeywords");
