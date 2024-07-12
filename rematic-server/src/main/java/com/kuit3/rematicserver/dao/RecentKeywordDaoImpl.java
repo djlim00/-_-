@@ -21,7 +21,7 @@ public class RecentKeywordDaoImpl implements RecentKeywordDao{
 
     @Override
     public long saveKeyword(Long userId, String keyword) {
-        String sql = "INSERT INTO recent_keyword(keyword, user_id) VALUES(:keyword, :userId)";
+        String sql = "INSERT INTO Recent_Keyword(keyword, user_id) VALUES(:keyword, :userId)";
 
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("keyword", keyword)
