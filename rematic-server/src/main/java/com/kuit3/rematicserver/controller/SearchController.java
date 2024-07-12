@@ -1,5 +1,6 @@
 package com.kuit3.rematicserver.controller;
 
+import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.response.BaseResponse;
 import com.kuit3.rematicserver.dto.search.UserRecentKeywordResponse;
 import com.kuit3.rematicserver.dto.search.UserRecommendableKeywordsResponse;
@@ -18,26 +19,26 @@ public class SearchController {
 
     private final SearchService searchService;
 
-    //    @GetMapping("/recentkeyword")
-//    public BaseResponse<UserRecentKeywordResponse> getUserRecentKeywords(@UserPreAuthorize long userId) {
-    @GetMapping("/recentkeyword/{userId}")
-    public BaseResponse<List<UserRecentKeywordResponse>> getUserRecentKeywords(@PathVariable long userId) {
+    @GetMapping("/recentkeyword")
+    public BaseResponse<List<UserRecentKeywordResponse>> getUserRecentKeywords(@PreAuthorizedUser long userId) {
+//    @GetMapping("/recentkeyword/{userId}")
+//    public BaseResponse<List<UserRecentKeywordResponse>> getUserRecentKeywords(@PathVariable long userId) {
         log.info("SearchController.getUserRecentKeywords");
         return new BaseResponse<>(searchService.getUserRecentKeywords(userId));
     }
 
-    //    @GetMapping("/recommendation")
-//    public BaseResponse<> getUserRecommendableKeywords(@UserPreAuthorize long userId) {
-    @GetMapping("/recommendation/{userId}")
-    public BaseResponse<List<UserRecommendableKeywordsResponse>> getUserRecommendableKeywords(@PathVariable long userId) {
+    @GetMapping("/recommendation")
+    public BaseResponse<> getUserRecommendableKeywords(@PreAuthorizedUser long userId) {
+//    @GetMapping("/recommendation/{userId}")
+//    public BaseResponse<List<UserRecommendableKeywordsResponse>> getUserRecommendableKeywords(@PathVariable long userId) {
         log.info("SearchController.getUserRecommendableKeywords");
         return new BaseResponse<>(searchService.getUserRecommendableKeywords(userId));
     }
 
-    //    @PostMapping("/keyword/{keyword_id}/delete")
-//    public BaseResponse<String> deactivateUserKeyword(@UserPreAuthorize long userId, @PathVariable long keyword_id) {
-    @PostMapping("/keyword/{userId}/{keyword_id}/delete")
-    public BaseResponse<String> deactivateUserKeyword(@PathVariable long userId, @PathVariable long keyword_id) {
+    @PostMapping("/keyword/{keyword_id}/delete")
+    public BaseResponse<String> deactivateUserKeyword(@PreAuthorizedUser long userId, @PathVariable long keyword_id) {
+//    @PostMapping("/keyword/{userId}/{keyword_id}/delete")
+//    public BaseResponse<String> deactivateUserKeyword(@PathVariable long userId, @PathVariable long keyword_id) {
         log.info("SearchController.deactivateUserKeyword");
         return new BaseResponse<>(searchService.deactivateUserKeyword(userId, keyword_id));
     }
