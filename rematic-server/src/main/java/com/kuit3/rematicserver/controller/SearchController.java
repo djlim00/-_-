@@ -2,8 +2,10 @@ package com.kuit3.rematicserver.controller;
 
 import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.response.BaseResponse;
+import com.kuit3.rematicserver.dto.GetSearchResultResponse;
 import com.kuit3.rematicserver.dto.search.UserRecentKeywordResponse;
 import com.kuit3.rematicserver.dto.search.UserRecommendableKeywordsResponse;
+import com.kuit3.rematicserver.service.PostService;
 import com.kuit3.rematicserver.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,18 @@ import java.util.List;
 public class SearchController {
 
     private final SearchService searchService;
+    private final PostService postService;
+    @GetMapping
+    public BaseResponse<GetSearchResultResponse> search(@PreAuthorizedUser long userId, @RequestParam String keyword, @RequestParam String category, @RequestParam Long lastId){
+        log.info("PostController::search()");
+        return new BaseResponse<>(postService.searchPageByKeywordAndCategory(userId, keyword, category, lastId));
+    }
+
+    @GetMapping("guest")
+    public BaseResponse<GetSearchResultResponse> search_guestmode(@RequestParam String keyword, @RequestParam String category, @RequestParam Long lastId){
+        log.info("PostController::search_guestmode()");
+        return new BaseResponse<>(postService.searchPageByKeywordAndCategory_guestmode(keyword, category, lastId));
+    }
 
     @GetMapping("/recentkeyword")
     public BaseResponse<List<UserRecentKeywordResponse>> getUserRecentKeywords(@PreAuthorizedUser long userId) {

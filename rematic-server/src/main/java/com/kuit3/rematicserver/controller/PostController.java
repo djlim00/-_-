@@ -14,16 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class PostController {
-    private final PostService postService;
-    @GetMapping("search")
-    public BaseResponse<GetSearchResultResponse> search(@PreAuthorizedUser long userId, @RequestParam String keyword, @RequestParam String category, @RequestParam Long lastId){
-        log.info("PostController::search()");
-        return new BaseResponse<>(postService.searchPageByKeywordAndCategory(userId, keyword, category, lastId));
-    }
 
-    @GetMapping("search/guest")
-    public BaseResponse<GetSearchResultResponse> search_guestmode(@RequestParam String keyword, @RequestParam String category, @RequestParam Long lastId){
-        log.info("PostController::search_guestmode()");
-        return new BaseResponse<>(postService.searchPageByKeywordAndCategory_guestmode(keyword, category, lastId));
-    }
+
 }
