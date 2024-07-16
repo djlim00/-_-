@@ -36,7 +36,6 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     MALFORMED_TOKEN(4004, HttpStatus.UNAUTHORIZED.value(), "토큰이 올바르게 구성되지 않았습니다."),
     EXPIRED_TOKEN(4005, HttpStatus.UNAUTHORIZED.value(), "만료된 토큰입니다."),
     TOKEN_MISMATCH(4006, HttpStatus.UNAUTHORIZED.value(), "로그인 정보가 토큰 정보와 일치하지 않습니다."),
-
     OAUTH_API_REQUEST_FAILED(4007, HttpStatus.INTERNAL_SERVER_ERROR.value(), "OAuth 서버에 요청하는 데 실패했습니다." ),
 
     /**
