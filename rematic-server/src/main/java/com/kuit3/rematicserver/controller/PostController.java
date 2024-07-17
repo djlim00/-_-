@@ -1,19 +1,35 @@
 package com.kuit3.rematicserver.controller;
 
-import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.response.BaseResponse;
-import com.kuit3.rematicserver.dto.GetSearchResultResponse;
+import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
 import com.kuit3.rematicserver.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/post")
 public class PostController {
+
+    private final PostService postService;
+
+    //모든 사람에게 글을 보는건 허용되지만, 댓글을 달 때는 preauthorize가 있어야 한다.
+    @GetMapping("/{postId}")
+    public BaseResponse<GetClickedPostResponse> showClickedPost(@PathVariable long postId) {
+        log.info("PostController.showClickedPost");
+        return new BaseResponse<>(postService.getClickedPostInfo(postId));
+    }
+
+//    @GetMapping("/comments/{postId}")
+//    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PathVariable long postId, @RequestParam long lastId, @RequestParam String orderBy) {
+//        log.info("BulletinController.showPostComments");
+//        return new BaseResponse<>(bulletinService.getCommentsByPostId(postId, lastId, orderBy));
+//    }
 
 
 }
