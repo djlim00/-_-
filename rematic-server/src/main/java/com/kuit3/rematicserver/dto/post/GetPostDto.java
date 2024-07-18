@@ -1,4 +1,4 @@
-package com.kuit3.rematicserver.dto;
+package com.kuit3.rematicserver.dto.post;
 
 import lombok.*;
 
@@ -7,12 +7,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GetRankedPostDto {
-    private int rank;
+public class GetPostDto {
     private Long post_id;
+//    private String status;
     private String title;
     private String content;
-    private String bulletin;
     private Long likes;
     private Long hates;
     private Long views;

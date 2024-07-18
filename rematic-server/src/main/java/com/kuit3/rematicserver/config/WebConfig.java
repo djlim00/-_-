@@ -23,8 +23,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(1)
                 .addPathPatterns("/auth/test")
                 .addPathPatterns("/search/**")
-                .excludePathPatterns("/search/guest")
-                .addPathPatterns("/user/**"); // 이게 없으면 인터셉터가 적용이 안되네요...
+                .excludePathPatterns("/search/guest");
+                //.addPathPatterns("/user/**"); // 이게 없으면 인터셉터가 적용이 안되네요...
     }
 
     @Override

@@ -4,8 +4,8 @@ import com.kuit3.rematicserver.common.exception.DatabaseException;
 import com.kuit3.rematicserver.dao.PostDao;
 import com.kuit3.rematicserver.dao.PostInfoDao;
 import com.kuit3.rematicserver.dao.RecentKeywordDao;
-import com.kuit3.rematicserver.dto.GetPostDto;
-import com.kuit3.rematicserver.dto.GetSearchResultResponse;
+import com.kuit3.rematicserver.dto.post.GetPostDto;
+import com.kuit3.rematicserver.dto.search.GetSearchResultResponse;
 import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
 import com.kuit3.rematicserver.dto.post.postresponse.UserInfo;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.POST_NOT_FOUND;
 
 @Slf4j
 @Service
