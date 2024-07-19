@@ -2,13 +2,11 @@ package com.kuit3.rematicserver.controller;
 
 import com.kuit3.rematicserver.common.response.BaseResponse;
 import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
+import com.kuit3.rematicserver.dto.post.GetScrolledCommentsResponse;
 import com.kuit3.rematicserver.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -25,11 +23,11 @@ public class PostController {
         return new BaseResponse<>(postService.getClickedPostInfo(postId));
     }
 
-//    @GetMapping("/comments/{postId}")
-//    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PathVariable long postId, @RequestParam long lastId, @RequestParam String orderBy) {
-//        log.info("BulletinController.showPostComments");
-//        return new BaseResponse<>(bulletinService.getCommentsByPostId(postId, lastId, orderBy));
-//    }
+    @GetMapping("/comments/{postId}")
+    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PathVariable long postId, @RequestParam long lastId, @RequestParam String orderBy) {
+        log.info("PostController.showPostComments");
+        return new BaseResponse<>(postService.getCommentsByPostId(postId, lastId, orderBy));
+    }
 
 
 }

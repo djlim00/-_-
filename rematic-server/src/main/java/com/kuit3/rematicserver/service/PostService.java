@@ -5,6 +5,9 @@ import com.kuit3.rematicserver.dao.PostDao;
 import com.kuit3.rematicserver.dao.PostInfoDao;
 import com.kuit3.rematicserver.dao.RecentKeywordDao;
 import com.kuit3.rematicserver.dto.post.GetPostDto;
+import com.kuit3.rematicserver.dto.post.GetScrolledCommentsResponse;
+import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
+import com.kuit3.rematicserver.dto.post.commentresponse.FamilyComment;
 import com.kuit3.rematicserver.dto.search.GetSearchResultResponse;
 import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
 import com.kuit3.rematicserver.dto.post.postresponse.UserInfo;
@@ -13,7 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.POST_NOT_FOUND;
 
@@ -73,7 +77,6 @@ public class PostService {
         } else {
             postResponse.setImageInfo(postInfoDao.getImageInfo(postId));
         }
-
         return postResponse;
     }
 
@@ -85,9 +88,36 @@ public class PostService {
         return postInfoDao.isPostExists(postId);
     }
 
-//    public GetScrolledCommentsResponse getCommentsByPostId(long postId, long lastId, String orderBy) {
-//        log.info("BulletinService.getCommentsByPostId");
-//
-//    }
+    public GetScrolledCommentsResponse getCommentsByPostId(long postId, long lastId, String orderBy) {
+        log.info("PostService.getCommentsByPostId");
+        //댓글 수 설정
+        Long countOfComments = postInfoDao.getCountOfComments(postId);
+        //부모 리스트 가져오기
+        List<CommentInfo> parentComments = null;
+        if(orderBy.equals("timeStandard")) {
+            parentComments = postInfoDao.getTimeStandCommentsByPostId(postId, lastId);
+        }
+        if(orderBy.equals("likeStandard")) {
+            parentComments = postInfoDao.getLikeStandCommentsByPostId(postId, lastId);
+        }
+        List<Long> parentCommentIds = parentComments.stream()
+                .map(CommentInfo::getCommentId)
+                .collect(Collectors.toList());
+        //자식 댓글 가져오기
+        Map<Long, List<CommentInfo>> childComments = postInfoDao.getChildCommentsTimeStand(parentCommentIds)
+                .stream()
+                .collect(Collectors.groupingBy(CommentInfo::getParentId));
+        //댓글-대댓글 매핑하기
+        List<FamilyComment> commentList = new ArrayList<>();
+        for(CommentInfo parentComment : parentComments) {
+            List<CommentInfo> childrenComment = childComments.getOrDefault(parentComment.getCommentId(), new ArrayList<>());
+            commentList.add(new FamilyComment(parentComment, childrenComment));
+        }
+        GetScrolledCommentsResponse commentsResponse = new GetScrolledCommentsResponse();
+        commentsResponse.setCommentList(commentList);
+        commentsResponse.setCountOfComments(countOfComments);
+        commentsResponse.setLastId(parentComments.isEmpty() ? lastId : parentComments.get(parentComments.size() - 1).getCommentId());
+        return commentsResponse;
+    }
 
 }
