@@ -1,6 +1,8 @@
 package com.kuit3.rematicserver.dao;
 
-import com.kuit3.rematicserver.dto.CreateUserDTO;
+import com.kuit3.rematicserver.dto.auth.CreateUserDTO;
+import com.kuit3.rematicserver.dto.user.UserCheckDto;
+import com.kuit3.rematicserver.dto.user.UserMyPageResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -10,6 +12,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -52,5 +55,36 @@ public class UserDao {
         String sql = "select exists(select * from User where nickname = :nickname)";
         Map<String, String> param = Map.of("nickname", nickname);
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, Boolean.class));
+    }
+
+    public UserCheckDto checkExistsOrDormant(long userId) {
+        String sql = "select count(*) as userCount, if(count(*) > 0 and status = 'active', TRUE, FALSE) as isActive " +
+                "from User where user_id = :userId;";
+        Map<String, Object> param = Map.of("userId", userId);
+        return jdbcTemplate.queryForObject(sql, param, (rs, rowNum) -> {
+            return new UserCheckDto(
+                    rs.getInt("userCount"),
+                    rs.getInt("isActive")
+            );
+        });
+    }
+
+    public UserMyPageResponse getMyPageInfo(long userId) {
+        String sql = "select u.nickname, u.profile_image_url, u.introduction, " +
+                "(select count(*) from Post p where p.user_id = u.user_id) as myPosts, " +
+                "(SELECT COUNT(*) FROM Comment c WHERE c.user_id = u.user_id) AS myComments, " +
+                "(SELECT COUNT(*) FROM UserScrap us WHERE us.user_id = u.user_id) AS myScraps " +
+                "from User u where u.user_id = :userId;";
+        Map<String, Object> param = Map.of("userId", userId);
+        return jdbcTemplate.queryForObject(sql, param, (rs, rowNum) -> {
+            return new UserMyPageResponse(
+                    rs.getString("nickname"),
+                    rs.getString("profile_image_url"),
+                    rs.getString("introduction"),
+                    rs.getLong("myPosts"),
+                    rs.getLong("myComments"),
+                    rs.getLong("myScraps")
+            );
+        });
     }
 }

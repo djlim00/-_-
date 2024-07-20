@@ -1,6 +1,6 @@
 package com.kuit3.rematicserver.dao;
 
-import com.kuit3.rematicserver.dto.GetRankedPostDto;
+import com.kuit3.rematicserver.dto.home.GetRankedPostDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;

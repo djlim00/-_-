@@ -1,16 +1,13 @@
-package com.kuit3.rematicserver.dto;
+package com.kuit3.rematicserver.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
-public class OAuthLoginResponse {
+public class LoginResponse {
     private String jwt;
     private Long user_id;
-    private Boolean is_new_user;
 }

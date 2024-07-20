@@ -2,7 +2,7 @@ package com.kuit3.rematicserver.controller;
 
 import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.response.BaseResponse;
-import com.kuit3.rematicserver.dto.GetSearchResultResponse;
+import com.kuit3.rematicserver.dto.search.GetSearchResultResponse;
 import com.kuit3.rematicserver.dto.search.UserRecentKeywordResponse;
 import com.kuit3.rematicserver.dto.search.UserRecommendableKeywordsResponse;
 import com.kuit3.rematicserver.service.PostService;

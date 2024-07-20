@@ -1,5 +1,6 @@
-package com.kuit3.rematicserver.dto;
+package com.kuit3.rematicserver.dto.search;
 
+import com.kuit3.rematicserver.dto.post.GetPostDto;
 import lombok.*;
 
 import java.util.List;

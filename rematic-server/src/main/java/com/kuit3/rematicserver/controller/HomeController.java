@@ -1,7 +1,7 @@
 package com.kuit3.rematicserver.controller;
 
 import com.kuit3.rematicserver.common.response.BaseResponse;
-import com.kuit3.rematicserver.dto.GetRankedPostDto;
+import com.kuit3.rematicserver.dto.home.GetRankedPostDto;
 import com.kuit3.rematicserver.service.RankingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

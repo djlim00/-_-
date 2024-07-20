@@ -20,6 +20,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     MISSING_PARAM(2003, HttpStatus.BAD_REQUEST.value(), "필요한 파라미터가 누락되었습니다"),
     EMPTY_IMAGE_FILE(2004, HttpStatus.BAD_REQUEST.value(), "이미지 파일이 비어있습니다."),
     UNSUPPORTED_FILE_EXTENSION(2005, HttpStatus.BAD_REQUEST.value(), "지원되지 않는 이미지 확장자입니다."),
+    POST_NOT_FOUND(2004, HttpStatus.BAD_REQUEST.value(), "요청하신 게시물이 없습니다."),
 
     /**
      * 3000: Server, Database 오류 (INTERNAL_SERVER_ERROR)
@@ -50,11 +51,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     DUPLICATE_NICKNAME(5002, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 닉네임입니다."),
     USER_NOT_FOUND(5003, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 계정입니다."),
     UNAUTHORIZED_USER_REQUEST(5004, HttpStatus.BAD_REQUEST.value(), "권한이 없는 사용자의 요청입니다."),
-    /**
-     * 6000: Post 오류
-     */
-    POST_NOT_FOUND(6000, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 게시물입니다.");
-
+    USER_DORMANT_STATUS(5004, HttpStatus.BAD_REQUEST.value(), "휴면상태 계정입니다.");
 
     private final int code;
     private final int status;
