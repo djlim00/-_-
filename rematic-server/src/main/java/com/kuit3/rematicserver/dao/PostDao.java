@@ -1,7 +1,7 @@
 package com.kuit3.rematicserver.dao;
 
 import com.kuit3.rematicserver.dto.CreatePostRequest;
-import com.kuit3.rematicserver.dto.GetPostDto;
+import com.kuit3.rematicserver.dto.post.GetPostDto;
 import com.kuit3.rematicserver.entity.Post;
 
 import java.util.List;

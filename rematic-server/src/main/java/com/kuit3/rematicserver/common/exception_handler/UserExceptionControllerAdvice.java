@@ -46,6 +46,7 @@ public class UserExceptionControllerAdvice {
     public BaseErrorResponse handle_UnauthorizedUserRequestException(Exception e) {
         log.error("[handle_UnauthorizedUserRequestException]", e);
         return new BaseErrorResponse(UNAUTHORIZED_USER_REQUEST);
+    }
       
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserDormantException.class)
