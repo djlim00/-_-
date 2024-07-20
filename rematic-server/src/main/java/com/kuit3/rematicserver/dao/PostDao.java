@@ -1,6 +1,6 @@
 package com.kuit3.rematicserver.dao;
 
-import com.kuit3.rematicserver.dto.GetPostDto;
+import com.kuit3.rematicserver.dto.post.GetPostDto;
 
 import java.util.List;
 

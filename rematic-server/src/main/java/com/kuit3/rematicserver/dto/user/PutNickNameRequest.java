@@ -1,16 +1,14 @@
-package com.kuit3.rematicserver.dto;
+package com.kuit3.rematicserver.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class KakaoSignUpReqeust {
-    String kakao_id;
-    String nickname;
-    String profile_image_url;
+public class PutNickNameRequest {
+    private String nickname;
 }
