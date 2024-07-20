@@ -30,7 +30,6 @@ public class AuthService {
 
     public OAuthLoginResponse kakaoOAuthLogin(String code) {
         log.info("AuthService::kakaoLogin()");
-//        String accessToken = kakaoAuthApiClient.requestAccessToken(request.getCode());
         String accessToken = kakaoAuthApiClient.requestAccessToken(code);
         log.info("accessToken = " + accessToken);
 

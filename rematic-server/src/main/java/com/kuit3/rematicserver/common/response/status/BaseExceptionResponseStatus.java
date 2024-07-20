@@ -18,6 +18,8 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     URL_NOT_FOUND(2001, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 URL 입니다."),
     METHOD_NOT_ALLOWED(2002, HttpStatus.METHOD_NOT_ALLOWED.value(), "해당 URL에서는 지원하지 않는 HTTP Method 입니다."),
     MISSING_PARAM(2003, HttpStatus.BAD_REQUEST.value(), "필요한 파라미터가 누락되었습니다"),
+    EMPTY_IMAGE_FILE(2004, HttpStatus.BAD_REQUEST.value(), "이미지 파일이 비어있습니다."),
+    UNSUPPORTED_FILE_EXTENSION(2005, HttpStatus.BAD_REQUEST.value(), "지원되지 않는 이미지 확장자입니다."),
 
     /**
      * 3000: Server, Database 오류 (INTERNAL_SERVER_ERROR)
@@ -25,6 +27,8 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     SERVER_ERROR(3000, HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버에서 오류가 발생하였습니다."),
     DATABASE_ERROR(3001, HttpStatus.INTERNAL_SERVER_ERROR.value(), "데이터베이스에서 오류가 발생하였습니다."),
     BAD_SQL_GRAMMAR(3002, HttpStatus.INTERNAL_SERVER_ERROR.value(), "SQL에 오류가 있습니다."),
+
+    S3_UPLOADING_FAILED(3003, HttpStatus.INTERNAL_SERVER_ERROR.value(), "이미지 저장에 실패했습니다."),
 
     /**
      * 4000: Authorization 오류
@@ -44,7 +48,13 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     INVALID_USER_VALUE(5000, HttpStatus.BAD_REQUEST.value(), "회원가입 요청에서 잘못된 값이 존재합니다."),
     DUPLICATE_EMAIL(5001, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 이메일입니다."),
     DUPLICATE_NICKNAME(5002, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 닉네임입니다."),
-    USER_NOT_FOUND(5003, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 계정입니다.");
+    USER_NOT_FOUND(5003, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 계정입니다."),
+    UNAUTHORIZED_USER_REQUEST(5004, HttpStatus.BAD_REQUEST.value(), "권한이 없는 사용자의 요청입니다."),
+    /**
+     * 6000: Post 오류
+     */
+    POST_NOT_FOUND(6000, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 게시물입니다.");
+
 
     private final int code;
     private final int status;
