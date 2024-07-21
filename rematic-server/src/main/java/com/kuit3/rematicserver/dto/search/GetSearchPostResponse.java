@@ -1,6 +1,6 @@
 package com.kuit3.rematicserver.dto.search;
 
-import com.kuit3.rematicserver.dto.post.GetPostDto;
+import com.kuit3.rematicserver.dto.post.GetSearchPostDto;
 import lombok.*;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetSearchResultResponse {
-    private List<GetPostDto> data;
+public class GetSearchPostResponse {
+    private List<GetSearchPostDto> data;
     private Boolean has_next;
 }
