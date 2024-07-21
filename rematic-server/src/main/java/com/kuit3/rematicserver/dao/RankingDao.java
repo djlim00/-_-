@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -59,4 +61,18 @@ public class RankingDao {
 
         return posts;
     }
+
+    public void clearRealTimeRanking() {
+        String sql = "delete from ranking where post_id > :stand;";
+        Map<String, Object> param = Map.of("stand", 0);
+        jdbcTemplate.update(sql, param);
+    }
+
+    public void updateRealTimeRanking() {
+        String sql = "insert into ranking (post_id, realtime_views) select post_id, realtime_views " +
+                "from post where (likes - hates) > 0 order by realtime_views DESC limit :cnt;";
+        Map<String, Integer> param = Map.of("cnt", 10);
+        jdbcTemplate.update(sql, param);
+    }
+
 }

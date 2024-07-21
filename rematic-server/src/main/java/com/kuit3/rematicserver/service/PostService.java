@@ -90,8 +90,15 @@ public class PostService {
 
     public GetScrolledCommentsResponse getCommentsByPostId(long postId, long lastId, String orderBy) {
         log.info("PostService.getCommentsByPostId");
+        GetScrolledCommentsResponse commentsResponse = new GetScrolledCommentsResponse();
         //댓글 수 설정
         Long countOfComments = postInfoDao.getCountOfComments(postId);
+        commentsResponse.setCountOfComments(countOfComments);
+        if(countOfComments == 0) {
+            commentsResponse.setLastId(null);
+            commentsResponse.setCommentList(null);
+            return commentsResponse;
+        }
         //부모 리스트 가져오기
         List<CommentInfo> parentComments = null;
         if(orderBy.equals("timeStandard")) {
@@ -113,8 +120,6 @@ public class PostService {
             List<CommentInfo> childrenComment = childComments.getOrDefault(parentComment.getCommentId(), new ArrayList<>());
             commentList.add(new FamilyComment(parentComment, childrenComment));
         }
-        GetScrolledCommentsResponse commentsResponse = new GetScrolledCommentsResponse();
-        commentsResponse.setCommentList(commentList);
         commentsResponse.setCountOfComments(countOfComments);
         commentsResponse.setLastId(parentComments.isEmpty() ? lastId : parentComments.get(parentComments.size() - 1).getCommentId());
         return commentsResponse;
