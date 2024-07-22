@@ -1,6 +1,7 @@
 package com.kuit3.rematicserver.service;
 
 
+import com.kuit3.rematicserver.aws.S3Uploader;
 import com.kuit3.rematicserver.dao.BulletinDao;
 import com.kuit3.rematicserver.dao.PostImageDao;
 import com.kuit3.rematicserver.dto.CreatePostResponse;

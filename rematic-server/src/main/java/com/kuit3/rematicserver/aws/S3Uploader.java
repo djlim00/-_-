@@ -1,4 +1,4 @@
-package com.kuit3.rematicserver.service;
+package com.kuit3.rematicserver.aws;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -28,13 +28,16 @@ public class S3Uploader {
     private String bucketName;
     private final AmazonS3 amazonS3;
 
+    /*
+    이미지 파일을 업로드하는 메소드
+     */
     public String uploadFile(MultipartFile file) {
         log.info("S3Uploader::uploadFile()");
 
         validateImageFile(file);
 
         String originalFilename = file.getOriginalFilename();
-        String fileName = UUID.randomUUID().toString() + originalFilename;
+        String fileName = UUID.randomUUID().toString() + originalFilename; // 유일한 이름을 만들기 위해서 uuid 사용함
 
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(file.getSize());
@@ -45,17 +48,21 @@ public class S3Uploader {
                     .withCannedAcl(CannedAccessControlList.PublicRead);
             amazonS3.putObject(putObjectRequest);
         } catch (IOException e) {
-            throw new InternalServerErrorException(SERVER_ERROR);
+            throw new InternalServerErrorException(SERVER_ERROR); // 업로드 중 예외는 서버 내부 에러로 처리
         }
 
-        return getFileUrl(fileName);
+        return getFileUrl(fileName); // s3 url 반환
     }
 
+    /*
+    파일을 검증하는 메소드
+     */
     private void validateImageFile(MultipartFile image) {
         if(image.isEmpty()){
             throw new S3EmptyFileException(EMPTY_IMAGE_FILE);
         }
 
+        // 추후에 파일 확장자 검증 기능 구현할 수도 있음
 //        String filename = image.getOriginalFilename();
 //        int lastDotIndex = filename.lastIndexOf(".");
 //        String extension = filename.substring(lastDotIndex + 1).toLowerCase();
@@ -65,10 +72,16 @@ public class S3Uploader {
 //        }
     }
 
+    /*
+    파일에 해당하는 s3 Url을 반환하는 메소드
+     */
     public String getFileUrl(String fileName){
         return amazonS3.getUrl(bucketName, fileName).toString();
     }
 
+    /*
+    해당하는 파일을 s3에서 삭제하는 메소드
+     */
     public void deleteFile(String fileName){
         amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
     }
