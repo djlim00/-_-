@@ -1,4 +1,4 @@
-package com.kuit3.rematicserver.dto;
+package com.kuit3.rematicserver.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

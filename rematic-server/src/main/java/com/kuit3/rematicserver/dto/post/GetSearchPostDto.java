@@ -1,4 +1,4 @@
-package com.kuit3.rematicserver.dto;
+package com.kuit3.rematicserver.dto.post;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GetPostDto {
+public class GetSearchPostDto {
     private Long post_id;
 //    private String status;
     private String title;

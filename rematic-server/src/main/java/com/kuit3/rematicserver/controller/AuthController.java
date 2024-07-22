@@ -1,8 +1,8 @@
 package com.kuit3.rematicserver.controller;
 
-import com.kuit3.rematicserver.dto.KakaoSignUpReqeust;
-import com.kuit3.rematicserver.dto.LoginResponse;
-import com.kuit3.rematicserver.dto.OAuthLoginResponse;
+import com.kuit3.rematicserver.dto.auth.KakaoSignUpReqeust;
+import com.kuit3.rematicserver.dto.auth.LoginResponse;
+import com.kuit3.rematicserver.dto.auth.OAuthLoginResponse;
 import com.kuit3.rematicserver.dto.auth.KakaoLoginRequest;
 import com.kuit3.rematicserver.common.response.BaseResponse;
 import com.kuit3.rematicserver.service.AuthService;

@@ -4,10 +4,10 @@ import com.kuit3.rematicserver.common.exception.UserDuplicateEmailException;
 import com.kuit3.rematicserver.common.exception.UserDuplicateNicknameException;
 import com.kuit3.rematicserver.common.exception.UserNotFoundException;
 import com.kuit3.rematicserver.dao.UserDao;
-import com.kuit3.rematicserver.dto.CreateUserDTO;
-import com.kuit3.rematicserver.dto.KakaoSignUpReqeust;
-import com.kuit3.rematicserver.dto.LoginResponse;
-import com.kuit3.rematicserver.dto.OAuthLoginResponse;
+import com.kuit3.rematicserver.dto.auth.CreateUserDTO;
+import com.kuit3.rematicserver.dto.auth.KakaoSignUpReqeust;
+import com.kuit3.rematicserver.dto.auth.LoginResponse;
+import com.kuit3.rematicserver.dto.auth.OAuthLoginResponse;
 import com.kuit3.rematicserver.dto.auth.KakaoLoginRequest;
 import com.kuit3.rematicserver.dto.auth.KakaoUserInfoResponse;
 import com.kuit3.rematicserver.jwt.JwtProvider;
@@ -30,7 +30,6 @@ public class AuthService {
 
     public OAuthLoginResponse kakaoOAuthLogin(String code) {
         log.info("AuthService::kakaoLogin()");
-//        String accessToken = kakaoAuthApiClient.requestAccessToken(request.getCode());
         String accessToken = kakaoAuthApiClient.requestAccessToken(code);
         log.info("accessToken = " + accessToken);
 

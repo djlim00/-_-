@@ -5,12 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
-@AllArgsConstructor
+@Setter
 @NoArgsConstructor
-public class OAuthLoginResponse {
-    private String jwt;
-    private Long user_id;
-    private Boolean is_new_user;
+@AllArgsConstructor
+public class CreatePostResponse {
+    private Long post_id;
 }
