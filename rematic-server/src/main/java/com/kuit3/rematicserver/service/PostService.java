@@ -43,10 +43,14 @@ public class PostService {
     private final S3Uploader s3Uploader;
     private final PostInfoDao postInfoDao;
 
+    public GetSearchPostResponse getPage(String category, Long lastId){
+        log.info("PostService::getPage()");
+        return searchPage(null, "", category, lastId);
+    }
 
     @Transactional
     public GetSearchPostResponse searchPage(Long userId, String keyword, String category, Long lastId) {
-        log.info("PostService::getPageByKeywordAndCategory()");
+        log.info("PostService::searchPage()");
         List<GetSearchPostDto> page = postDao.getPage(keyword, category, lastId, 10L);
         boolean hasNext = checkNextPage(keyword, category, page);
         if(userId != null){
