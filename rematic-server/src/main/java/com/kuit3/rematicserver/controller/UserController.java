@@ -3,6 +3,7 @@ package com.kuit3.rematicserver.controller;
 import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.response.BaseResponse;
 
+import com.kuit3.rematicserver.dto.UpdateUserInfoRequest;
 import com.kuit3.rematicserver.dto.user.PutNickNameRequest;
 import com.kuit3.rematicserver.dto.user.UserMyPageResponse;
 
@@ -28,7 +29,7 @@ public class UserController {
 
 
     @PatchMapping("/mypage/info")
-    public BaseResponse<Object> updateUserInfo(@RequestBody UpdateUserInfoRequest request){
+    public BaseResponse<Object> updateUserInfo(@RequestBody UpdateUserInfoRequest request) {
         log.info("UserController::updateUserInfo()");
         log.info("user_id = " + request.getUser_id());
         log.info("nickname = " + request.getNickname());
@@ -36,6 +37,7 @@ public class UserController {
         log.info("profile_image_url = " + request.getProfile_image_url());
         userService.updateUserInfo(request);
         return new BaseResponse<>(null);
+    }
 
 //    public BaseResponse<UserMyPageResponse> getUserInfoPage(@RequestParam long userId)
     @GetMapping("/mypage")
