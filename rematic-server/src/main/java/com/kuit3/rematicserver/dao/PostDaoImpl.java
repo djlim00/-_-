@@ -1,15 +1,13 @@
 package com.kuit3.rematicserver.dao;
 
 import com.kuit3.rematicserver.dto.CreatePostRequest;
-import com.kuit3.rematicserver.dto.post.GetPostDto;
+import com.kuit3.rematicserver.dto.post.GetSearchPostDto;
 import com.kuit3.rematicserver.entity.Post;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -29,18 +27,22 @@ public class PostDaoImpl implements PostDao{
     }
 
     @Override
-    public List<GetPostDto> getPage(String keyword, String category, Long lastId) {
-        String sql = "SELECT * FROM Post" +
+    public List<GetSearchPostDto> getPage(String keyword, String category, Long lastId, Long limit) {
+        String sql = "SELECT *, (SELECT image_url FROM PostImage WHERE post_id = p.post_id LIMIT 1) AS image_url FROM Post as p" +
                 " WHERE (title LIKE :keyword OR content LIKE :keyword)" +
-                " AND post_id > :lastId";
+                " AND status = 'active'";
+        if(lastId != null) {
+            sql += " AND post_id < :lastId";
+        }
         if(!category.equals("all")){
             sql += " AND category = :category";
         }
-        sql += " LIMIT 10";
+        sql += " ORDER BY post_id DESC LIMIT :limit";
 
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("keyword",  "%" + keyword + "%")
-                .addValue("lastId", lastId);
+                .addValue("lastId", lastId)
+                .addValue("limit", limit);
         if(!category.equals("all")){
             param.addValue("category", category);
         }
@@ -48,9 +50,9 @@ public class PostDaoImpl implements PostDao{
         return jdbcTemplate.query(sql, param, getPostDtoRowMapper());
     }
 
-    private RowMapper<GetPostDto> getPostDtoRowMapper(){
+    private RowMapper<GetSearchPostDto> getPostDtoRowMapper(){
         return (ResultSet rs, int rowNum)->{
-            GetPostDto dto = GetPostDto.builder()
+            GetSearchPostDto dto = GetSearchPostDto.builder()
                     .post_id(rs.getLong("post_id"))
                     .title(rs.getString("title"))
                     .content(rs.getString("content"))
@@ -58,7 +60,7 @@ public class PostDaoImpl implements PostDao{
                     .hates(rs.getLong("hates"))
                     .views(rs.getLong("views"))
                     .scraps(rs.getLong("scraps"))
-                    .image_url(rs.getString("images"))
+                    .image_url(rs.getString("image_url"))
                     .build();
             return dto;
         };
@@ -68,7 +70,7 @@ public class PostDaoImpl implements PostDao{
     public boolean hasNextPage(String keyword, String category, Long lastId) {
         String sql = "SELECT EXISTS(SELECT * FROM Post " +
                 "WHERE (title LIKE :keyword OR content LIKE :keyword)" +
-                " AND post_id > :lastId";
+                " AND post_id < :lastId";
         if(!category.equals("all")){
             sql += " AND category = :category";
         }

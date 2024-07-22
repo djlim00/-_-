@@ -2,7 +2,7 @@ package com.kuit3.rematicserver.controller;
 
 import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.response.BaseResponse;
-import com.kuit3.rematicserver.dto.search.GetSearchResultResponse;
+import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
 import com.kuit3.rematicserver.dto.search.UserRecentKeywordResponse;
 import com.kuit3.rematicserver.dto.search.UserRecommendableKeywordsResponse;
 import com.kuit3.rematicserver.service.PostService;
@@ -21,16 +21,21 @@ public class SearchController {
 
     private final SearchService searchService;
     private final PostService postService;
-    @GetMapping
-    public BaseResponse<GetSearchResultResponse> search(@PreAuthorizedUser long userId, @RequestParam String keyword, @RequestParam String category, @RequestParam Long lastId){
+    @GetMapping("post")
+    public BaseResponse<GetSearchPostResponse> search(@PreAuthorizedUser long userId,
+                                                      @RequestParam String keyword,
+                                                      @RequestParam String category,
+                                                      @RequestParam(required = false) Long lastId){
         log.info("PostController::search()");
-        return new BaseResponse<>(postService.searchPageByKeywordAndCategory(userId, keyword, category, lastId));
+        return new BaseResponse<>(postService.searchPage(userId, keyword, category, lastId));
     }
 
-    @GetMapping("guest")
-    public BaseResponse<GetSearchResultResponse> search_guestmode(@RequestParam String keyword, @RequestParam String category, @RequestParam Long lastId){
+    @GetMapping("post/guest")
+    public BaseResponse<GetSearchPostResponse> search_guestmode(@RequestParam String keyword,
+                                                                @RequestParam String category,
+                                                                @RequestParam(required = false) Long lastId){
         log.info("PostController::search_guestmode()");
-        return new BaseResponse<>(postService.searchPageByKeywordAndCategory_guestmode(keyword, category, lastId));
+        return new BaseResponse<>(postService.searchPage(null, keyword, category, lastId));
     }
 
     @GetMapping("/recentkeyword")

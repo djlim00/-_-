@@ -12,11 +12,11 @@ import com.kuit3.rematicserver.common.exception.DatabaseException;
 import com.kuit3.rematicserver.dao.PostDao;
 import com.kuit3.rematicserver.dao.PostInfoDao;
 import com.kuit3.rematicserver.dao.RecentKeywordDao;
-import com.kuit3.rematicserver.dto.post.GetPostDto;
+import com.kuit3.rematicserver.dto.post.GetSearchPostDto;
 import com.kuit3.rematicserver.dto.post.GetScrolledCommentsResponse;
 import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
 import com.kuit3.rematicserver.dto.post.commentresponse.FamilyComment;
-import com.kuit3.rematicserver.dto.search.GetSearchResultResponse;
+import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
 import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
 import com.kuit3.rematicserver.dto.post.postresponse.UserInfo;
 
@@ -43,17 +43,23 @@ public class PostService {
     private final S3Uploader s3Uploader;
     private final PostInfoDao postInfoDao;
 
-
-    @Transactional
-    public GetSearchResultResponse searchPageByKeywordAndCategory(Long userId, String keyword, String category, Long lastId) {
-        log.info("PostService::getPageByKeywordAndCategory()");
-        List<GetPostDto> page = postDao.getPage(keyword, category, lastId);
-        boolean hasNext = checkNextPage(keyword, category, page);
-        recentKeywordDao.saveKeyword(userId, keyword);
-        return new GetSearchResultResponse(page, hasNext);
+    public GetSearchPostResponse getPage(String category, Long lastId){
+        log.info("PostService::getPage()");
+        return searchPage(null, "", category, lastId);
     }
 
-    private boolean checkNextPage(String keyword, String category, List<GetPostDto> page) {
+    @Transactional
+    public GetSearchPostResponse searchPage(Long userId, String keyword, String category, Long lastId) {
+        log.info("PostService::searchPage()");
+        List<GetSearchPostDto> page = postDao.getPage(keyword, category, lastId, 10L);
+        boolean hasNext = checkNextPage(keyword, category, page);
+        if(userId != null){
+            recentKeywordDao.saveKeyword(userId, keyword);
+        }
+        return new GetSearchPostResponse(page, hasNext);
+    }
+
+    private boolean checkNextPage(String keyword, String category, List<GetSearchPostDto> page) {
         boolean hasNext = false;
         if(page.size() > 0){
             Long nextStartingId = page.get(page.size() - 1).getPost_id();
@@ -61,13 +67,6 @@ public class PostService {
             hasNext = postDao.hasNextPage(keyword, category, nextStartingId);
         }
         return hasNext;
-    }
-
-    public GetSearchResultResponse searchPageByKeywordAndCategory_guestmode(String keyword, String category, Long lastId) {
-        log.info("PostService::getPageByKeywordAndCategory()");
-        List<GetPostDto> page = postDao.getPage(keyword, category, lastId);
-        boolean hasNext = checkNextPage(keyword, category, page);
-        return new GetSearchResultResponse(page, hasNext);
     }
 
     public CreatePostResponse createPost(CreatePostRequest request) {
