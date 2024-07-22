@@ -14,7 +14,7 @@ public class RankingScheduleService {
     private final RankingDao rankingDao;
 
     //매일 0분일 될 때마다 실행
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void resetRealtimeViewsEveryDay() {
         rankingDao.clearRealTimeRanking();
         rankingDao.updateRealTimeRanking();

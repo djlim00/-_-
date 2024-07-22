@@ -89,56 +89,60 @@ public class PostInfoDao {
         return jdbcTemplate.queryForObject(sql, Map.of("postId", postId), Long.class);
     }
 
-    public List<CommentInfo> getTimeStandCommentsByPostId(long postId, long lastId) {
-        String sql = "select c.comment_id as parent_comment_id, u.nickname as parent_writer, " +
+    public List<CommentInfo> getTimeStandCommentsByPostId(long postId) {
+        String sql = "select c.comment_id as parent_comment_id, u.nickname as parent_writer, u.user_id as writer_id, " +
                 "u.profile_image_url as parent_image_url, c.sentences as parent_comment, c.parent_id as parent_id, " +
                 "c.created_at as parent_time, c.likes as parent_likes, c.hates as parent_hates " +
                 "from Comment c join User u on c.user_id = u.user_id " +
-                "where c.post_id = :postId and c.parent_id = 0 and c.comment_id < :lastId " +
+                "where c.post_id = :postId and c.parent_id = 0 and c.status = 'active' " +
                 "order by c.created_at desc limit 10;";
-        Map<String, Object> param = Map.of("postId", postId, "lastId", lastId);
+        Map<String, Object> param = Map.of("postId", postId);
         return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
             CommentInfo parentComment = new CommentInfo
                     (
                             rs.getLong("parent_comment_id"),
                             rs.getString("parent_writer"),
+                            rs.getLong("writer_id"),
                             rs.getString("parent_image_url"),
                             rs.getString("parent_comment"),
                             rs.getLong("parent_id"),
                             rs.getTimestamp("parent_time"),
                             rs.getLong("parent_likes"),
-                            rs.getLong("parent_hates")
+                            rs.getLong("parent_hates"),
+                            true
                     );
             return parentComment;
         });
     }
 
-    public List<CommentInfo> getLikeStandCommentsByPostId(long postId, long lastId) {
-        String sql = "select c.comment_id as parent_comment_id, u.nickname as parent_writer, " +
+    public List<CommentInfo> getLikeStandCommentsByPostId(long postId) {
+        String sql = "select c.comment_id as parent_comment_id, u.nickname as parent_writer, u.user_id as writer_id, " +
                 "u.profile_image_url as parent_image_url, c.sentences as parent_comment, c.parent_id as parent_id, " +
                 "c.created_at as parent_time, c.likes as parent_likes, c.hates as parent_hates " +
                 "from Comment c join User u on c.user_id = u.user_id " +
-                "where c.post_id = :postId and c.parent_id = 0 and c.comment_id < :lastId " +
-                "order by c.parent_likes desc limit 10;";
-        Map<String, Object> param = Map.of("postId", postId, "lastId", lastId);
+                "where c.post_id = :postId and c.parent_id = 0 and c.status = 'active' " +
+                "order by c.likes desc limit 10;";
+        Map<String, Object> param = Map.of("postId", postId);
         return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
             CommentInfo parentComment = new CommentInfo
                     (
                             rs.getLong("parent_comment_id"),
                             rs.getString("parent_writer"),
+                            rs.getLong("writer_id"),
                             rs.getString("parent_image_url"),
                             rs.getString("parent_comment"),
                             rs.getLong("parent_id"),
                             rs.getTimestamp("parent_time"),
                             rs.getLong("parent_likes"),
-                            rs.getLong("parent_hates")
+                            rs.getLong("parent_hates"),
+                            true
                     );
             return parentComment;
         });
     }
 
     public List<CommentInfo> getChildCommentsTimeStand(List<Long> parentIds) {
-        String sql = "SELECT c.comment_id AS child_comment_id, u.nickname AS child_writer, " +
+        String sql = "SELECT c.comment_id AS child_comment_id, u.nickname AS child_writer, u.user_id as writer_id, " +
                 "u.profile_image_url AS child_image_url, c.sentences AS child_comment, c.parent_id AS parent_id, " +
                 "c.created_at AS child_time, c.likes AS child_likes, c.hates AS child_hates " +
                 "FROM Comment c " +
@@ -147,15 +151,18 @@ public class PostInfoDao {
                 "ORDER BY c.created_at ASC";
         MapSqlParameterSource param = new MapSqlParameterSource("parentIds", parentIds);
         return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
-            return new CommentInfo(
+            return new CommentInfo
+                    (
                     rs.getLong("child_comment_id"),
                     rs.getString("child_writer"),
+                    rs.getLong("writer_id"),
                     rs.getString("child_image_url"),
                     rs.getString("child_comment"),
                     rs.getLong("parent_id"),
                     rs.getTimestamp("child_time"),
                     rs.getLong("child_likes"),
-                    rs.getLong("child_hates")
+                    rs.getLong("child_hates"),
+                    false
             );
         });
     }

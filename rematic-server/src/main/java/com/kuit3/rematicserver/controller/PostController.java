@@ -24,9 +24,9 @@ public class PostController {
     }
 
     @GetMapping("/comments/{postId}")
-    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PathVariable long postId, @RequestParam long lastId, @RequestParam String orderBy) {
+    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PathVariable long postId, @RequestParam String orderBy) {
         log.info("PostController.showPostComments");
-        return new BaseResponse<>(postService.getCommentsByPostId(postId, lastId, orderBy));
+        return new BaseResponse<>(postService.getCommentsByPostId(postId, orderBy));
     }
 
 

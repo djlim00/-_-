@@ -12,11 +12,13 @@ public class CommentInfo {
 
     private Long commentId;
     private String writer;
+    private Long writerId;
     private String imageUrl;
     private String comment;
     private Long parentId;
     private Timestamp time;
     private Long likes;
     private Long hates;
+    private Boolean isParentComment;
 
 }
