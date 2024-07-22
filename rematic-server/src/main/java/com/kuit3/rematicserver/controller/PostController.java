@@ -50,7 +50,12 @@ public class PostController {
         return new BaseResponse<>(response);
     }
 
- 
+    @GetMapping
+    public BaseResponse<GetSearchPostResponse> showPage(@RequestParam String category,
+                                                        @RequestParam(required = false) Long lastId){
+        log.info("PostController::showPage()");
+        return new BaseResponse<>( postService.getPage(category, lastId));
+    }
 
     //모든 사람에게 글을 보는건 허용되지만, 댓글을 달 때는 preauthorize가 있어야 한다.
     @GetMapping("/{postId}")
