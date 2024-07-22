@@ -5,6 +5,7 @@ import com.kuit3.rematicserver.common.exception.UserDormantException;
 import com.kuit3.rematicserver.common.exception.UserNotFoundException;
 import com.kuit3.rematicserver.dao.UserDao;
 
+import com.kuit3.rematicserver.dto.UpdateUserInfoRequest;
 import com.kuit3.rematicserver.dto.user.UserCheckDto;
 import com.kuit3.rematicserver.dto.user.UserMyPageResponse;
 
@@ -34,6 +35,8 @@ public class UserService {
         int affectedRow = userDao.updateUserInfo(request);
         if (affectedRow != 1) {
             throw new RuntimeException("User info update failed");
+        }
+    }
 
     public UserMyPageResponse getMyPageInfo(long userId) {
         log.info("UserService.getMyPageInfo");
