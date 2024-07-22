@@ -3,13 +3,11 @@ package com.kuit3.rematicserver.controller;
 import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.response.BaseResponse;
 import com.kuit3.rematicserver.dto.PutNickNameRequest;
+import com.kuit3.rematicserver.dto.UpdateUserInfoRequest;
 import com.kuit3.rematicserver.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -23,6 +21,17 @@ public class UserController {
         log.info("userid = " + userId);
         log.info("newNickname = " + request.getNickname());
         userService.modifyNickname(userId, request.getNickname());
+        return new BaseResponse<>(null);
+    }
+
+    @PatchMapping("/mypage/info")
+    public BaseResponse<Object> updateUserInfo(@RequestBody UpdateUserInfoRequest request){
+        log.info("UserController::updateUserInfo()");
+        log.info("user_id = " + request.getUser_id());
+        log.info("nickname = " + request.getNickname());
+        log.info("introduction = " + request.getIntroduction());
+        log.info("profile_image_url = " + request.getProfile_image_url());
+        userService.updateUserInfo(request);
         return new BaseResponse<>(null);
     }
 }

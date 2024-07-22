@@ -2,6 +2,7 @@ package com.kuit3.rematicserver.service;
 
 import com.kuit3.rematicserver.common.exception.DatabaseException;
 import com.kuit3.rematicserver.dao.UserDao;
+import com.kuit3.rematicserver.dto.UpdateUserInfoRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,13 @@ public class UserService {
         int affectedRow = userDao.changeUserNickname(userId, newNickname);
         if(affectedRow != 1){
             throw new DatabaseException(DATABASE_ERROR);
+        }
+    }
+
+    public void updateUserInfo(UpdateUserInfoRequest request) {
+        int affectedRow = userDao.updateUserInfo(request);
+        if (affectedRow != 1) {
+            throw new RuntimeException("User info update failed");
         }
     }
 }

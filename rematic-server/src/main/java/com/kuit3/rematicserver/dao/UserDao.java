@@ -1,6 +1,7 @@
 package com.kuit3.rematicserver.dao;
 
 import com.kuit3.rematicserver.dto.CreateUserDTO;
+import com.kuit3.rematicserver.dto.UpdateUserInfoRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -52,5 +53,11 @@ public class UserDao {
         String sql = "select exists(select * from User where nickname = :nickname)";
         Map<String, String> param = Map.of("nickname", nickname);
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, Boolean.class));
+    }
+
+    public int updateUserInfo(UpdateUserInfoRequest request) {
+        String sql = "UPDATE User SET nickname = :nickname, introduction = :introduction, profile_image_url = :profile_image_url WHERE user_id = :user_id";
+        SqlParameterSource param = new BeanPropertySqlParameterSource(request);
+        return jdbcTemplate.update(sql, param);
     }
 }
