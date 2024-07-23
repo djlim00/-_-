@@ -8,6 +8,7 @@ import com.kuit3.rematicserver.dto.post.GetPostDto;
 import com.kuit3.rematicserver.dto.post.GetScrolledCommentsResponse;
 import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
 import com.kuit3.rematicserver.dto.post.commentresponse.FamilyComment;
+import com.kuit3.rematicserver.dto.post.postresponse.PostInfo;
 import com.kuit3.rematicserver.dto.search.GetSearchResultResponse;
 import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
 import com.kuit3.rematicserver.dto.post.postresponse.UserInfo;
@@ -54,20 +55,43 @@ public class PostService {
         boolean hasNext = checkNextPage(keyword, category, page);
         return new GetSearchResultResponse(page, hasNext);
     }
+    //로그인 사용자용
+    public GetClickedPostResponse getValidatedClickedPostInfo(long userId, long postId) {
+        log.info("PostService.getValidatedClickedPostInfo");
+        //게시물이 삭제되진 않았는지 확인
+        if(!checkPostExists(postId)) {
+            throw new DatabaseException(POST_NOT_FOUND);
+        }
+        GetClickedPostResponse postResponse = new GetClickedPostResponse();
+        //게시물 익명성 여부 확인
+        validateAndSetPostWriter(postId, postResponse);
+        //게시글 정보 가져오기
+        postResponse.setBulletinName(postInfoDao.getBulletinInfo(postId));
+        //이미지 주소와 설명 가져오기
+        if(!postInfoDao.imageExists(postId)) {
+            postResponse.setImageInfo(null);
+        } else {
+            postResponse.setImageInfo(postInfoDao.getImageInfo(postId));
+        }
+        PostInfo postInfo = postInfoDao.getPostInfo(postId);
+        List<Boolean> userPreference = postInfoDao.checkUserPrefer(userId, postId);
+        postInfo.setIsLiked(userPreference.get(0));
+        postInfo.setIsHated(userPreference.get(1));
+        postInfo.setIsScraped(userPreference.get(2));
+        postResponse.setPostInfo(postInfo);
+        return postResponse;
+    }
 
+    //게스트용
     public GetClickedPostResponse getClickedPostInfo(long postId) {
-        log.info("BulletinService.getClickedPostInfo");
+        log.info("PostService.getClickedPostInfo");
         //게시물이 삭제되진 않았는지 확인
         if(!checkPostExists(postId)) {
             throw new DatabaseException(POST_NOT_FOUND);
         }
         //게시물 익명성 여부 확인
         GetClickedPostResponse postResponse = new GetClickedPostResponse();
-        if(!checkAnonymity(postId)) {
-            postResponse.setUserInfo(new UserInfo("익명", null));
-        } else {
-            postResponse.setUserInfo(postInfoDao.getWriterInfo(postId));
-        }
+        validateAndSetPostWriter(postId, postResponse);
         //이외 정보 가져오기
         postResponse.setBulletinName(postInfoDao.getBulletinInfo(postId));
         postResponse.setPostInfo(postInfoDao.getPostInfo(postId));
@@ -78,6 +102,14 @@ public class PostService {
             postResponse.setImageInfo(postInfoDao.getImageInfo(postId));
         }
         return postResponse;
+    }
+
+    private void validateAndSetPostWriter(long postId, GetClickedPostResponse postResponse) {
+        if(!checkAnonymity(postId)) {
+            postResponse.setUserInfo(new UserInfo("익명", null));
+        } else {
+            postResponse.setUserInfo(postInfoDao.getWriterInfo(postId));
+        }
     }
 
     private boolean checkAnonymity(long postId) {
@@ -126,4 +158,6 @@ public class PostService {
         commentsResponse.setCommentList(commentList);
         return commentsResponse;
     }
+
+
 }

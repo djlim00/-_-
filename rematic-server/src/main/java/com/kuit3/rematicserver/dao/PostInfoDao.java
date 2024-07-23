@@ -11,7 +11,7 @@ import com.kuit3.rematicserver.dto.post.postresponse.UserInfo;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,8 +63,11 @@ public class PostInfoDao {
                     rs.getString("title"),
                     rs.getString("content"),
                     rs.getLong("likes"),
+                    false,
                     rs.getLong("hates"),
-                    rs.getLong("scraps")
+                    false,
+                    rs.getLong("scraps"),
+                    false
             );
         });
     }
@@ -76,6 +79,21 @@ public class PostInfoDao {
                     rs.getString("image_url"),
                     rs.getString("description")
             );
+        });
+    }
+
+    public List<Boolean> checkUserPrefer(long userId, long postId) {
+        String sql = "select " +
+                "exists (select 1 from PostLikes where user_id = :userId and post_id = :postId) as isPostLikes, " +
+                "exists (select 1 from PostHates where user_id = :userId and post_id = :postId) as isPostHates, " +
+                "exists (select 1 from UserScrap where user_id = :userId and post_id = :postId) as isUserScraped;";
+        Map<String, Object> param = Map.of("userId", userId, "postId", postId);
+        return jdbcTemplate.queryForObject(sql, param, (rs, rowNum) -> {
+            List<Boolean> result = new ArrayList<>();
+            result.add(rs.getBoolean("isPostLikes"));
+            result.add(rs.getBoolean("isPostHates"));
+            result.add(rs.getBoolean("isUserScraped"));
+            return result;
         });
     }
 

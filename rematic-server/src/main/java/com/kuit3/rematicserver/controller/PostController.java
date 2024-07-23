@@ -1,5 +1,6 @@
 package com.kuit3.rematicserver.controller;
 
+import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.response.BaseResponse;
 import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
 import com.kuit3.rematicserver.dto.post.GetScrolledCommentsResponse;
@@ -16,12 +17,17 @@ public class PostController {
 
     private final PostService postService;
 
-    //모든 사람에게 글을 보는건 허용되지만, 댓글을 달 때는 preauthorize가 있어야 한다.
     @GetMapping("/{postId}")
-    public BaseResponse<GetClickedPostResponse> showClickedPost(@PathVariable long postId) {
+    public BaseResponse<GetClickedPostResponse> showClickedPost(@PreAuthorizedUser long userId, @PathVariable long postId) {
         log.info("PostController.showClickedPost");
+        return new BaseResponse<>(postService.getValidatedClickedPostInfo(userId, postId));
+    }
+    @GetMapping("/guest/{postId}")
+    public BaseResponse<GetClickedPostResponse> showClickedPostByGuestMode(@PathVariable long postId) {
+        log.info("PostController.showClickedPostByGuestMode");
         return new BaseResponse<>(postService.getClickedPostInfo(postId));
     }
+
 
     @GetMapping("/comments/{postId}")
     public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PathVariable long postId, @RequestParam String orderBy) {

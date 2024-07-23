@@ -46,7 +46,8 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     DUPLICATE_EMAIL(5001, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 이메일입니다."),
     DUPLICATE_NICKNAME(5002, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 닉네임입니다."),
     USER_NOT_FOUND(5003, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 계정입니다."),
-    USER_DORMANT_STATUS(5004, HttpStatus.BAD_REQUEST.value(), "휴면상태 계정입니다.");
+    USER_DORMANT_STATUS(5004, HttpStatus.BAD_REQUEST.value(), "휴면상태 계정입니다."),
+    USER_KEYWORD_NOT_FOUND(5005, HttpStatus.BAD_REQUEST.value(), "요청하신 사용자의 최근 검색어가 없습니다.");
 
     private final int code;
     private final int status;
