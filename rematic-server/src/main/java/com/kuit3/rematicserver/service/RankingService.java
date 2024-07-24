@@ -30,8 +30,4 @@ public class RankingService {
     public List<GetRankedPostDto> getNovelRanking() {
         return rankingDao.getRankingByCategory("novel");
     }
-
-    public void deletePostFromRanking(Long postId) {
-
-    }
 }

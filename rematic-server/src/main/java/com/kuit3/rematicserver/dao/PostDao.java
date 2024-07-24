@@ -12,5 +12,4 @@ public interface PostDao {
     public long createPost(CreatePostRequest request);
     Post findById(Long postId);
     boolean hasPostWithId(Long postId);
-    int modifyStatusDormant(Long postId);
 }
