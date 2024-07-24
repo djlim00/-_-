@@ -69,7 +69,7 @@ public class PostDaoImpl implements PostDao{
     @Override
     public boolean hasNextPage(String keyword, String category, Long lastId) {
         String sql = "SELECT EXISTS(SELECT * FROM Post " +
-                "WHERE (title LIKE :keyword OR content LIKE :keyword)" +
+                "WHERE status = 'active' AND (title LIKE :keyword OR content LIKE :keyword)" +
                 " AND post_id < :lastId";
         if(!category.equals("all")){
             sql += " AND category = :category";
