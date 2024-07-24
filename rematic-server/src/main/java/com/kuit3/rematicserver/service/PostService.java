@@ -163,10 +163,4 @@ public class PostService {
         return commentsResponse;
     }
 
-    public void deletePost(Long postId) {
-        log.info("PostService::deletePost()");
-
-        postDao.modifyStatusDormant(postId);
-        postImageDao.modifyStatusDormantByPostId(postId);
-    }
 }
