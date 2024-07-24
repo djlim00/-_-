@@ -137,7 +137,7 @@ public class PostDaoImpl implements PostDao{
 
     @Override
     public boolean hasPostWithId(Long postId) {
-        String sql = "select exists(select * from Post where post_id = :post_id)";
+        String sql = "select exists(select * from Post where status='active'AND post_id = :post_id)";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("post_id", postId);
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
