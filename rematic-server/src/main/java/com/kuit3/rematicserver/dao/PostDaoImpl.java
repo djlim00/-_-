@@ -69,7 +69,7 @@ public class PostDaoImpl implements PostDao{
     @Override
     public boolean hasNextPage(String keyword, String category, Long lastId) {
         String sql = "SELECT EXISTS(SELECT * FROM Post " +
-                "WHERE (title LIKE :keyword OR content LIKE :keyword)" +
+                "WHERE status = 'active' AND (title LIKE :keyword OR content LIKE :keyword)" +
                 " AND post_id < :lastId";
         if(!category.equals("all")){
             sql += " AND category = :category";
@@ -137,10 +137,18 @@ public class PostDaoImpl implements PostDao{
 
     @Override
     public boolean hasPostWithId(Long postId) {
-        String sql = "select exists(select * from Post where post_id = :post_id)";
+        String sql = "select exists(select * from Post where status='active'AND post_id = :post_id)";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("post_id", postId);
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
+    }
+
+    @Override
+    public int modifyStatusDormant(Long postId) {
+        String sql = "UPDATE Post SET status='dormant' WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        return jdbcTemplate.update(sql, param);
     }
 }
 
