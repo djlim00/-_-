@@ -142,5 +142,13 @@ public class PostDaoImpl implements PostDao{
                 .addValue("post_id", postId);
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
     }
+
+    @Override
+    public int modifyStatusDormant(Long postId) {
+        String sql = "UPDATE Post SET status='dormant' WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        return jdbcTemplate.update(sql, param);
+    }
 }
 
