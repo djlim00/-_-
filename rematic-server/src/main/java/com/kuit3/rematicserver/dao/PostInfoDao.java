@@ -14,6 +14,7 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -126,7 +127,9 @@ public class PostInfoDao {
                             rs.getLong("parent_id"),
                             rs.getTimestamp("parent_time"),
                             rs.getLong("parent_likes"),
+                            false,
                             rs.getLong("parent_hates"),
+                            false,
                             true
                     );
             return parentComment;
@@ -152,14 +155,44 @@ public class PostInfoDao {
                             rs.getLong("parent_id"),
                             rs.getTimestamp("parent_time"),
                             rs.getLong("parent_likes"),
+                            false,
                             rs.getLong("parent_hates"),
+                            false,
                             true
                     );
             return parentComment;
         });
     }
 
-    public List<CommentInfo> getChildCommentsTimeStand(List<Long> parentIds) {
+    public List<CommentInfo> getChildCommentsWithPrefer(long userId, List<Long> parentIds) {
+        String sql = "SELECT c.comment_id AS child_comment_id, u.nickname AS child_writer, u.user_id as writer_id, " +
+                "u.profile_image_url AS child_image_url, c.sentences AS child_comment, c.parent_id AS parent_id, " +
+                "c.created_at AS child_time, c.likes AS child_likes, c.hates AS child_hates " +
+                "FROM Comment c " +
+                "JOIN User u ON c.user_id = u.user_id " +
+                "WHERE c.parent_id IN (:parentIds) AND c.status = 'active' " +
+                "ORDER BY c.created_at ASC";
+        MapSqlParameterSource param = new MapSqlParameterSource("parentIds", parentIds);
+        return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
+            return new CommentInfo
+                    (
+                            rs.getLong("child_comment_id"),
+                            rs.getString("child_writer"),
+                            rs.getLong("writer_id"),
+                            rs.getString("child_image_url"),
+                            rs.getString("child_comment"),
+                            rs.getLong("parent_id"),
+                            rs.getTimestamp("child_time"),
+                            rs.getLong("child_likes"),
+                            false,
+                            rs.getLong("child_hates"),
+                            false,
+                            false
+                    );
+        });
+    }
+
+    public List<CommentInfo> getChildCommentsWithoutPrefer(List<Long> parentIds) {
         String sql = "SELECT c.comment_id AS child_comment_id, u.nickname AS child_writer, u.user_id as writer_id, " +
                 "u.profile_image_url AS child_image_url, c.sentences AS child_comment, c.parent_id AS parent_id, " +
                 "c.created_at AS child_time, c.likes AS child_likes, c.hates AS child_hates " +
@@ -179,9 +212,27 @@ public class PostInfoDao {
                     rs.getLong("parent_id"),
                     rs.getTimestamp("child_time"),
                     rs.getLong("child_likes"),
+                    false,
                     rs.getLong("child_hates"),
+                    false,
                     false
             );
         });
+    }
+
+    public Map<Long, Boolean> getCommentLikesHistory(long userId, List<Long> CommentIds) {
+        String sql = "select comment_id from CommentLikes where user_id = :userId and comment_id in (:commentIds);";
+        Map<String, Object> param = Map.of("userId", userId, "commentIds", CommentIds);
+        return  jdbcTemplate.query(sql, param, (rs, rowNum) -> rs.getLong("comment_id"))
+                .stream()
+                .collect(Collectors.toMap(commentId -> commentId, commentId -> true));
+    }
+
+    public Map<Long, Boolean> getCommentHatesHistory(long userId, List<Long> parentCommentIds) {
+        String sql = "select comment_id from CommentHates where user_id = :userId and comment_id in (:commentIds);";
+        Map<String, Object> param = Map.of("userId", userId, "commentIds", parentCommentIds);
+        return  jdbcTemplate.query(sql, param, (rs, rowNum) -> rs.getLong("comment_id"))
+                .stream()
+                .collect(Collectors.toMap(commentId -> commentId, commentId -> true));
     }
 }

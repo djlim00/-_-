@@ -28,9 +28,14 @@ public class PostController {
         return new BaseResponse<>(postService.getClickedPostInfo(postId));
     }
 
-
     @GetMapping("/comments/{postId}")
-    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PathVariable long postId, @RequestParam String orderBy) {
+    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PathVariable long postId, @RequestParam long userId, @RequestParam String orderBy) {
+        log.info("PostController.showPostComments");
+        return new BaseResponse<>(postService.getValidatedCommentsByPostId(postId, userId, orderBy));
+    }
+
+    @GetMapping("/comments/guest/{postId}")
+    public BaseResponse<GetScrolledCommentsResponse> showPostCommentsByGuestMode(@PathVariable long postId, @RequestParam String orderBy) {
         log.info("PostController.showPostComments");
         return new BaseResponse<>(postService.getCommentsByPostId(postId, orderBy));
     }

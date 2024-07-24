@@ -120,6 +120,61 @@ public class PostService {
         return postInfoDao.isPostExists(postId);
     }
 
+    public GetScrolledCommentsResponse getValidatedCommentsByPostId(long postId, long userId, String orderBy) {
+        log.info("PostService.getValidatedCommentsByPostId");
+        GetScrolledCommentsResponse commentsResponse = new GetScrolledCommentsResponse();
+
+        //댓글 수 설정(ok)
+        Long countOfComments = postInfoDao.getCountOfComments(postId);
+        commentsResponse.setCountOfComments(countOfComments);
+        if(countOfComments == 0) {
+            commentsResponse.setCommentList(null);
+            return commentsResponse;
+        }
+        //부모 리스트 가져오기(ok)
+        List<CommentInfo> parentComments = null;
+        if(orderBy.equals("timeStandard")) {
+            parentComments = postInfoDao.getTimeStandCommentsByPostId(postId);
+        }
+        if(orderBy.equals("likeStandard")) {
+            parentComments = postInfoDao.getLikeStandCommentsByPostId(postId);
+        }
+        List<Long> parentCommentIds = parentComments.stream()
+                .map(CommentInfo::getCommentId)
+                .collect(Collectors.toList());
+        Map<Long, Boolean> likesHistory = postInfoDao.getCommentLikesHistory(userId, parentCommentIds);
+        Map<Long, Boolean> hatesHistory = postInfoDao.getCommentHatesHistory(userId, parentCommentIds);
+        //부모 댓글 좋아요 실어요 여부 매핑(ok)
+        for(CommentInfo parentComment : parentComments) {
+            parentComment.setIsLiked(likesHistory.getOrDefault(parentComment.getCommentId(), false));
+            parentComment.setIsHated(hatesHistory.getOrDefault(parentComment.getCommentId(), false));
+        }
+        //자식 댓글 가져오기
+        List<CommentInfo> childComments = postInfoDao.getChildCommentsWithPrefer(userId, parentCommentIds);
+        List<Long> childCommentIds = childComments.stream()
+                .map(CommentInfo::getCommentId)
+                .collect(Collectors.toList());
+        //자식 댓글 좋아요 싫어요 여부 매핑
+        Map<Long, Boolean> childLikeHistory = postInfoDao.getCommentLikesHistory(userId, childCommentIds);
+        Map<Long, Boolean> childHateHistory = postInfoDao.getCommentHatesHistory(userId, childCommentIds);
+        for(CommentInfo childComment : childComments) {
+            childComment.setIsLiked(childLikeHistory.getOrDefault(childComment.getCommentId(), false));
+            childComment.setIsHated(childHateHistory.getOrDefault(childComment.getCommentId(), false));
+        }
+
+        Map<Long, List<CommentInfo>> groupedChildComments = childComments.stream()
+                .collect(Collectors.groupingBy(CommentInfo::getParentId));
+
+        //댓글-대댓글 매핑하기
+        List<FamilyComment> commentList = new ArrayList<>();
+        for(CommentInfo parentComment : parentComments) {
+            List<CommentInfo> childrenComment = groupedChildComments.getOrDefault(parentComment.getCommentId(), new ArrayList<>());
+            commentList.add(new FamilyComment(parentComment, childrenComment));
+        }
+        commentsResponse.setCommentList(commentList);
+        return commentsResponse;
+    }
+
     public GetScrolledCommentsResponse getCommentsByPostId(long postId, String orderBy) {
         log.info("PostService.getCommentsByPostId");
         GetScrolledCommentsResponse commentsResponse = new GetScrolledCommentsResponse();
@@ -145,7 +200,7 @@ public class PostService {
                 .collect(Collectors.toList());
 
         //자식 댓글 가져오기
-        Map<Long, List<CommentInfo>> childComments = postInfoDao.getChildCommentsTimeStand(parentCommentIds)
+        Map<Long, List<CommentInfo>> childComments = postInfoDao.getChildCommentsWithoutPrefer(parentCommentIds)
                 .stream()
                 .collect(Collectors.groupingBy(CommentInfo::getParentId));
 
@@ -158,6 +213,4 @@ public class PostService {
         commentsResponse.setCommentList(commentList);
         return commentsResponse;
     }
-
-
 }

@@ -18,7 +18,9 @@ public class CommentInfo {
     private Long parentId;
     private Timestamp time;
     private Long likes;
+    private Boolean isLiked;
     private Long hates;
+    private Boolean isHated;
     private Boolean isParentComment;
 
 }
