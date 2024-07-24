@@ -23,6 +23,8 @@ public class PostDeletionService {
         postHatesService.deleteHatesOfPost(postId);
         userScrapService.deleteScrapsOfPost(postId);
         commentService.deleteCommentsOfPost(postId);
+
+        // 랭킹 기능 수정 시 구현할 코드
         //rankingService.deletePostFromRanking(postId);
         postService.deletePost(postId);
     }

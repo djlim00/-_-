@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -17,8 +19,11 @@ public class CommentService {
 
     public void deleteCommentsOfPost(Long postId) {
         log.info("CommentService::deleteCommentsOfPost()");
+        List<Long> postCommentIds = commentDao.findAllByPostId(postId);
+        for(Long commentId : postCommentIds) {
+            commentLikesDao.deleteByCommentId(commentId);
+            commentHatesDao.deleteByCommentId(commentId);
+        }
         commentDao.modifyStatusDormantByPostId(postId);
-        commentLikesDao.deleteByPostId(postId);
-        commentHatesDao.deleteByPostId(postId);
     }
 }

@@ -15,10 +15,10 @@ public class CommentHatesDao {
     public CommentHatesDao(DataSource dataSource) {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
-    public int deleteByPostId(Long postId) {
-        String sql = "DELETE FROM CommentHates WHERE post_id = :post_id";
+    public int deleteByCommentId(Long commentId) {
+        String sql = "DELETE FROM CommentHates WHERE comment_id = :comment_id";
         MapSqlParameterSource param = new MapSqlParameterSource()
-                .addValue("post_id", postId);
+                .addValue("comment_id", commentId);
         return jdbcTemplate.update(sql, param);
     }
 }

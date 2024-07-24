@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.util.Map;
 
 @Slf4j
 @Repository
@@ -16,10 +15,10 @@ public class CommentLikesDao {
     public CommentLikesDao(DataSource dataSource) {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
-    public int deleteByPostId(Long postId) {
-        String sql = "DELETE FROM CommentLikes WHERE post_id = :post_id";
+    public int deleteByCommentId(Long commentId) {
+        String sql = "DELETE FROM CommentLikes WHERE comment_id = :comment_id";
         MapSqlParameterSource param = new MapSqlParameterSource()
-                .addValue("post_id", postId);
+                .addValue("comment_id", commentId);
         return jdbcTemplate.update(sql, param);
     }
 }
