@@ -10,5 +10,10 @@
         <module name="rematic-server.main" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="remetic" target="17" />
+      <module name="remetic.main" target="17" />
+      <module name="remetic.test" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

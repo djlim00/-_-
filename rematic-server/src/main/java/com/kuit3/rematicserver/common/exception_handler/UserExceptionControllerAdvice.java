@@ -1,6 +1,14 @@
 package com.kuit3.rematicserver.common.exception_handler;
 
+<<<<<<< HEAD
 import com.kuit3.rematicserver.common.exception.*;
+=======
+import com.kuit3.rematicserver.common.exception.UnauthorizedUserRequestException;
+import com.kuit3.rematicserver.common.exception.UserDormantException;
+import com.kuit3.rematicserver.common.exception.UserDuplicateEmailException;
+import com.kuit3.rematicserver.common.exception.UserDuplicateNicknameException;
+import com.kuit3.rematicserver.common.exception.UserNotFoundException;
+>>>>>>> 4e6863d2396d73c3780a99bb275d41e558207e9b
 import com.kuit3.rematicserver.common.response.BaseErrorResponse;
 import jakarta.annotation.Priority;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +45,13 @@ public class UserExceptionControllerAdvice {
         return new BaseErrorResponse(DUPLICATE_EMAIL);
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UnauthorizedUserRequestException.class)
+    public BaseErrorResponse handle_UnauthorizedUserRequestException(Exception e) {
+        log.error("[handle_UnauthorizedUserRequestException]", e);
+        return new BaseErrorResponse(UNAUTHORIZED_USER_REQUEST);
+    }
+      
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserDormantException.class)
     public BaseErrorResponse handle_UserStatusDormatException(Exception e) {

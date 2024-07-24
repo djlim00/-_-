@@ -43,7 +43,7 @@ public class RankingDao {
     }
 
     public List<GetRankedPostDto> getRankingByCategory(String category) {
-        String sql = "SELECT p.post_id, p.title, p.content, b.name as bulletin, p.likes, p.hates, p.views, p.scraps, p.images as image_url, p.realtime_views " +
+        String sql = "SELECT p.post_id, p.title, p.content, b.name as bulletin, p.likes, p.hates, p.views, p.scraps, p.has_image as image_url, p.realtime_views " +
                 "FROM Post p " +
                 "JOIN Bulletin b ON p.bulletin_id = b.bulletin_id " +
                 "WHERE p.status = 'active' AND p.created_at >= now() - interval 12 hour " +
@@ -53,9 +53,6 @@ public class RankingDao {
 
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("category", category);
-
-        log.info("Executing SQL: {}", sql);
-        log.info("With parameters: {}", params);
 
         List<GetRankedPostDto> posts = jdbcTemplate.query(sql, params, (rs, rowNum) ->
                 GetRankedPostDto.builder()
@@ -74,4 +71,5 @@ public class RankingDao {
 
         return posts;
     }
+
 }

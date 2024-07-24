@@ -4,8 +4,11 @@ import com.kuit3.rematicserver.common.exception.DatabaseException;
 import com.kuit3.rematicserver.common.exception.UserDormantException;
 import com.kuit3.rematicserver.common.exception.UserNotFoundException;
 import com.kuit3.rematicserver.dao.UserDao;
+
+import com.kuit3.rematicserver.dto.UpdateUserInfoRequest;
 import com.kuit3.rematicserver.dto.user.UserCheckDto;
 import com.kuit3.rematicserver.dto.user.UserMyPageResponse;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,14 @@ public class UserService {
         }
     }
 
+
+    public void updateUserInfo(UpdateUserInfoRequest request) {
+        int affectedRow = userDao.updateUserInfo(request);
+        if (affectedRow != 1) {
+            throw new RuntimeException("User info update failed");
+        }
+    }
+
     public UserMyPageResponse getMyPageInfo(long userId) {
         log.info("UserService.getMyPageInfo");
         checkUserExistsOrDormant(userId);
@@ -41,6 +52,7 @@ public class UserService {
         }
         if(result.getIsActive() == 0) {
             throw new UserDormantException(USER_DORMANT_STATUS);
+
         }
     }
 }
