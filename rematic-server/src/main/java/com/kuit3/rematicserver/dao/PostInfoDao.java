@@ -58,11 +58,13 @@ public class PostInfoDao {
     }
 
     public PostInfo getPostInfo(long postId) {
-        String sql = "select title, content, likes, hates, scraps from Post where post_id = :postId;";
+        String sql = "select title, content, views, created_at, likes, hates, scraps from Post where post_id = :postId;";
         return jdbcTemplate.queryForObject(sql, Map.of("postId", postId), (rs, rowNum) -> {
             return new PostInfo(
                     rs.getString("title"),
                     rs.getString("content"),
+                    rs.getLong("views"),
+                    rs.getTimestamp("created_at"),
                     rs.getLong("likes"),
                     false,
                     rs.getLong("hates"),
