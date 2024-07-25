@@ -67,7 +67,7 @@ public class PostController {
     }
 
     @GetMapping("/comments/{postId}")
-    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PathVariable long postId, @RequestParam long userId, @RequestParam String orderBy) {
+    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PreAuthorizedUser long postId, @RequestParam long userId, @RequestParam String orderBy) {
         log.info("PostController.showPostComments");
         return new BaseResponse<>(postService.getValidatedCommentsByPostId(postId, userId, orderBy));
     }
@@ -76,5 +76,11 @@ public class PostController {
     public BaseResponse<GetScrolledCommentsResponse> showPostCommentsByGuestMode(@PathVariable long postId, @RequestParam String orderBy) {
         log.info("PostController.showPostComments");
         return new BaseResponse<>(postService.getCommentsByPostId(postId, orderBy));
+    }
+
+    @PostMapping("/comments/{comment_id}")
+    public BaseResponse<String> dormantUserComment(@PreAuthorizedUser long userId, @PathVariable("comment_id") long commentId) {
+        log.info("PostController.dormantUserComment");
+        return new BaseResponse<>(postService.dormantUserComment(userId, commentId));
     }
 }

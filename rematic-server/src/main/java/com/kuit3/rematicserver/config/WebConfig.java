@@ -24,8 +24,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/auth/test")
                 .addPathPatterns("/search/**")
                 .excludePathPatterns("/search/post/guest")
-                .addPathPatterns("/post/**")
-                .excludePathPatterns("/post")
+//                .addPathPatterns("/post/**")
+//                .excludePathPatterns("/post")
                 .addPathPatterns("/user/**"); // 이게 없으면 인터셉터가 적용이 안되네요...
     }
 

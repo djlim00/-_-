@@ -52,7 +52,8 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     USER_NOT_FOUND(5003, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 계정입니다."),
     UNAUTHORIZED_USER_REQUEST(5004, HttpStatus.BAD_REQUEST.value(), "권한이 없는 사용자의 요청입니다."),
     USER_KEYWORD_NOT_FOUND(5005, HttpStatus.BAD_REQUEST.value(), "요청하신 사용자의 최근 검색어가 없습니다."),
-    USER_DORMANT_STATUS(5006, HttpStatus.BAD_REQUEST.value(), "휴면상태 계정입니다.");
+    USER_DORMANT_STATUS(5006, HttpStatus.BAD_REQUEST.value(), "휴면상태 계정입니다."),
+    COMMENT_NOT_FOUND(5007, HttpStatus.BAD_REQUEST.value(), "요청하신 댓글이 존재하지 않습니다.");
 
     private final int code;
     private final int status;

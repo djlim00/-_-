@@ -2,6 +2,7 @@ package com.kuit3.rematicserver.service;
 
 
 import com.kuit3.rematicserver.aws.S3Uploader;
+import com.kuit3.rematicserver.common.exception.UserCommentException;
 import com.kuit3.rematicserver.dao.BulletinDao;
 import com.kuit3.rematicserver.dao.PostImageDao;
 import com.kuit3.rematicserver.dto.CreatePostResponse;
@@ -31,7 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.POST_NOT_FOUND;
+import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.*;
 
 @Slf4j
 @Service
@@ -255,5 +256,18 @@ public class PostService {
         }
         commentsResponse.setCommentList(commentList);
         return commentsResponse;
+    }
+
+    public String dormantUserComment(long userId, long commentId) {
+        log.info("PostService.dormantUserComment");
+        if (!postInfoDao.checkCommentExists(userId, commentId)) {
+            throw new UserCommentException(COMMENT_NOT_FOUND);
+        }
+        int result = postInfoDao.dormantValidatedComment(userId, commentId);
+        if (result == 1) {
+            return "complete deleting comment";
+        } else {
+            throw new DatabaseException(DATABASE_ERROR);
+        }
     }
 }
