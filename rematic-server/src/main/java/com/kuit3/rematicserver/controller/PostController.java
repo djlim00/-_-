@@ -6,7 +6,15 @@ import com.kuit3.rematicserver.common.exception.UnauthorizedUserRequestException
 import com.kuit3.rematicserver.common.response.BaseResponse;
 import com.kuit3.rematicserver.dto.CreatePostRequest;
 import com.kuit3.rematicserver.dto.CreatePostResponse;
+
 import com.kuit3.rematicserver.dto.UploadPostImageResponse;
+import com.kuit3.rematicserver.dto.post.GetSearchPostDto;
+import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
+import com.kuit3.rematicserver.service.PostDeletionService;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.web.multipart.MultipartFile;
+import com.kuit3.rematicserver.common.response.BaseResponse;
+
 import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
 import com.kuit3.rematicserver.dto.post.GetScrolledCommentsResponse;
 import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
@@ -25,6 +33,7 @@ import static com.kuit3.rematicserver.common.response.status.BaseExceptionRespon
 @RequestMapping("post")
 public class PostController {
     private final PostService postService;
+    private final PostDeletionService postDeletionService;
     @PostMapping("newpost")
     public BaseResponse<CreatePostResponse> createPost(@PreAuthorizedUser long userId, @RequestBody CreatePostRequest request){
         log.info("PostController::createPost()");
@@ -76,5 +85,18 @@ public class PostController {
     public BaseResponse<GetScrolledCommentsResponse> showPostCommentsByGuestMode(@PathVariable long postId, @RequestParam String orderBy) {
         log.info("PostController.showPostComments");
         return new BaseResponse<>(postService.getCommentsByPostId(postId, orderBy));
+    }
+
+    @DeleteMapping("{postId}")
+    public BaseResponse<Object> deletePost(@PreAuthorizedUser long userId, @PathVariable Long postId){
+        log.info("PostController::deletePost()");
+        if(!postService.hasPostWithId(postId)){
+            throw new PostNotFoundException(POST_NOT_FOUND);
+        }
+        if(!postService.checkPostWriter(userId, postId)){
+            throw new UnauthorizedUserRequestException(UNAUTHORIZED_USER_REQUEST);
+        }
+        postDeletionService.handle(postId);
+        return new BaseResponse<>(null);
     }
 }
