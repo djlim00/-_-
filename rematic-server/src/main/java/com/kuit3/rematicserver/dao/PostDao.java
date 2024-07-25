@@ -13,4 +13,5 @@ public interface PostDao {
     Post findById(Long postId);
     boolean hasPostWithId(Long postId);
     int modifyStatusDormant(Long postId);
+
 }

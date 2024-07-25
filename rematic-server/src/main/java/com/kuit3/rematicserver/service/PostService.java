@@ -6,6 +6,9 @@ import com.kuit3.rematicserver.dao.BulletinDao;
 import com.kuit3.rematicserver.dao.PostImageDao;
 import com.kuit3.rematicserver.dto.CreatePostResponse;
 import com.kuit3.rematicserver.dto.CreatePostRequest;
+import com.kuit3.rematicserver.dto.GetPostUpdateFormDto;
+import com.kuit3.rematicserver.dto.PostImageDto;
+import com.kuit3.rematicserver.dto.post.postresponse.PostInfo;
 import com.kuit3.rematicserver.entity.Bulletin;
 import com.kuit3.rematicserver.entity.Post;
 
@@ -21,6 +24,7 @@ import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
 import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
 import com.kuit3.rematicserver.dto.post.postresponse.UserInfo;
 
+import com.kuit3.rematicserver.entity.PostImage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -80,7 +84,8 @@ public class PostService {
     public Long uploadImage(Long postId, MultipartFile image, String description) {
         log.info("PostService::uploadImage()");
 
-        String fileUrl = s3Uploader.uploadFile(image);
+        //String fileUrl = s3Uploader.uploadFile(image);
+        String fileUrl = "test.png";
         if(description != null){
             return postImageDao.savePostImage(postId, fileUrl, description);
         }
@@ -168,5 +173,17 @@ public class PostService {
 
         postDao.modifyStatusDormant(postId);
         postImageDao.modifyStatusDormantByPostId(postId);
+    }
+
+    public GetPostUpdateFormDto getPostUpdateForm(Long postId) {
+        log.info("PostService::getPostUpdateForm()");
+        PostInfo postInfo = postInfoDao.getPostInfo(postId);
+        List<PostImage> postImages = postImageDao.getByPostId(postId);
+
+        GetPostUpdateFormDto dto = GetPostUpdateFormDto.builder()
+                .title(postInfo.getTitle())
+                .content(postInfo.getContent())
+                .images(postImages.stream().map(PostImageDto::entityToDto).collect(Collectors.toList())).build();
+        return dto;
     }
 }

@@ -5,11 +5,10 @@ import com.kuit3.rematicserver.common.exception.PostNotFoundException;
 import com.kuit3.rematicserver.common.exception.UnauthorizedUserRequestException;
 import com.kuit3.rematicserver.dto.CreatePostResponse;
 import com.kuit3.rematicserver.dto.CreatePostRequest;
+import com.kuit3.rematicserver.dto.GetPostUpdateFormDto;
 import com.kuit3.rematicserver.dto.UploadPostImageResponse;
-import com.kuit3.rematicserver.dto.post.GetSearchPostDto;
 import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
 import com.kuit3.rematicserver.service.PostDeletionService;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.multipart.MultipartFile;
 
 import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.POST_NOT_FOUND;
@@ -83,5 +82,18 @@ public class PostController {
         }
         postDeletionService.handle(postId);
         return new BaseResponse<>(null);
+    }
+
+    @GetMapping("{post_id}/updateform")
+    public BaseResponse<GetPostUpdateFormDto> getUpdateForm(@PreAuthorizedUser long userId,
+                                                            @PathVariable("post_id") Long postId){
+        log.info("PostController::getUpdateForm()");
+        if(!postService.hasPostWithId(postId)){
+            throw new PostNotFoundException(POST_NOT_FOUND);
+        }
+        if(!postService.checkPostWriter(userId, postId)){
+            throw new UnauthorizedUserRequestException(UNAUTHORIZED_USER_REQUEST);
+        }
+        return new BaseResponse<>(postService.getPostUpdateForm(postId));
     }
 }
