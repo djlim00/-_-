@@ -150,5 +150,15 @@ public class PostDaoImpl implements PostDao{
                 .addValue("post_id", postId);
         return jdbcTemplate.update(sql, param);
     }
+
+    @Override
+    public int update(Long postId, String title, String content) {
+        String sql = "UPDATE Post SET title = :title, content = :content WHERE post_id = :postId";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("title", title)
+                .addValue("content", content)
+                .addValue("postId", postId);
+        return jdbcTemplate.update(sql, param);
+    }
 }
 

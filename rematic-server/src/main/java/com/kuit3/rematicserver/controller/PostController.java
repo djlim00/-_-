@@ -3,14 +3,9 @@ package com.kuit3.rematicserver.controller;
 import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.exception.PostNotFoundException;
 import com.kuit3.rematicserver.common.exception.UnauthorizedUserRequestException;
-import com.kuit3.rematicserver.common.response.BaseResponse;
-import com.kuit3.rematicserver.dto.CreatePostRequest;
 
-import com.kuit3.rematicserver.dto.GetPostUpdateFormDto;
+import com.kuit3.rematicserver.dto.*;
 
-import com.kuit3.rematicserver.dto.CreatePostResponse;
-
-import com.kuit3.rematicserver.dto.UploadPostImageResponse;
 import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
 import com.kuit3.rematicserver.service.PostDeletionService;
 import org.springframework.web.multipart.MultipartFile;
@@ -112,5 +107,14 @@ public class PostController {
             throw new UnauthorizedUserRequestException(UNAUTHORIZED_USER_REQUEST);
         }
         return new BaseResponse<>(postService.getPostUpdateForm(postId));
+    }
+
+    @PatchMapping("{post_id}")
+    public BaseResponse<Object> patchPost(@PathVariable("post_id") Long postId,
+                                          @RequestBody PatchPostDto dto){
+        log.info("PostController::updatePost()");
+
+        postService.modifyPost(postId, dto);
+        return new BaseResponse<>(null);
     }
 }
