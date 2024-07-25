@@ -1,5 +1,8 @@
 package com.kuit3.rematicserver.dao;
 
+import com.kuit3.rematicserver.entity.PostImage;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -7,6 +10,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.List;
 import java.util.Objects;
 
 @Repository
@@ -50,5 +54,27 @@ public class PostImageDaoImpl implements PostImageDao{
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("post_id", postId);
         return jdbcTemplate.update(sql, param);
+    }
+
+    @Override
+    public List<PostImage> getByPostId(Long postId) {
+        String sql = "SELECT * FROM PostImage WHERE post_id = :postId";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("postId", postId);
+        return jdbcTemplate.query(sql, param, postImageRowMapper());
+    }
+
+    private RowMapper<PostImage> postImageRowMapper() {
+        return (rs, rowNum) -> {
+            PostImage postImage = PostImage
+                    .builder()
+                    .postImageId(rs.getLong("post_image_id"))
+                    .description(rs.getString("description"))
+                    .imageUrl(rs.getString("image_url"))
+                    .status(rs.getString("status"))
+                    .postId(rs.getLong("post_id"))
+                    .build();
+            return postImage;
+        };
     }
 }
