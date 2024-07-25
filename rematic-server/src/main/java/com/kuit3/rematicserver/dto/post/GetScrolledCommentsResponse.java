@@ -15,5 +15,4 @@ public class GetScrolledCommentsResponse {
 
     private List<FamilyComment> commentList;
     private Long countOfComments;
-    private Long lastId;
 }
