@@ -14,4 +14,5 @@ public interface PostDao {
     boolean hasPostWithId(Long postId);
     int modifyStatusDormant(Long postId);
 
+    int update(Long postId, String title, String content);
 }

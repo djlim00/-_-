@@ -13,4 +13,5 @@ public class PostImage {
     private String description;
     private String status;
     private Long postId;
+    private Long order;
 }
