@@ -3,24 +3,29 @@ package com.kuit3.rematicserver.controller;
 import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.exception.PostNotFoundException;
 import com.kuit3.rematicserver.common.exception.UnauthorizedUserRequestException;
-import com.kuit3.rematicserver.dto.CreatePostResponse;
+import com.kuit3.rematicserver.common.response.BaseResponse;
 import com.kuit3.rematicserver.dto.CreatePostRequest;
+import com.kuit3.rematicserver.dto.CreatePostResponse;
+
 import com.kuit3.rematicserver.dto.UploadPostImageResponse;
 import com.kuit3.rematicserver.dto.post.GetSearchPostDto;
 import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
 import com.kuit3.rematicserver.service.PostDeletionService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.multipart.MultipartFile;
-
-import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.POST_NOT_FOUND;
-import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.UNAUTHORIZED_USER_REQUEST;
 import com.kuit3.rematicserver.common.response.BaseResponse;
+
 import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
 import com.kuit3.rematicserver.dto.post.GetScrolledCommentsResponse;
+import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
 import com.kuit3.rematicserver.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.POST_NOT_FOUND;
+import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.UNAUTHORIZED_USER_REQUEST;
 
 @Slf4j
 @RestController
@@ -59,17 +64,27 @@ public class PostController {
         return new BaseResponse<>( postService.getPage(category, lastId));
     }
 
-    //모든 사람에게 글을 보는건 허용되지만, 댓글을 달 때는 preauthorize가 있어야 한다.
     @GetMapping("/{postId}")
-    public BaseResponse<GetClickedPostResponse> showClickedPost(@PathVariable long postId) {
+    public BaseResponse<GetClickedPostResponse> showClickedPost(@PreAuthorizedUser long userId, @PathVariable long postId) {
         log.info("PostController.showClickedPost");
+        return new BaseResponse<>(postService.getValidatedClickedPostInfo(userId, postId));
+    }
+    @GetMapping("/guest/{postId}")
+    public BaseResponse<GetClickedPostResponse> showClickedPostByGuestMode(@PathVariable long postId) {
+        log.info("PostController.showClickedPostByGuestMode");
         return new BaseResponse<>(postService.getClickedPostInfo(postId));
     }
 
     @GetMapping("/comments/{postId}")
-    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PathVariable long postId, @RequestParam long lastId, @RequestParam String orderBy) {
+    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PathVariable long postId, @RequestParam long userId, @RequestParam String orderBy) {
         log.info("PostController.showPostComments");
-        return new BaseResponse<>(postService.getCommentsByPostId(postId, lastId, orderBy));
+        return new BaseResponse<>(postService.getValidatedCommentsByPostId(postId, userId, orderBy));
+    }
+
+    @GetMapping("/comments/guest/{postId}")
+    public BaseResponse<GetScrolledCommentsResponse> showPostCommentsByGuestMode(@PathVariable long postId, @RequestParam String orderBy) {
+        log.info("PostController.showPostComments");
+        return new BaseResponse<>(postService.getCommentsByPostId(postId, orderBy));
     }
 
     @DeleteMapping("{postId}")
