@@ -9,9 +9,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostInfo {
+
     private String title;
     private String content;
     private Long likes;
+    private Boolean isLiked;
     private Long hates;
+    private Boolean isHated;
     private Long scraps;
+    private Boolean isScraped;
 }
