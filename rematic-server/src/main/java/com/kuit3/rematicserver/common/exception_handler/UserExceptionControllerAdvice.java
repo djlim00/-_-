@@ -1,14 +1,7 @@
 package com.kuit3.rematicserver.common.exception_handler;
 
-<<<<<<< HEAD
 import com.kuit3.rematicserver.common.exception.*;
-=======
-import com.kuit3.rematicserver.common.exception.UnauthorizedUserRequestException;
-import com.kuit3.rematicserver.common.exception.UserDormantException;
-import com.kuit3.rematicserver.common.exception.UserDuplicateEmailException;
-import com.kuit3.rematicserver.common.exception.UserDuplicateNicknameException;
-import com.kuit3.rematicserver.common.exception.UserNotFoundException;
->>>>>>> 4e6863d2396d73c3780a99bb275d41e558207e9b
+
 import com.kuit3.rematicserver.common.response.BaseErrorResponse;
 import jakarta.annotation.Priority;
 import lombok.extern.slf4j.Slf4j;
