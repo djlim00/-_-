@@ -21,6 +21,8 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     EMPTY_IMAGE_FILE(2004, HttpStatus.BAD_REQUEST.value(), "이미지 파일이 비어있습니다."),
     UNSUPPORTED_FILE_EXTENSION(2005, HttpStatus.BAD_REQUEST.value(), "지원되지 않는 이미지 확장자입니다."),
     POST_NOT_FOUND(2004, HttpStatus.BAD_REQUEST.value(), "요청하신 게시물이 없습니다."),
+    WRONG_COMMENT_REGISTER(2005, HttpStatus.BAD_REQUEST.value(), "댓글 등록에 오류가 발생했습니다."),
+    PARENT_COMMENT_NOT_EXISTS(2006, HttpStatus.NOT_FOUND.value(), "부모 댓글이 존재하지 않습니다."),
 
     /**
      * 3000: Server, Database 오류 (INTERNAL_SERVER_ERROR)

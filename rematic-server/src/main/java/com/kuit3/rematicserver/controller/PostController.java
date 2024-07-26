@@ -9,6 +9,8 @@ import com.kuit3.rematicserver.dto.CreatePostResponse;
 import com.kuit3.rematicserver.dto.UploadPostImageResponse;
 import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
 import com.kuit3.rematicserver.dto.post.GetScrolledCommentsResponse;
+import com.kuit3.rematicserver.dto.post.PostCommentRequest;
+import com.kuit3.rematicserver.dto.post.PostCommentResponse;
 import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
 import com.kuit3.rematicserver.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -83,4 +85,13 @@ public class PostController {
         log.info("PostController.dormantUserComment");
         return new BaseResponse<>(postService.dormantUserComment(userId, commentId));
     }
+
+    @PostMapping("/{post_id}/comment")
+    public BaseResponse<PostCommentResponse> leaveNewComment(@PreAuthorizedUser long userId, @PathVariable("post_id") long postId,
+                                                             @RequestBody PostCommentRequest request) {
+        log.info("PostController.leaveNewComment");
+        return new BaseResponse<>(postService.leaveNewComment(userId, postId, request));
+    }
+
+
 }

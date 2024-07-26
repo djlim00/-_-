@@ -1,8 +1,11 @@
 package com.kuit3.rematicserver.dao;
 
+import com.kuit3.rematicserver.dto.post.PostCommentRequest;
 import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.kuit3.rematicserver.dto.post.postresponse.ImageInfo;
@@ -14,6 +17,7 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -248,5 +252,28 @@ public class PostInfoDao {
         String sql = "update Comment set status = 'dormant' where user_id = :userId and comment_id = :commentId;";
         Map<String ,Object> param = Map.of("userId", userId, "commentId", commentId);
         return jdbcTemplate.update(sql, param);
+    }
+
+    public List<Long> leaveCommentWrittenByUser(long userId, long postId, PostCommentRequest request) {
+        String sql = "insert into Comment " +
+                "(sentences, likes, hates, comment_image_url, parent_id, alarm_status, status, created_at, post_id, user_id) " +
+                "values (:sentences, 0, 0, null, :parent_id, 'on', 'active', now(), :post_id, :user_id);";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("sentences", request.getSentences())
+                .addValue("parent_id", request.getParentCommentId())
+                .addValue("post_id", postId)
+                .addValue("user_id", userId);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        long result = jdbcTemplate.update(sql, param, keyHolder);
+        List<Long> response = new ArrayList<>();
+        response.add(Objects.requireNonNull(keyHolder.getKey()).longValue());
+        response.add(result);
+        return response;
+    }
+
+    public boolean chekcParentCommentExists(Long parentCommentId) {
+        String sql = "select exists(select 1 from Comment where comment_id = :parentCommentId);";
+        Map<String, Object> param = Map.of("parentCommentId", parentCommentId);
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
     }
 }
