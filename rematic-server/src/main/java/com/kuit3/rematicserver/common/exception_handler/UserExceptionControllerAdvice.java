@@ -57,18 +57,4 @@ public class UserExceptionControllerAdvice {
         log.error("[handle_UserKeywordException]", e);
         return new BaseErrorResponse(USER_KEYWORD_NOT_FOUND);
     }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserCommentException.class)
-    public BaseErrorResponse handle_UserCommentException(Exception e) {
-        log.error("[handle_UserCommentException]", e);
-        return new BaseErrorResponse(COMMENT_NOT_FOUND);
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(CommentNotFoundException.class)
-    public BaseErrorResponse handle_CommentNotFoundException(Exception e) {
-        log.error("[handle_CommentNotFoundException]", e);
-        return new BaseErrorResponse(PARENT_COMMENT_NOT_EXISTS);
-    }
 }

@@ -43,4 +43,14 @@ public class PostImageDaoImpl implements PostImageDao{
         jdbcTemplate.update(sql, param, keyHolder);
         return Objects.requireNonNull(keyHolder.getKey()).longValue();
     }
+
+    @Override
+    public Boolean hasImageUrlAlready(long commentId) {
+        String sql = "select exists (select 1 from Comment where comment_id = :commentId and comment_image_url is not null);";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("commentId", commentId);
+
+        return Boolean.FALSE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
+    }
+
 }

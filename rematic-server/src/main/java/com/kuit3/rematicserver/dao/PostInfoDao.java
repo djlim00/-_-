@@ -2,6 +2,7 @@ package com.kuit3.rematicserver.dao;
 
 import com.kuit3.rematicserver.dto.post.PostCommentRequest;
 import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
+import com.sun.jdi.ObjectReference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -274,6 +275,18 @@ public class PostInfoDao {
     public boolean chekcParentCommentExists(Long parentCommentId) {
         String sql = "select exists(select 1 from Comment where comment_id = :parentCommentId);";
         Map<String, Object> param = Map.of("parentCommentId", parentCommentId);
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
+    }
+
+    public int saveUrlFromS3(String fileUrl, long commentId, long userId) {
+        String sql = "update Comment set comment_image_url = :fileUrl where comment_id = :commentId and user_id = :userId;";
+        Map<String, Object> param = Map.of("fileUrl", fileUrl, "commentId", commentId, "userId", userId);
+        return jdbcTemplate.update(sql, param);
+    }
+
+    public boolean checkUserCommentMatch(long userId, long commentId) {
+        String sql = "select exists (select 1 from Comment where user_id = :userId and comment_id = :commentId);";
+        Map<String, Object> param = Map.of("userId", userId, "commentId", commentId);
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
     }
 }

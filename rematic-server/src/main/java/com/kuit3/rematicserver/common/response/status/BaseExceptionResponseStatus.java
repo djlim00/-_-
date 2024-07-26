@@ -23,6 +23,8 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     POST_NOT_FOUND(2004, HttpStatus.BAD_REQUEST.value(), "요청하신 게시물이 없습니다."),
     WRONG_COMMENT_REGISTER(2005, HttpStatus.BAD_REQUEST.value(), "댓글 등록에 오류가 발생했습니다."),
     PARENT_COMMENT_NOT_EXISTS(2006, HttpStatus.NOT_FOUND.value(), "부모 댓글이 존재하지 않습니다."),
+    IMAGE_ALREADY_EXISTS(2007, HttpStatus.BAD_REQUEST.value(), "댓글 첨부 이미지가 이미 존재합니다."),
+    USER_COMMENT_MISMATCH(2008, HttpStatus.BAD_REQUEST.value(), "작성자가 아닌 사용자는 접근 불가합니다."),
 
     /**
      * 3000: Server, Database 오류 (INTERNAL_SERVER_ERROR)

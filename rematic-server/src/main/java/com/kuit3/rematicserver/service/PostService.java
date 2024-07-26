@@ -2,18 +2,16 @@ package com.kuit3.rematicserver.service;
 
 
 import com.kuit3.rematicserver.aws.S3Uploader;
-import com.kuit3.rematicserver.common.exception.CommentNotFoundException;
-import com.kuit3.rematicserver.common.exception.PostNotFoundException;
-import com.kuit3.rematicserver.common.exception.UserCommentException;
+import com.kuit3.rematicserver.common.exception.*;
 import com.kuit3.rematicserver.dao.BulletinDao;
 import com.kuit3.rematicserver.dao.PostImageDao;
 import com.kuit3.rematicserver.dto.CreatePostResponse;
 import com.kuit3.rematicserver.dto.CreatePostRequest;
+import com.kuit3.rematicserver.dto.UploadPostImageResponse;
 import com.kuit3.rematicserver.dto.post.*;
 import com.kuit3.rematicserver.entity.Bulletin;
 import com.kuit3.rematicserver.entity.Post;
 
-import com.kuit3.rematicserver.common.exception.DatabaseException;
 import com.kuit3.rematicserver.dao.PostDao;
 import com.kuit3.rematicserver.dao.PostInfoDao;
 import com.kuit3.rematicserver.dao.RecentKeywordDao;
@@ -293,5 +291,27 @@ public class PostService {
 
     private boolean checkPostExists(long postId) {
         return postInfoDao.isPostExists(postId);
+    }
+
+    public String uploadCommentImage(long userId, long commentId, MultipartFile image) {
+        log.info("PostService.uploadCommentImage");
+        String fileUrl = s3Uploader.uploadFile(image);
+        if(checkImageUrlExists(commentId)) {
+            throw new CommentImageDuplicateException(IMAGE_ALREADY_EXISTS);
+        }
+        int result = postInfoDao.saveUrlFromS3(fileUrl, commentId, userId);
+        if(result != 1) {
+            return "failed to saving comment image";
+        } else {
+            return "complete saving comment image";
+        }
+    }
+
+    private boolean checkImageUrlExists(long commentId) {
+        return postImageDao.hasImageUrlAlready(commentId);
+    }
+
+    public boolean isUserMatchesComment(long userId, long commentId) {
+        return postInfoDao.checkUserCommentMatch(userId, commentId);
     }
 }

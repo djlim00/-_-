@@ -3,6 +3,7 @@ package com.kuit3.rematicserver.controller;
 import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.exception.PostNotFoundException;
 import com.kuit3.rematicserver.common.exception.UnauthorizedUserRequestException;
+import com.kuit3.rematicserver.common.exception.UserCommentException;
 import com.kuit3.rematicserver.common.response.BaseResponse;
 import com.kuit3.rematicserver.dto.CreatePostRequest;
 import com.kuit3.rematicserver.dto.CreatePostResponse;
@@ -18,8 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.POST_NOT_FOUND;
-import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.UNAUTHORIZED_USER_REQUEST;
+import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.*;
 
 @Slf4j
 @RestController
@@ -93,5 +93,15 @@ public class PostController {
         return new BaseResponse<>(postService.leaveNewComment(userId, postId, request));
     }
 
+    @PostMapping("/comment/{comment_id}/image")
+    public BaseResponse<String> uploadCommentImage(@PreAuthorizedUser long userId,
+                                                                    @PathVariable("comment_id") long commentId,
+                                                                    @RequestPart MultipartFile image) {
+        log.info("PostController.uploadCommentImage");
+        if(!postService.isUserMatchesComment(userId, commentId)) {
+            throw new UserCommentException(USER_COMMENT_MISMATCH);
+        }
+        return new BaseResponse<>(postService.uploadCommentImage(userId, commentId, image));
+    }
 
 }
