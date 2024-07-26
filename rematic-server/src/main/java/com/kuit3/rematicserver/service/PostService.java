@@ -14,12 +14,11 @@ import com.kuit3.rematicserver.common.exception.DatabaseException;
 import com.kuit3.rematicserver.dao.PostDao;
 import com.kuit3.rematicserver.dao.PostInfoDao;
 import com.kuit3.rematicserver.dao.RecentKeywordDao;
-import com.kuit3.rematicserver.dto.post.GetSearchPostDto;
+import com.kuit3.rematicserver.dto.post.SearchPostDto;
 import com.kuit3.rematicserver.dto.post.GetScrolledCommentsResponse;
 import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
 import com.kuit3.rematicserver.dto.post.commentresponse.FamilyComment;
-import com.kuit3.rematicserver.dto.post.postresponse.PostInfo;
-import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
+import com.kuit3.rematicserver.dto.search.SearchPostResponse;
 import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
 import com.kuit3.rematicserver.dto.post.postresponse.UserInfo;
 
@@ -49,28 +48,28 @@ public class PostService {
     private final PostInfoDao postInfoDao;
     private final int MAX_IMAGE_NUMBER = 30;
 
-    public GetSearchPostResponse getPage(String category, Long lastId){
+    public SearchPostResponse getPage(String category, Long lastId){
         log.info("PostService::getPage()");
         return searchPage(null, "", category, lastId);
     }
 
     @Transactional
-    public GetSearchPostResponse searchPage(Long userId, String keyword, String category, Long lastId) {
+    public SearchPostResponse searchPage(Long userId, String keyword, String category, Long lastId) {
         log.info("PostService::searchPage()");
-        List<GetSearchPostDto> page = postDao.getPage(keyword, category, lastId, 10L);
+        List<SearchPostDto> page = postDao.getPage(keyword, category, lastId, 10L);
         boolean hasNext = checkNextPage(keyword, category, page);
         if(userId != null){
             recentKeywordDao.saveKeyword(userId, keyword);
         }
-        return new GetSearchPostResponse(page, hasNext);
+        return new SearchPostResponse(page, hasNext);
     }
 
-    private boolean checkNextPage(String keyword, String category, List<GetSearchPostDto> page) {
+    private boolean checkNextPage(String keyword, String category, List<SearchPostDto> page) {
         boolean hasNext = false;
         if(page.size() > 0){
-            Long nextStartingId = page.get(page.size() - 1).getPost_id();
-            log.info("nextStartingId = " + nextStartingId);
-            hasNext = postDao.hasNextPage(keyword, category, nextStartingId);
+            Long lastPostId = page.get(page.size() - 1).getPost_id();
+            log.info("lastPostId = " + lastPostId);
+            hasNext = postDao.hasNextPage(keyword, category, lastPostId);
         }
         return hasNext;
     }
@@ -302,13 +301,13 @@ public class PostService {
 
     @Transactional
     public void modifyPost(Long postId, PatchPostDto dto) {
-        log.info("PostService::updatePost()");
+        log.info("PostService::modifyPost()");
         postDao.update(postId, dto.getTitle(), dto.getContent());
         modifyPostImages(postId, dto.getImages());
     }
 
     public void modifyPostImages(Long postId, List<PostImageDto> modifiedImages) {
-        log.info("PostService::updatePost()");
+        log.info("PostService::modifyPostImages()");
 
         postImageDao.modifyStatusDormantByPostId(postId);
         for(PostImageDto dto : modifiedImages){
@@ -317,4 +316,33 @@ public class PostService {
             postImageDao.save(postId, savedPostImage.getImageUrl(), dto.getImage_description());
         }
     }
+
+    @Transactional
+    public SearchPostResponse searchBulletinPage(Long userId, Long bulletinId, String keyword, Long lastId) {
+        log.info("PostService::searchBulletinPage()");
+        List<SearchPostDto> page = postDao.getBulletinPosts(bulletinId, keyword, lastId, 10L);
+        boolean hasNext = checkNextBulletinPage(bulletinId, keyword, page);
+        recentKeywordDao.saveKeyword(userId, keyword);
+        return new SearchPostResponse(page, hasNext);
+    }
+
+    public SearchPostResponse searchBulletinPage_guestmode(Long bulletinId, String keyword, Long lastId) {
+        log.info("PostService::searchBulletinPage_guestmode()");
+        List<SearchPostDto> page = postDao.getBulletinPosts(bulletinId, keyword, lastId, 10L);
+        boolean hasNext = checkNextBulletinPage(bulletinId, keyword, page);
+        return new SearchPostResponse(page, hasNext);
+    }
+
+    private boolean checkNextBulletinPage(Long bulletinId, String keyword, List<SearchPostDto> page) {
+        log.info("PostService::searchBulletinPage()");
+
+        boolean hasNext = false;
+        if(page.size() > 0){
+            Long lastPostId = page.get(page.size() - 1).getPost_id();
+            log.info("lastPostId = " + lastPostId);
+            hasNext = postDao.hasNextBulletinPage(bulletinId, keyword, lastPostId);
+        }
+        return hasNext;
+    }
+
 }
