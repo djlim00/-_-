@@ -65,4 +65,11 @@ public class UserExceptionControllerAdvice {
         log.error("[handle_DuplicateUserScrapException]", e);
         return new BaseErrorResponse(DUPLICATE_USER_SCRAP);
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserScrapNotFoundException.class)
+    public BaseErrorResponse handle_UserScrapNotFoundException(Exception e) {
+        log.error("[handle_UserScrapNotFoundException]", e);
+        return new BaseErrorResponse(USER_SCRAP_NOT_FOUND);
+    }
 }

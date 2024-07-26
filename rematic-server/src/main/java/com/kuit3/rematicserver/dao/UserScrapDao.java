@@ -43,4 +43,19 @@ public class UserScrapDao {
                 .addValue("postId", postId);
         return jdbcTemplate.queryForObject(sql, param, boolean.class);
     }
+
+    public boolean existsByUserIdAndScrapId(long userId, Long scrapId) {
+        String sql = "SELECT EXISTS(SELECT * FROM UserScrap WHERE user_id = :userId AND scrap_id = :scrapId)";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("scrapId", scrapId);
+        return jdbcTemplate.queryForObject(sql, param, boolean.class);
+    }
+
+    public long deleteById(Long scrapId) {
+        String sql = "DELETE FROM UserScrap WHERE scrap_id = :scrapId";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("scrapId", scrapId);
+        return jdbcTemplate.update(sql, param);
+    }
 }
