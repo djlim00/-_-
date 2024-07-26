@@ -1,6 +1,6 @@
 package com.kuit3.rematicserver.dao;
 
-import com.kuit3.rematicserver.dto.CreatePostRequest;
+import com.kuit3.rematicserver.dto.post.CreatePostRequest;
 import com.kuit3.rematicserver.dto.post.SearchPostDto;
 import com.kuit3.rematicserver.entity.Post;
 

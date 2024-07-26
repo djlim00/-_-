@@ -6,8 +6,9 @@ import com.kuit3.rematicserver.common.exception.PostNotFoundException;
 import com.kuit3.rematicserver.common.exception.UserScrapNotFoundException;
 import com.kuit3.rematicserver.common.response.BaseResponse;
 
-import com.kuit3.rematicserver.dto.PostUserScrapRequest;
-import com.kuit3.rematicserver.dto.UpdateUserInfoRequest;
+import com.kuit3.rematicserver.dto.post.PostUserScrapResponse;
+import com.kuit3.rematicserver.dto.user.PostUserScrapRequest;
+import com.kuit3.rematicserver.dto.user.UpdateUserInfoRequest;
 import com.kuit3.rematicserver.dto.user.PutNickNameRequest;
 import com.kuit3.rematicserver.dto.user.UserMyPageResponse;
 
@@ -58,7 +59,7 @@ public class UserController {
 
     @PostMapping("scraps")
     public BaseResponse<PostUserScrapResponse> postUserScrap(@PreAuthorizedUser long userId,
-                                              @RequestBody PostUserScrapRequest request){
+                                                             @RequestBody PostUserScrapRequest request){
         log.info("UserController::postUserScrap()");
         if(userScrapService.hasDuplicateScrap(userId, request.getPostId())){
             throw new DuplicateUserScrapException(DUPLICATE_USER_SCRAP);
