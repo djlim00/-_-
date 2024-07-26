@@ -24,4 +24,14 @@ public class UserScrapService {
         log.info("UserScrapService::hasDuplicateScrap()");
         return userScrapDao.exists(userId, postId);
     }
+
+    public boolean isScrapCreatedByUser(long userId, Long scrapId) {
+        log.info("UserScrapService::existsByUserIdAndScrapId()");
+        return userScrapDao.existsByUserIdAndScrapId(userId, scrapId);
+    }
+
+    public void deleteById(Long scrapId) {
+        log.info("UserScrapService::deleteById()");
+        userScrapDao.deleteById(scrapId);
+    }
 }

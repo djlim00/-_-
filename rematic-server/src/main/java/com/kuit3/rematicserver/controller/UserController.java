@@ -3,6 +3,7 @@ package com.kuit3.rematicserver.controller;
 import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.exception.DuplicateUserScrapException;
 import com.kuit3.rematicserver.common.exception.PostNotFoundException;
+import com.kuit3.rematicserver.common.exception.UserScrapNotFoundException;
 import com.kuit3.rematicserver.common.response.BaseResponse;
 
 import com.kuit3.rematicserver.dto.PostUserScrapRequest;
@@ -17,8 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.DUPLICATE_USER_SCRAP;
-import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.POST_NOT_FOUND;
+import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.*;
 
 @Slf4j
 @RestController
@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @PostMapping("scraps")
-    public BaseResponse<Object> postUserScrap(@PreAuthorizedUser long userId,
+    public BaseResponse<PostUserScrapResponse> postUserScrap(@PreAuthorizedUser long userId,
                                               @RequestBody PostUserScrapRequest request){
         log.info("UserController::postUserScrap()");
         if(userScrapService.hasDuplicateScrap(userId, request.getPostId())){
@@ -68,5 +68,18 @@ public class UserController {
         }
         PostUserScrapResponse response = new PostUserScrapResponse(userScrapService.create(userId, request.getPostId()));
         return new BaseResponse<>(response);
+    }
+
+    @DeleteMapping("scraps/{scrap_id}")
+    public BaseResponse<Object> deleteUserScrap(@PreAuthorizedUser long userId,
+                                                @PathVariable("scrap_id") Long scrapId){
+        log.info("UserController::deleteUserScrap()");
+        log.info("scrapId=" + scrapId);
+
+        if(!userScrapService.isScrapCreatedByUser(userId, scrapId)){
+            throw new UserScrapNotFoundException(USER_SCRAP_NOT_FOUND);
+        }
+        userScrapService.deleteById(scrapId);
+        return new BaseResponse<>(null);
     }
 }
