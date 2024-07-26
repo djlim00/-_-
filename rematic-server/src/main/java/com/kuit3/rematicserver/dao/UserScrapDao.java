@@ -3,9 +3,12 @@ package com.kuit3.rematicserver.dao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.Objects;
 
 @Slf4j
 @Repository
@@ -21,5 +24,23 @@ public class UserScrapDao {
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("post_id", postId);
         return jdbcTemplate.update(sql, param);
+    }
+
+    public long save(long userId, Long postId) {
+        String sql = "insert into UserScrap(user_id, post_id) values(:userId, :postId)";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("postId", postId);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(sql, param, keyHolder);
+        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+    }
+
+    public boolean exists(long userId, Long postId) {
+        String sql = "SELECT EXISTS(SELECT * FROM UserScrap WHERE user_id = :userId AND post_id = :postId)";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("postId", postId);
+        return jdbcTemplate.queryForObject(sql, param, boolean.class);
     }
 }

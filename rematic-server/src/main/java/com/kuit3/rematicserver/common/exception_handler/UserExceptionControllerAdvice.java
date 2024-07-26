@@ -58,4 +58,11 @@ public class UserExceptionControllerAdvice {
         log.error("[handle_UserKeywordException]", e);
         return new BaseErrorResponse(USER_KEYWORD_NOT_FOUND);
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DuplicateUserScrapException.class)
+    public BaseErrorResponse handle_DuplicateUserScrapException(Exception e) {
+        log.error("[handle_DuplicateUserScrapException]", e);
+        return new BaseErrorResponse(DUPLICATE_USER_SCRAP);
+    }
 }

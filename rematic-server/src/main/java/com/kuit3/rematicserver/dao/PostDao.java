@@ -11,7 +11,7 @@ public interface PostDao {
     public boolean hasNextPage(String keyword, String category, Long lastId);
     public long createPost(CreatePostRequest request);
     public Post findById(Long postId);
-    public boolean hasPostWithId(Long postId);
+    public boolean existsById(Long postId);
     public int modifyStatusDormant(Long postId);
 
     public int update(Long postId, String title, String content);
