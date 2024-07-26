@@ -59,4 +59,28 @@ public class PostController {
         log.info("PostController.showPostComments");
         return new BaseResponse<>(postService.getCommentsByPostId(postId, lastId, orderBy));
     }
+
+    @PostMapping("/{post_id}/like/up")
+    public BaseResponse<String> increaseLike(@PathVariable("post_id") Long postId) {
+        postService.increaseLike(postId);
+        return new BaseResponse<>("좋아요 증가");
+    }
+
+    @PostMapping("/{post_id}/like/down")
+    public BaseResponse<String> decreaseLike(@PathVariable("post_id") Long postId) {
+        postService.decreaseLike(postId);
+        return new BaseResponse<>("좋아요 감소");
+    }
+
+    @PostMapping("/{post_id}/hate/up")
+    public BaseResponse<String> increaseHate(@PathVariable("post_id") Long postId) {
+        postService.increaseHate(postId);
+        return new BaseResponse<>("싫어요 증가");
+    }
+
+    @PostMapping("/{post_id}/hate/down")
+    public BaseResponse<String> decreaseHate(@PathVariable("post_id") Long postId) {
+        postService.decreaseHate(postId);
+        return new BaseResponse<>("싫어요 감소");
+    }
 }

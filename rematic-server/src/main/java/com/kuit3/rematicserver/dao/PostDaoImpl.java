@@ -142,5 +142,23 @@ public class PostDaoImpl implements PostDao{
                 .addValue("post_id", postId);
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
     }
+
+    @Override
+    public void updateLike(Long postId, int delta) {
+        String sql = "UPDATE Post SET likes = likes + :delta WHERE post_id = :post_id";
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("delta", delta)
+                .addValue("post_id", postId);
+        jdbcTemplate.update(sql, params);
+    }
+
+    @Override
+    public void updateHate(Long postId, int delta) {
+        String sql = "UPDATE Post SET hates = hates + :delta WHERE post_id = :post_id";
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("delta", delta)
+                .addValue("post_id", postId);
+        jdbcTemplate.update(sql, params);
+    }
 }
 
