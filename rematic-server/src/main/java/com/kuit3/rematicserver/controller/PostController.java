@@ -4,15 +4,12 @@ import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.exception.PostNotFoundException;
 import com.kuit3.rematicserver.common.exception.UnauthorizedUserRequestException;
 
-import com.kuit3.rematicserver.dto.*;
-
+import com.kuit3.rematicserver.dto.post.*;
 import com.kuit3.rematicserver.dto.search.SearchPostResponse;
 import com.kuit3.rematicserver.service.PostDeletionService;
 import org.springframework.web.multipart.MultipartFile;
 import com.kuit3.rematicserver.common.response.BaseResponse;
 
-import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
-import com.kuit3.rematicserver.dto.post.GetScrolledCommentsResponse;
 import com.kuit3.rematicserver.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

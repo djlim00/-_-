@@ -1,4 +1,4 @@
-package com.kuit3.rematicserver.dto;
+package com.kuit3.rematicserver.dto.post;
 
 import com.kuit3.rematicserver.entity.PostImage;
 import lombok.*;
