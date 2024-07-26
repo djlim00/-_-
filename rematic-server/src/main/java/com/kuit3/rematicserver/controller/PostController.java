@@ -93,10 +93,10 @@ public class PostController {
         return new BaseResponse<>(postService.leaveNewComment(userId, postId, request));
     }
 
-    @PostMapping("/comment/{comment_id}/image")
-    public BaseResponse<String> uploadCommentImage(@PreAuthorizedUser long userId,
-                                                                    @PathVariable("comment_id") long commentId,
-                                                                    @RequestPart MultipartFile image) {
+    @PostMapping("/comment/{comment_id}/image/{userId}")
+    public BaseResponse<String> uploadCommentImage(@PathVariable long userId,
+                                                   @PathVariable("comment_id") long commentId,
+                                                   @RequestPart MultipartFile image) {
         log.info("PostController.uploadCommentImage");
         if(!postService.isUserMatchesComment(userId, commentId)) {
             throw new UserCommentException(USER_COMMENT_MISMATCH);
