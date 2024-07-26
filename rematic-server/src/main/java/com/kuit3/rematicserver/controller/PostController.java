@@ -93,8 +93,8 @@ public class PostController {
         return new BaseResponse<>(postService.leaveNewComment(userId, postId, request));
     }
 
-    @PostMapping("/comment/{comment_id}/image/{userId}")
-    public BaseResponse<String> uploadCommentImage(@PathVariable long userId,
+    @PostMapping("/comment/{comment_id}/image")
+    public BaseResponse<String> uploadCommentImage(@PreAuthorizedUser long userId,
                                                    @PathVariable("comment_id") long commentId,
                                                    @RequestPart MultipartFile image) {
         log.info("PostController.uploadCommentImage");
