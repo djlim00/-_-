@@ -41,7 +41,7 @@ public class PostController {
                                                              @RequestPart MultipartFile image,
                                                              @RequestPart(required = false) String description){
         log.info("PostController::uploadImage()");
-        if(!postService.hasPostWithId(postId)){
+        if(!postService.existsById(postId)){
             throw new PostNotFoundException(POST_NOT_FOUND);
         }
         if(!postService.checkPostWriter(userId, postId)){
@@ -84,7 +84,7 @@ public class PostController {
     @DeleteMapping("{postId}")
     public BaseResponse<Object> deletePost(@PreAuthorizedUser long userId, @PathVariable Long postId){
         log.info("PostController::deletePost()");
-        if(!postService.hasPostWithId(postId)){
+        if(!postService.existsById(postId)){
             throw new PostNotFoundException(POST_NOT_FOUND);
         }
         if(!postService.checkPostWriter(userId, postId)){
@@ -98,7 +98,7 @@ public class PostController {
     public BaseResponse<GetPostUpdateFormDto> getUpdateForm(@PreAuthorizedUser long userId,
                                                             @PathVariable("post_id") Long postId){
         log.info("PostController::getUpdateForm()");
-        if(!postService.hasPostWithId(postId)){
+        if(!postService.existsById(postId)){
             throw new PostNotFoundException(POST_NOT_FOUND);
         }
         if(!postService.checkPostWriter(userId, postId)){

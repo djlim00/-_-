@@ -117,8 +117,8 @@ public class PostService {
         return post.getUserId() == userId;
     }
 
-    public boolean hasPostWithId(Long postId) {
-        return postDao.hasPostWithId(postId);
+    public boolean existsById(Long postId) {
+        return postDao.existsById(postId);
     }
     //로그인 사용자용
     public GetClickedPostResponse getValidatedClickedPostInfo(long userId, long postId) {

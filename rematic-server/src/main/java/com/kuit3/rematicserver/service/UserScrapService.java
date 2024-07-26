@@ -15,4 +15,13 @@ public class UserScrapService {
         userScrapDao.deleteByPostId(postId);
     }
 
+    public long create(long userId, Long postId) {
+        log.info("UserScrapService::create()");
+        return userScrapDao.save(userId, postId);
+    }
+
+    public boolean hasDuplicateScrap(long userId, Long postId) {
+        log.info("UserScrapService::hasDuplicateScrap()");
+        return userScrapDao.exists(userId, postId);
+    }
 }
