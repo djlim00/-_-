@@ -53,4 +53,10 @@ public class PostImageDaoImpl implements PostImageDao{
         return Boolean.FALSE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
     }
 
+    public int modifyStatusDormantByPostId(Long postId) {
+        String sql = "update PostImage set status='dormant' WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        return jdbcTemplate.update(sql, param);
+    }
 }

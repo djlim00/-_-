@@ -7,17 +7,20 @@ import com.kuit3.rematicserver.common.exception.UserCommentException;
 import com.kuit3.rematicserver.common.response.BaseResponse;
 import com.kuit3.rematicserver.dto.CreatePostRequest;
 import com.kuit3.rematicserver.dto.CreatePostResponse;
+
 import com.kuit3.rematicserver.dto.UploadPostImageResponse;
+import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
+import com.kuit3.rematicserver.service.PostDeletionService;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
 import com.kuit3.rematicserver.dto.post.GetScrolledCommentsResponse;
 import com.kuit3.rematicserver.dto.post.PostCommentRequest;
 import com.kuit3.rematicserver.dto.post.PostCommentResponse;
-import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
 import com.kuit3.rematicserver.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.*;
 
@@ -27,6 +30,7 @@ import static com.kuit3.rematicserver.common.response.status.BaseExceptionRespon
 @RequestMapping("post")
 public class PostController {
     private final PostService postService;
+    private final PostDeletionService postDeletionService;
     @PostMapping("newpost")
     public BaseResponse<CreatePostResponse> createPost(@PreAuthorizedUser long userId, @RequestBody CreatePostRequest request){
         log.info("PostController::createPost()");
@@ -80,6 +84,7 @@ public class PostController {
         return new BaseResponse<>(postService.getCommentsByPostId(postId, orderBy));
     }
 
+
     @PostMapping("/comments/{comment_id}")
     public BaseResponse<String> dormantUserComment(@PreAuthorizedUser long userId, @PathVariable("comment_id") long commentId) {
         log.info("PostController.dormantUserComment");
@@ -104,4 +109,16 @@ public class PostController {
         return new BaseResponse<>(postService.uploadCommentImage(userId, commentId, image));
     }
 
+    @DeleteMapping("{postId}")
+    public BaseResponse<Object> deletePost(@PreAuthorizedUser long userId, @PathVariable Long postId){
+        log.info("PostController::deletePost()");
+        if(!postService.hasPostWithId(postId)){
+            throw new PostNotFoundException(POST_NOT_FOUND);
+        }
+        if(!postService.checkPostWriter(userId, postId)){
+            throw new UnauthorizedUserRequestException(UNAUTHORIZED_USER_REQUEST);
+        }
+        postDeletionService.handle(postId);
+        return new BaseResponse<>(null);
+    }
 }

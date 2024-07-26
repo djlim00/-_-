@@ -15,4 +15,5 @@ public class Bulletin {
     private String category;
     private String thumbnailImageUrl;
     private String PreviewVideoUrl;
+    private String status;
 }

@@ -7,7 +7,6 @@ import com.kuit3.rematicserver.dao.BulletinDao;
 import com.kuit3.rematicserver.dao.PostImageDao;
 import com.kuit3.rematicserver.dto.CreatePostResponse;
 import com.kuit3.rematicserver.dto.CreatePostRequest;
-import com.kuit3.rematicserver.dto.UploadPostImageResponse;
 import com.kuit3.rematicserver.dto.post.*;
 import com.kuit3.rematicserver.entity.Bulletin;
 import com.kuit3.rematicserver.entity.Post;
@@ -313,5 +312,12 @@ public class PostService {
 
     public boolean isUserMatchesComment(long userId, long commentId) {
         return postInfoDao.checkUserCommentMatch(userId, commentId);
+    }
+
+    public void deletePost(Long postId) {
+        log.info("PostService::deletePost()");
+
+        postDao.modifyStatusDormant(postId);
+        postImageDao.modifyStatusDormantByPostId(postId);
     }
 }

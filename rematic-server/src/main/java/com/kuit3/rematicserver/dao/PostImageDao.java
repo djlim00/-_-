@@ -8,4 +8,5 @@ public interface PostImageDao {
 
     Boolean hasImageUrlAlready(long commentId);
 
+    int modifyStatusDormantByPostId(Long postId);
 }
