@@ -1,6 +1,7 @@
 package com.kuit3.rematicserver.common.exception_handler;
 
 import com.kuit3.rematicserver.common.exception.*;
+
 import com.kuit3.rematicserver.common.response.BaseErrorResponse;
 import jakarta.annotation.Priority;
 import lombok.extern.slf4j.Slf4j;
@@ -56,5 +57,19 @@ public class UserExceptionControllerAdvice {
     public BaseErrorResponse handle_UserKeywordException(Exception e) {
         log.error("[handle_UserKeywordException]", e);
         return new BaseErrorResponse(USER_KEYWORD_NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DuplicateUserScrapException.class)
+    public BaseErrorResponse handle_DuplicateUserScrapException(Exception e) {
+        log.error("[handle_DuplicateUserScrapException]", e);
+        return new BaseErrorResponse(DUPLICATE_USER_SCRAP);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserScrapNotFoundException.class)
+    public BaseErrorResponse handle_UserScrapNotFoundException(Exception e) {
+        log.error("[handle_UserScrapNotFoundException]", e);
+        return new BaseErrorResponse(USER_SCRAP_NOT_FOUND);
     }
 }

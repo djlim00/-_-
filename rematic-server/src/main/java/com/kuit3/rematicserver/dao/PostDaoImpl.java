@@ -1,7 +1,7 @@
 package com.kuit3.rematicserver.dao;
 
-import com.kuit3.rematicserver.dto.CreatePostRequest;
-import com.kuit3.rematicserver.dto.post.GetSearchPostDto;
+import com.kuit3.rematicserver.dto.post.CreatePostRequest;
+import com.kuit3.rematicserver.dto.post.SearchPostDto;
 import com.kuit3.rematicserver.entity.Post;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class PostDaoImpl implements PostDao{
     }
 
     @Override
-    public List<GetSearchPostDto> getPage(String keyword, String category, Long lastId, Long limit) {
+    public List<SearchPostDto> getPage(String keyword, String category, Long lastId, Long limit) {
         String sql = "SELECT *, (SELECT image_url FROM PostImage WHERE post_id = p.post_id LIMIT 1) AS image_url FROM Post as p" +
                 " WHERE (title LIKE :keyword OR content LIKE :keyword)" +
                 " AND status = 'active'";
@@ -47,12 +47,12 @@ public class PostDaoImpl implements PostDao{
             param.addValue("category", category);
         }
 
-        return jdbcTemplate.query(sql, param, getPostDtoRowMapper());
+        return jdbcTemplate.query(sql, param, searchPostDtoRowMapper());
     }
 
-    private RowMapper<GetSearchPostDto> getPostDtoRowMapper(){
+    private RowMapper<SearchPostDto> searchPostDtoRowMapper(){
         return (ResultSet rs, int rowNum)->{
-            GetSearchPostDto dto = GetSearchPostDto.builder()
+            SearchPostDto dto = SearchPostDto.builder()
                     .post_id(rs.getLong("post_id"))
                     .title(rs.getString("title"))
                     .content(rs.getString("content"))
@@ -136,7 +136,7 @@ public class PostDaoImpl implements PostDao{
     }
 
     @Override
-    public boolean hasPostWithId(Long postId) {
+    public boolean existsById(Long postId) {
         String sql = "select exists(select * from Post where status='active'AND post_id = :post_id)";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("post_id", postId);
@@ -149,6 +149,53 @@ public class PostDaoImpl implements PostDao{
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("post_id", postId);
         return jdbcTemplate.update(sql, param);
+    }
+
+    @Override
+    public int update(Long postId, String title, String content) {
+        String sql = "UPDATE Post SET title = :title, content = :content WHERE post_id = :postId";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("title", title)
+                .addValue("content", content)
+                .addValue("postId", postId);
+        return jdbcTemplate.update(sql, param);
+    }
+
+    @Override
+    public List<SearchPostDto> getBulletinPosts(Long bulletinId, String keyword, Long lastId, Long limit) {
+        String sql = "SELECT *, (SELECT image_url FROM PostImage WHERE post_id = p.post_id LIMIT 1) AS image_url FROM Post as p" +
+                " WHERE (title LIKE :keyword OR content LIKE :keyword) " +
+                " AND bulletin_id = :bulletinId" +
+                " AND status = 'active'";
+        if(lastId != null) {
+            sql += " AND post_id < :lastId";
+        }
+        sql += " ORDER BY post_id DESC LIMIT :limit";
+
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("keyword",  "%" + keyword + "%")
+                .addValue("lastId", lastId)
+                .addValue("bulletinId", bulletinId)
+                .addValue("limit", limit);
+
+        return jdbcTemplate.query(sql, param, searchPostDtoRowMapper());
+    }
+
+    @Override
+    public boolean hasNextBulletinPage(Long bulletinId, String keyword, Long lastId) {
+        String sql = "SELECT EXISTS(" +
+                "SELECT * FROM Post WHERE status = 'active'" +
+                " AND (title LIKE :keyword OR content LIKE :keyword)" +
+                " AND bulletin_id = :bulletinId" +
+                " AND post_id < :lastId " +
+                ")";
+
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("keyword",  "%" + keyword + "%")
+                .addValue("bulletinId", bulletinId)
+                .addValue("lastId", lastId);
+
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
     }
 }
 

@@ -1,13 +1,11 @@
 package com.kuit3.rematicserver.service;
 
 import com.kuit3.rematicserver.dao.PostDao;
-import com.kuit3.rematicserver.dto.CreatePostRequest;
+import com.kuit3.rematicserver.dto.post.CreatePostRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class PostDeletionServiceTest {

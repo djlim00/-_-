@@ -5,16 +5,13 @@ import com.kuit3.rematicserver.common.exception.UserDormantException;
 import com.kuit3.rematicserver.common.exception.UserNotFoundException;
 import com.kuit3.rematicserver.dao.UserDao;
 
-import com.kuit3.rematicserver.dto.UpdateUserInfoRequest;
+import com.kuit3.rematicserver.dto.user.UpdateUserInfoRequest;
 import com.kuit3.rematicserver.dto.user.UserCheckDto;
 import com.kuit3.rematicserver.dto.user.UserMyPageResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
 
 import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.*;
 

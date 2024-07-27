@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GetSearchPostDto {
+public class SearchPostDto {
     private Long post_id;
 //    private String status;
     private String title;

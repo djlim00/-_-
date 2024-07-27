@@ -3,6 +3,7 @@ package com.kuit3.rematicserver.controller;
 import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.exception.PostNotFoundException;
 import com.kuit3.rematicserver.common.exception.UnauthorizedUserRequestException;
+
 import com.kuit3.rematicserver.common.exception.UserCommentException;
 import com.kuit3.rematicserver.common.response.BaseResponse;
 import com.kuit3.rematicserver.dto.CreatePostRequest;
@@ -10,9 +11,11 @@ import com.kuit3.rematicserver.dto.CreatePostResponse;
 
 import com.kuit3.rematicserver.dto.UploadPostImageResponse;
 import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
+
+import com.kuit3.rematicserver.dto.post.*;
+import com.kuit3.rematicserver.dto.search.SearchPostResponse;
 import com.kuit3.rematicserver.service.PostDeletionService;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
 import com.kuit3.rematicserver.dto.post.GetScrolledCommentsResponse;
 import com.kuit3.rematicserver.dto.post.PostCommentRequest;
@@ -44,7 +47,7 @@ public class PostController {
                                                              @RequestPart MultipartFile image,
                                                              @RequestPart(required = false) String description){
         log.info("PostController::uploadImage()");
-        if(!postService.hasPostWithId(postId)){
+        if(!postService.existsById(postId)){
             throw new PostNotFoundException(POST_NOT_FOUND);
         }
         if(!postService.checkPostWriter(userId, postId)){
@@ -55,8 +58,8 @@ public class PostController {
     }
 
     @GetMapping
-    public BaseResponse<GetSearchPostResponse> showPage(@RequestParam String category,
-                                                        @RequestParam(required = false) Long lastId){
+    public BaseResponse<SearchPostResponse> showPage(@RequestParam String category,
+                                                     @RequestParam(required = false) Long lastId){
         log.info("PostController::showPage()");
         return new BaseResponse<>( postService.getPage(category, lastId));
     }
@@ -112,13 +115,35 @@ public class PostController {
     @DeleteMapping("{postId}")
     public BaseResponse<Object> deletePost(@PreAuthorizedUser long userId, @PathVariable Long postId){
         log.info("PostController::deletePost()");
-        if(!postService.hasPostWithId(postId)){
+        if(!postService.existsById(postId)){
             throw new PostNotFoundException(POST_NOT_FOUND);
         }
         if(!postService.checkPostWriter(userId, postId)){
             throw new UnauthorizedUserRequestException(UNAUTHORIZED_USER_REQUEST);
         }
         postDeletionService.handle(postId);
+        return new BaseResponse<>(null);
+    }
+
+    @GetMapping("{post_id}/updateform")
+    public BaseResponse<GetPostUpdateFormDto> getUpdateForm(@PreAuthorizedUser long userId,
+                                                            @PathVariable("post_id") Long postId){
+        log.info("PostController::getUpdateForm()");
+        if(!postService.existsById(postId)){
+            throw new PostNotFoundException(POST_NOT_FOUND);
+        }
+        if(!postService.checkPostWriter(userId, postId)){
+            throw new UnauthorizedUserRequestException(UNAUTHORIZED_USER_REQUEST);
+        }
+        return new BaseResponse<>(postService.getPostUpdateForm(postId));
+    }
+
+    @PatchMapping("{post_id}")
+    public BaseResponse<Object> patchPost(@PathVariable("post_id") Long postId,
+                                          @RequestBody PatchPostDto dto){
+        log.info("PostController::updatePost()");
+
+        postService.modifyPost(postId, dto);
         return new BaseResponse<>(null);
     }
 }

@@ -8,6 +8,13 @@ import com.kuit3.rematicserver.dao.PostImageDao;
 import com.kuit3.rematicserver.dto.CreatePostResponse;
 import com.kuit3.rematicserver.dto.CreatePostRequest;
 import com.kuit3.rematicserver.dto.post.*;
+
+import com.kuit3.rematicserver.common.exception.S3FileNumberLimitExceededException;
+import com.kuit3.rematicserver.dao.BulletinDao;
+import com.kuit3.rematicserver.dao.PostImageDao;
+import com.kuit3.rematicserver.dto.post.*;
+import com.kuit3.rematicserver.dto.post.postresponse.PostInfo;
+
 import com.kuit3.rematicserver.entity.Bulletin;
 import com.kuit3.rematicserver.entity.Post;
 
@@ -16,10 +23,15 @@ import com.kuit3.rematicserver.dao.PostInfoDao;
 import com.kuit3.rematicserver.dao.RecentKeywordDao;
 import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
 import com.kuit3.rematicserver.dto.post.commentresponse.FamilyComment;
+
 import com.kuit3.rematicserver.dto.post.postresponse.PostInfo;
 import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
+
+import com.kuit3.rematicserver.dto.search.SearchPostResponse;
+
 import com.kuit3.rematicserver.dto.post.postresponse.UserInfo;
 
+import com.kuit3.rematicserver.entity.PostImage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,7 +41,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.*;
+import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.FILE_LIMIT_EXCEEDED;
+import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.POST_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -42,29 +57,30 @@ public class PostService {
     private final PostImageDao postImageDao;
     private final S3Uploader s3Uploader;
     private final PostInfoDao postInfoDao;
+    private final int MAX_IMAGE_NUMBER = 30;
 
-    public GetSearchPostResponse getPage(String category, Long lastId){
+    public SearchPostResponse getPage(String category, Long lastId){
         log.info("PostService::getPage()");
         return searchPage(null, "", category, lastId);
     }
 
     @Transactional
-    public GetSearchPostResponse searchPage(Long userId, String keyword, String category, Long lastId) {
+    public SearchPostResponse searchPage(Long userId, String keyword, String category, Long lastId) {
         log.info("PostService::searchPage()");
-        List<GetSearchPostDto> page = postDao.getPage(keyword, category, lastId, 10L);
+        List<SearchPostDto> page = postDao.getPage(keyword, category, lastId, 10L);
         boolean hasNext = checkNextPage(keyword, category, page);
         if(userId != null){
             recentKeywordDao.saveKeyword(userId, keyword);
         }
-        return new GetSearchPostResponse(page, hasNext);
+        return new SearchPostResponse(page, hasNext);
     }
 
-    private boolean checkNextPage(String keyword, String category, List<GetSearchPostDto> page) {
+    private boolean checkNextPage(String keyword, String category, List<SearchPostDto> page) {
         boolean hasNext = false;
         if(page.size() > 0){
-            Long nextStartingId = page.get(page.size() - 1).getPost_id();
-            log.info("nextStartingId = " + nextStartingId);
-            hasNext = postDao.hasNextPage(keyword, category, nextStartingId);
+            Long lastPostId = page.get(page.size() - 1).getPost_id();
+            log.info("lastPostId = " + lastPostId);
+            hasNext = postDao.hasNextPage(keyword, category, lastPostId);
         }
         return hasNext;
     }
@@ -76,12 +92,31 @@ public class PostService {
         return new CreatePostResponse(postDao.createPost(request));
     }
 
+    @Transactional
     public Long uploadImage(Long postId, MultipartFile image, String description) {
         log.info("PostService::uploadImage()");
 
-        String fileUrl = s3Uploader.uploadFile(image);
+        //String fileUrl = s3Uploader.uploadFile(image);
+        String fileUrl = "test.png";
+
+        // 이미지 순서를 별도의 칼럼에 저장하는 경우 사용
+//        Long currentOrder = 0L;
+//        List<PostImage> postImages = postImageDao.getByPostId(postId);
+//        if(postImages != null){
+//            for(PostImage postImage : postImages){
+//                if(currentOrder > postImage.getPostImageId()){
+//                    currentOrder = postImage.getPostImageId();
+//                }
+//            }
+//        }
+//        currentOrder += 1;
+
+        if(postImageDao.getByPostId(postId).size() >= MAX_IMAGE_NUMBER){
+            throw new S3FileNumberLimitExceededException(FILE_LIMIT_EXCEEDED);
+        }
+
         if(description != null){
-            return postImageDao.savePostImage(postId, fileUrl, description);
+            return postImageDao.save(postId, fileUrl, description);
         }
         return postImageDao.savePostImageWithoutDescription(postId, fileUrl);
     }
@@ -93,8 +128,8 @@ public class PostService {
         return post.getUserId() == userId;
     }
 
-    public boolean hasPostWithId(Long postId) {
-        return postDao.hasPostWithId(postId);
+    public boolean existsById(Long postId) {
+        return postDao.existsById(postId);
     }
     //로그인 사용자용
     public GetClickedPostResponse getValidatedClickedPostInfo(long userId, long postId) {
@@ -320,4 +355,63 @@ public class PostService {
         postDao.modifyStatusDormant(postId);
         postImageDao.modifyStatusDormantByPostId(postId);
     }
+
+    public GetPostUpdateFormDto getPostUpdateForm(Long postId) {
+        log.info("PostService::getPostUpdateForm()");
+        PostInfo postInfo = postInfoDao.getPostInfo(postId);
+        List<PostImage> postImages = postImageDao.getByPostId(postId);
+
+        GetPostUpdateFormDto dto = GetPostUpdateFormDto.builder()
+                .title(postInfo.getTitle())
+                .content(postInfo.getContent())
+                .images(postImages.stream().map(PostImageDto::entityToDto).collect(Collectors.toList())).build();
+        return dto;
+    }
+
+    @Transactional
+    public void modifyPost(Long postId, PatchPostDto dto) {
+        log.info("PostService::modifyPost()");
+        postDao.update(postId, dto.getTitle(), dto.getContent());
+        modifyPostImages(postId, dto.getImages());
+    }
+
+    public void modifyPostImages(Long postId, List<PostImageDto> modifiedImages) {
+        log.info("PostService::modifyPostImages()");
+
+        postImageDao.modifyStatusDormantByPostId(postId);
+        for(PostImageDto dto : modifiedImages){
+            PostImage savedPostImage = postImageDao.getById(dto.getPost_image_id());
+            postImageDao.deleteById(dto.getPost_image_id());
+            postImageDao.save(postId, savedPostImage.getImageUrl(), dto.getImage_description());
+        }
+    }
+
+    @Transactional
+    public SearchPostResponse searchBulletinPage(Long userId, Long bulletinId, String keyword, Long lastId) {
+        log.info("PostService::searchBulletinPage()");
+        List<SearchPostDto> page = postDao.getBulletinPosts(bulletinId, keyword, lastId, 10L);
+        boolean hasNext = checkNextBulletinPage(bulletinId, keyword, page);
+        recentKeywordDao.saveKeyword(userId, keyword);
+        return new SearchPostResponse(page, hasNext);
+    }
+
+    public SearchPostResponse searchBulletinPage_guestmode(Long bulletinId, String keyword, Long lastId) {
+        log.info("PostService::searchBulletinPage_guestmode()");
+        List<SearchPostDto> page = postDao.getBulletinPosts(bulletinId, keyword, lastId, 10L);
+        boolean hasNext = checkNextBulletinPage(bulletinId, keyword, page);
+        return new SearchPostResponse(page, hasNext);
+    }
+
+    private boolean checkNextBulletinPage(Long bulletinId, String keyword, List<SearchPostDto> page) {
+        log.info("PostService::searchBulletinPage()");
+
+        boolean hasNext = false;
+        if(page.size() > 0){
+            Long lastPostId = page.get(page.size() - 1).getPost_id();
+            log.info("lastPostId = " + lastPostId);
+            hasNext = postDao.hasNextBulletinPage(bulletinId, keyword, lastPostId);
+        }
+        return hasNext;
+    }
+
 }

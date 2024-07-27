@@ -1,6 +1,7 @@
 package com.kuit3.rematicserver.common.exception_handler;
 
 import com.kuit3.rematicserver.common.exception.S3EmptyFileException;
+import com.kuit3.rematicserver.common.exception.S3FileNumberLimitExceededException;
 import com.kuit3.rematicserver.common.exception.S3UploadingFailureException;
 import com.kuit3.rematicserver.common.response.BaseErrorResponse;
 import jakarta.annotation.Priority;
@@ -30,4 +31,12 @@ public class S3UploadingExceptionControllerAdvice {
         log.error("[handle_S3EmptyFileException]", e);
         return new BaseErrorResponse(EMPTY_IMAGE_FILE);
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(S3FileNumberLimitExceededException.class)
+    public BaseErrorResponse handle_S3FileNumberLimitExceededException(Exception e) {
+        log.error("[handle_S3FileNumberLimitExceededException]", e);
+        return new BaseErrorResponse(FILE_LIMIT_EXCEEDED);
+    }
+
 }
