@@ -10,6 +10,8 @@ public interface PostImageDao {
 
     Long savePostImageWithoutDescription(Long postId, String fileUrl);
 
+    Boolean hasImageUrlAlready(long commentId);
+
     int modifyStatusDormantByPostId(Long postId);
 
     List<PostImage> getByPostId(Long postId);

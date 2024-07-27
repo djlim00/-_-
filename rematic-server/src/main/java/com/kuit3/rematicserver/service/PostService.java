@@ -2,21 +2,33 @@ package com.kuit3.rematicserver.service;
 
 
 import com.kuit3.rematicserver.aws.S3Uploader;
+import com.kuit3.rematicserver.common.exception.*;
+import com.kuit3.rematicserver.dao.BulletinDao;
+import com.kuit3.rematicserver.dao.PostImageDao;
+import com.kuit3.rematicserver.dto.CreatePostResponse;
+import com.kuit3.rematicserver.dto.CreatePostRequest;
+import com.kuit3.rematicserver.dto.post.*;
+
 import com.kuit3.rematicserver.common.exception.S3FileNumberLimitExceededException;
 import com.kuit3.rematicserver.dao.BulletinDao;
 import com.kuit3.rematicserver.dao.PostImageDao;
 import com.kuit3.rematicserver.dto.post.*;
 import com.kuit3.rematicserver.dto.post.postresponse.PostInfo;
+
 import com.kuit3.rematicserver.entity.Bulletin;
 import com.kuit3.rematicserver.entity.Post;
 
-import com.kuit3.rematicserver.common.exception.DatabaseException;
 import com.kuit3.rematicserver.dao.PostDao;
 import com.kuit3.rematicserver.dao.PostInfoDao;
 import com.kuit3.rematicserver.dao.RecentKeywordDao;
 import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
 import com.kuit3.rematicserver.dto.post.commentresponse.FamilyComment;
+
+import com.kuit3.rematicserver.dto.post.postresponse.PostInfo;
+import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
+
 import com.kuit3.rematicserver.dto.search.SearchPostResponse;
+
 import com.kuit3.rematicserver.dto.post.postresponse.UserInfo;
 
 import com.kuit3.rematicserver.entity.PostImage;
@@ -29,6 +41,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.*;
 import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.FILE_LIMIT_EXCEEDED;
 import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.POST_NOT_FOUND;
 
@@ -166,22 +180,6 @@ public class PostService {
         return postResponse;
     }
 
-    private void validateAndSetPostWriter(long postId, GetClickedPostResponse postResponse) {
-        if(!checkAnonymity(postId)) {
-            postResponse.setUserInfo(new UserInfo("익명", null));
-        } else {
-            postResponse.setUserInfo(postInfoDao.getWriterInfo(postId));
-        }
-    }
-
-    private boolean checkAnonymity(long postId) {
-        return postInfoDao.isPostAnonymous(postId);
-    }
-
-    private boolean checkPostExists(long postId) {
-        return postInfoDao.isPostExists(postId);
-    }
-
     public GetScrolledCommentsResponse getValidatedCommentsByPostId(long postId, long userId, String orderBy) {
         log.info("PostService.getValidatedCommentsByPostId");
         GetScrolledCommentsResponse commentsResponse = new GetScrolledCommentsResponse();
@@ -276,6 +274,80 @@ public class PostService {
         return commentsResponse;
     }
 
+    public String dormantUserComment(long userId, long commentId) {
+        log.info("PostService.dormantUserComment");
+        if (!postInfoDao.checkCommentExists(userId, commentId)) {
+            throw new UserCommentException(COMMENT_NOT_FOUND);
+        }
+        int result = postInfoDao.dormantValidatedComment(userId, commentId);
+        if (result == 1) {
+            return "complete deleting comment";
+        } else {
+            throw new DatabaseException(DATABASE_ERROR);
+        }
+    }
+
+    public PostCommentResponse leaveNewComment(long userId, long postId, PostCommentRequest request) {
+        log.info("PostService.leaveNewComment");
+        //댓글 작성 중에 게시글이 삭제되었는 지 확인하는 것.
+        if(!checkPostExists(postId)) {
+            throw new PostNotFoundException(POST_NOT_FOUND);
+        }
+        log.info("pass post Exists Checking");
+        //대댓글일 때 부모 댓글이 삭제되었는지 확인하는 것.
+        if(request.getParentCommentId() != 0 && !checkParentCommentExists(request.getParentCommentId())) {
+            throw new CommentNotFoundException(PARENT_COMMENT_NOT_EXISTS);
+        }
+        log.info("pass ParentComment Exists checking");
+        List<Long> result = postInfoDao.leaveCommentWrittenByUser(userId, postId, request);
+        //댓글 등록이 잘 됐는지 확인
+        if(result.get(1) != 1) {
+            throw new UserCommentException(WRONG_COMMENT_REGISTER);
+        }
+        return new PostCommentResponse(result.get(0));
+    }
+
+    private boolean checkParentCommentExists(Long parentCommentId) {
+        return postInfoDao.chekcParentCommentExists(parentCommentId);
+    }
+
+    private void validateAndSetPostWriter(long postId, GetClickedPostResponse postResponse) {
+        if(!checkAnonymity(postId)) {
+            postResponse.setUserInfo(new UserInfo("익명", null));
+        } else {
+            postResponse.setUserInfo(postInfoDao.getWriterInfo(postId));
+        }
+    }
+
+    private boolean checkAnonymity(long postId) {
+        return postInfoDao.isPostAnonymous(postId);
+    }
+
+    private boolean checkPostExists(long postId) {
+        return postInfoDao.isPostExists(postId);
+    }
+
+    public String uploadCommentImage(long userId, long commentId, MultipartFile image) {
+        log.info("PostService.uploadCommentImage");
+        String fileUrl = s3Uploader.uploadFile(image);
+        if(checkImageUrlExists(commentId)) {
+            throw new CommentImageDuplicateException(IMAGE_ALREADY_EXISTS);
+        }
+        int result = postInfoDao.saveUrlFromS3(fileUrl, commentId, userId);
+        if(result != 1) {
+            return "failed to saving comment image";
+        } else {
+            return "complete saving comment image";
+        }
+    }
+
+    private boolean checkImageUrlExists(long commentId) {
+        return postImageDao.hasImageUrlAlready(commentId);
+    }
+
+    public boolean isUserMatchesComment(long userId, long commentId) {
+        return postInfoDao.checkUserCommentMatch(userId, commentId);
+    }
 
     public void deletePost(Long postId) {
         log.info("PostService::deletePost()");

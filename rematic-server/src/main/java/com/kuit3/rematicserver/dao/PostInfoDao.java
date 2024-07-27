@@ -1,8 +1,12 @@
 package com.kuit3.rematicserver.dao;
 
+import com.kuit3.rematicserver.dto.post.PostCommentRequest;
 import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
+import com.sun.jdi.ObjectReference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.kuit3.rematicserver.dto.post.postresponse.ImageInfo;
@@ -14,6 +18,7 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -58,11 +63,13 @@ public class PostInfoDao {
     }
 
     public PostInfo getPostInfo(long postId) {
-        String sql = "select title, content, likes, hates, scraps from Post where post_id = :postId;";
+        String sql = "select title, content, views, created_at, likes, hates, scraps from Post where post_id = :postId;";
         return jdbcTemplate.queryForObject(sql, Map.of("postId", postId), (rs, rowNum) -> {
             return new PostInfo(
                     rs.getString("title"),
                     rs.getString("content"),
+                    rs.getLong("views"),
+                    rs.getTimestamp("created_at"),
                     rs.getLong("likes"),
                     false,
                     rs.getLong("hates"),
@@ -234,5 +241,52 @@ public class PostInfoDao {
         return  jdbcTemplate.query(sql, param, (rs, rowNum) -> rs.getLong("comment_id"))
                 .stream()
                 .collect(Collectors.toMap(commentId -> commentId, commentId -> true));
+    }
+
+    public boolean checkCommentExists(long userId, long commentId) {
+        String sql = "select exists(select 1 from Comment where comment_id = :commentId and user_id = :userId and status = 'active');";
+        Map<String, Object> param = Map.of("commentId", commentId, "userId", userId);
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
+    }
+
+    public Integer dormantValidatedComment(long userId, long commentId) {
+        String sql = "update Comment set status = 'dormant' where user_id = :userId and comment_id = :commentId;";
+        Map<String ,Object> param = Map.of("userId", userId, "commentId", commentId);
+        return jdbcTemplate.update(sql, param);
+    }
+
+    public List<Long> leaveCommentWrittenByUser(long userId, long postId, PostCommentRequest request) {
+        String sql = "insert into Comment " +
+                "(sentences, likes, hates, comment_image_url, parent_id, alarm_status, status, created_at, post_id, user_id) " +
+                "values (:sentences, 0, 0, null, :parent_id, 'on', 'active', now(), :post_id, :user_id);";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("sentences", request.getSentences())
+                .addValue("parent_id", request.getParentCommentId())
+                .addValue("post_id", postId)
+                .addValue("user_id", userId);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        long result = jdbcTemplate.update(sql, param, keyHolder);
+        List<Long> response = new ArrayList<>();
+        response.add(Objects.requireNonNull(keyHolder.getKey()).longValue());
+        response.add(result);
+        return response;
+    }
+
+    public boolean chekcParentCommentExists(Long parentCommentId) {
+        String sql = "select exists(select 1 from Comment where comment_id = :parentCommentId);";
+        Map<String, Object> param = Map.of("parentCommentId", parentCommentId);
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
+    }
+
+    public int saveUrlFromS3(String fileUrl, long commentId, long userId) {
+        String sql = "update Comment set comment_image_url = :fileUrl where comment_id = :commentId and user_id = :userId;";
+        Map<String, Object> param = Map.of("fileUrl", fileUrl, "commentId", commentId, "userId", userId);
+        return jdbcTemplate.update(sql, param);
+    }
+
+    public boolean checkUserCommentMatch(long userId, long commentId) {
+        String sql = "select exists (select 1 from Comment where user_id = :userId and comment_id = :commentId);";
+        Map<String, Object> param = Map.of("userId", userId, "commentId", commentId);
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
     }
 }
