@@ -5,14 +5,11 @@ import com.kuit3.rematicserver.aws.S3Uploader;
 import com.kuit3.rematicserver.common.exception.*;
 import com.kuit3.rematicserver.dao.BulletinDao;
 import com.kuit3.rematicserver.dao.PostImageDao;
-import com.kuit3.rematicserver.dto.CreatePostResponse;
-import com.kuit3.rematicserver.dto.CreatePostRequest;
+import com.kuit3.rematicserver.dto.post.CreatePostResponse;
+import com.kuit3.rematicserver.dto.post.CreatePostRequest;
 import com.kuit3.rematicserver.dto.post.*;
 
 import com.kuit3.rematicserver.common.exception.S3FileNumberLimitExceededException;
-import com.kuit3.rematicserver.dao.BulletinDao;
-import com.kuit3.rematicserver.dao.PostImageDao;
-import com.kuit3.rematicserver.dto.post.*;
 import com.kuit3.rematicserver.dto.post.postresponse.PostInfo;
 
 import com.kuit3.rematicserver.entity.Bulletin;
@@ -23,9 +20,6 @@ import com.kuit3.rematicserver.dao.PostInfoDao;
 import com.kuit3.rematicserver.dao.RecentKeywordDao;
 import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
 import com.kuit3.rematicserver.dto.post.commentresponse.FamilyComment;
-
-import com.kuit3.rematicserver.dto.post.postresponse.PostInfo;
-import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
 
 import com.kuit3.rematicserver.dto.search.SearchPostResponse;
 

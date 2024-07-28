@@ -6,11 +6,6 @@ import com.kuit3.rematicserver.common.exception.UnauthorizedUserRequestException
 
 import com.kuit3.rematicserver.common.exception.UserCommentException;
 import com.kuit3.rematicserver.common.response.BaseResponse;
-import com.kuit3.rematicserver.dto.CreatePostRequest;
-import com.kuit3.rematicserver.dto.CreatePostResponse;
-
-import com.kuit3.rematicserver.dto.UploadPostImageResponse;
-import com.kuit3.rematicserver.dto.search.GetSearchPostResponse;
 
 import com.kuit3.rematicserver.dto.post.*;
 import com.kuit3.rematicserver.dto.search.SearchPostResponse;
