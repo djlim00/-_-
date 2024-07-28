@@ -91,8 +91,8 @@ public class PostService {
     public Long uploadImage(Long postId, MultipartFile image, String description) {
         log.info("PostService::uploadImage()");
 
-        String fileUrl = s3Uploader.uploadFile(image);
-//        String fileUrl = "test.png";
+//        String fileUrl = s3Uploader.uploadFile(image);
+        String fileUrl = "test.png";
 
         // 이미지 순서를 별도의 칼럼에 저장하는 경우 사용
 //        Long currentOrder = 0L;
