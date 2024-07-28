@@ -87,14 +87,15 @@ public class PostDaoImpl implements PostDao{
     }
     @Override
     public long createPost(CreatePostRequest request) {
-        String sql = "insert into Post(title, content, has_image, category, anonymity, user_id, bulletin_id)" +
-                " values(:title, :content, :has_image, :category, :anonymity, :user_id, :bulletin_id)";
+        String sql = "insert into Post(title, content, has_image, category, genre, anonymity, user_id, bulletin_id)" +
+                " values(:title, :content, :has_image, :category, :genre, :anonymity, :user_id, :bulletin_id)";
 
        MapSqlParameterSource param = new MapSqlParameterSource()
                .addValue("title", request.getTitle())
                .addValue("content", request.getContent())
                .addValue("has_image", request.getHas_image() ? "있음" : "없음")
                .addValue("category", request.getCategory())
+               .addValue("genre", request.getGenre())
                .addValue("anonymity", request.getAnonymity() ? "공개" : "익명")
                .addValue("user_id", request.getUser_id())
                .addValue("bulletin_id", request.getBulletin_id());
