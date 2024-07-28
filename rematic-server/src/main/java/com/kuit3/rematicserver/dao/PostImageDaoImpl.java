@@ -52,7 +52,7 @@ public class PostImageDaoImpl implements PostImageDao{
 //        String sql = "insert into PostImage(image_url, post_id, image_order) values(:image_url, :post_id, :image_order)";
 
     public Long savePostImageWithoutDescription(Long postId, String fileUrl) {
-        String sql = "insert into PostImage(image_url, post_id) values(:image_url, :post_id, :image_order)";
+        String sql = "insert into PostImage(image_url, post_id) values(:image_url, :post_id)";
 
     MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("image_url", fileUrl)
