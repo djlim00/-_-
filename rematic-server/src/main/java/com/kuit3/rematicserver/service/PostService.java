@@ -162,21 +162,4 @@ public class PostService {
         commentsResponse.setLastId(parentComments.isEmpty() ? lastId : parentComments.get(parentComments.size() - 1).getCommentId());
         return commentsResponse;
     }
-
-    public void increaseLike(Long postId) {
-        postDao.updateLike(postId, 1);
-    }
-
-    public void decreaseLike(Long postId) {
-        postDao.updateLike(postId, -1);
-    }
-
-    public void increaseHate(Long postId) {
-        postDao.updateHate(postId, 1);
-    }
-
-    public void decreaseHate(Long postId) {
-        postDao.updateHate(postId, -1);
-    }
-
 }

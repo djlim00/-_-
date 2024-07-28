@@ -12,6 +12,8 @@ public interface PostDao {
     public long createPost(CreatePostRequest request);
     Post findById(Long postId);
     boolean hasPostWithId(Long postId);
-    void updateLike(Long postId, int delta);
-    void updateHate(Long postId, int delta);
+    void incrementLikes(Long postId);
+    void decrementLikes(Long postId);
+    void incrementHates(Long postId);
+    void decrementHates(Long postId);
 }
