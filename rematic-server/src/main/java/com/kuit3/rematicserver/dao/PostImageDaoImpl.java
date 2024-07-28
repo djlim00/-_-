@@ -82,7 +82,7 @@ public class PostImageDaoImpl implements PostImageDao{
 
     @Override
     public List<PostImage> getByPostId(Long postId) {
-        String sql = "SELECT * FROM PostImage WHERE post_id = :postId AND status = 'active' ORDER BY image_order";
+        String sql = "SELECT * FROM PostImage WHERE post_id = :postId AND status = 'active'";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("postId", postId);
         return jdbcTemplate.query(sql, param, postImageRowMapper());
