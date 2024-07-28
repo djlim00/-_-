@@ -62,6 +62,8 @@ public class AuthService {
     public LoginResponse kakaoLogin(KakaoLoginRequest request) {
         log.info("AuthService::kakaoLogin()");
 
+        log.info("kakao_id = " + request.getKakao_id());
+
         if(!userDao.hasUserWithDuplicateEmail(request.getKakao_id())){
             throw new UserNotFoundException(USER_NOT_FOUND);
         }
@@ -73,6 +75,9 @@ public class AuthService {
 
     public LoginResponse kakaoSignup(KakaoSignUpReqeust request) {
         log.info("AuthService::kakaoSignup()");
+
+        log.info("kakao_id = " + request.getKakao_id());
+        log.info("nickname = " + request.getNickname());
 
         if(userDao.hasUserWithDuplicateEmail(request.getKakao_id())){
             throw new UserDuplicateEmailException(DUPLICATE_EMAIL);
