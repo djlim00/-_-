@@ -108,6 +108,11 @@ public class PostDaoImpl implements PostDao{
     }
 
     @Override
+    public boolean hasPostWithId(Long postId) {
+        return false;
+    }
+
+    @Override
     public Post findById(Long postId) {
         String sql = "select * from Post where post_id = :post_id";
         MapSqlParameterSource param = new MapSqlParameterSource()
@@ -175,6 +180,7 @@ public class PostDaoImpl implements PostDao{
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("post_id", postId);
         jdbcTemplate.update(sql, param);
+    }
 
     public int modifyStatusDormant(Long postId) {
         String sql = "UPDATE Post SET status='dormant' WHERE post_id = :post_id";
