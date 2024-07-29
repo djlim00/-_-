@@ -115,7 +115,7 @@ public class PostDaoImpl implements PostDao{
 
         return jdbcTemplate.queryForObject(sql, param, postRowMapper());
     }
-    
+
     private RowMapper<Post> postRowMapper(){
         return (ResultSet rs, int rowNum)->{
            Post post = Post.builder()

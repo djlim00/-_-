@@ -11,7 +11,7 @@ import com.kuit3.rematicserver.dto.auth.OAuthLoginResponse;
 import com.kuit3.rematicserver.dto.auth.KakaoLoginRequest;
 import com.kuit3.rematicserver.dto.auth.KakaoUserInfoResponse;
 import com.kuit3.rematicserver.jwt.JwtProvider;
-import com.kuit3.rematicserver.service.auth.KakaoAuthApiClient;
+import com.kuit3.rematicserver.oauth.KakaoAuthApiClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
