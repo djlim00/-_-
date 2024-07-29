@@ -1,4 +1,4 @@
-package com.kuit3.rematicserver.service.auth;
+package com.kuit3.rematicserver.oauth;
 
 import com.kuit3.rematicserver.common.exception.auth.OAuthApiRequestFailedException;
 import com.kuit3.rematicserver.dto.auth.KakaoTokens;

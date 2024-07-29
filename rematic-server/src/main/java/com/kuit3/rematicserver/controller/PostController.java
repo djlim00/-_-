@@ -71,7 +71,7 @@ public class PostController {
     }
 
     @GetMapping("/comments/{postId}")
-    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PreAuthorizedUser long postId, @RequestParam long userId, @RequestParam String orderBy) {
+    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PreAuthorizedUser long userId, @PathVariable long postId, @RequestParam String orderBy) {
         log.info("PostController.showPostComments");
         return new BaseResponse<>(postService.getValidatedCommentsByPostId(postId, userId, orderBy));
     }
