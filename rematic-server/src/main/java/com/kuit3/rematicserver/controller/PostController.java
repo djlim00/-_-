@@ -69,8 +69,13 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public BaseResponse<GetClickedPostResponse> showClickedPost(@PreAuthorizedUser long userId, @PathVariable long postId) {
+    //public BaseResponse<GetClickedPostResponse> showClickedPost(@PreAuthorizedUser long userId,
+    public BaseResponse<GetClickedPostResponse> showClickedPost(
+                                                                @PathVariable long postId) {
         log.info("PostController.showClickedPost");
+
+        long userId = 1;
+
         return new BaseResponse<>(postService.getValidatedClickedPostInfo(userId, postId));
     }
     @GetMapping("/guest/{postId}")
@@ -80,13 +85,16 @@ public class PostController {
     }
 
     @GetMapping("/comments/{postId}")
-    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PreAuthorizedUser long postId, @RequestParam long userId, @RequestParam String orderBy) {
+    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PreAuthorizedUser long userId,
+                                                                      @PathVariable long postId,
+                                                                      @RequestParam String orderBy) {
         log.info("PostController.showPostComments");
         return new BaseResponse<>(postService.getValidatedCommentsByPostId(postId, userId, orderBy));
     }
 
     @GetMapping("/comments/guest/{postId}")
-    public BaseResponse<GetScrolledCommentsResponse> showPostCommentsByGuestMode(@PathVariable long postId, @RequestParam String orderBy) {
+    public BaseResponse<GetScrolledCommentsResponse> showPostCommentsByGuestMode(@PathVariable long postId,
+                                                                                 @RequestParam String orderBy) {
         log.info("PostController.showPostComments");
         return new BaseResponse<>(postService.getCommentsByPostId(postId, orderBy));
     }
@@ -143,10 +151,16 @@ public class PostController {
     }
 
     @PatchMapping("{post_id}")
-    public BaseResponse<Object> patchPost(@PathVariable("post_id") Long postId,
+    public BaseResponse<Object> patchPost(@PreAuthorizedUser long userId,
+                                          @PathVariable("post_id") Long postId,
                                           @RequestBody PatchPostDto dto){
         log.info("PostController::updatePost()");
-
+        if(!postService.existsById(postId)){
+            throw new PostNotFoundException(POST_NOT_FOUND);
+        }
+        if(!postService.checkPostWriter(userId, postId)){
+            throw new UnauthorizedUserRequestException(UNAUTHORIZED_USER_REQUEST);
+        }
         postService.modifyPost(postId, dto);
         return new BaseResponse<>(null);
     }
