@@ -1,4 +1,4 @@
-package com.kuit3.rematicserver.dto;
+package com.kuit3.rematicserver.dto.post;
 
 import lombok.*;
 
@@ -12,6 +12,7 @@ public class CreatePostRequest {
     private String content;
     private Boolean has_image;
     private String category;
+    private String genre;
     private Boolean anonymity;
     private Long user_id;
     private Long bulletin_id;

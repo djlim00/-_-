@@ -20,7 +20,12 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     MISSING_PARAM(2003, HttpStatus.BAD_REQUEST.value(), "필요한 파라미터가 누락되었습니다"),
     EMPTY_IMAGE_FILE(2004, HttpStatus.BAD_REQUEST.value(), "이미지 파일이 비어있습니다."),
     UNSUPPORTED_FILE_EXTENSION(2005, HttpStatus.BAD_REQUEST.value(), "지원되지 않는 이미지 확장자입니다."),
-    POST_NOT_FOUND(2004, HttpStatus.BAD_REQUEST.value(), "요청하신 게시물이 없습니다."),
+    PARENT_COMMENT_NOT_EXISTS(2006, HttpStatus.NOT_FOUND.value(), "부모 댓글이 존재하지 않습니다."),
+    IMAGE_ALREADY_EXISTS(2007, HttpStatus.BAD_REQUEST.value(), "댓글 첨부 이미지가 이미 존재합니다."),
+    USER_COMMENT_MISMATCH(2008, HttpStatus.BAD_REQUEST.value(), "작성자가 아닌 사용자는 접근 불가합니다."),
+    POST_NOT_FOUND(2009, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 게시물입니다."),
+    FILE_LIMIT_EXCEEDED(2010, HttpStatus.BAD_REQUEST.value(), "업로드할 수 있는 파일 수 제한을 초과했습니다."),
+    WRONG_COMMENT_REGISTER(2011, HttpStatus.BAD_REQUEST.value(), "댓글 등록에 오류가 발생했습니다."),
 
     /**
      * 3000: Server, Database 오류 (INTERNAL_SERVER_ERROR)
@@ -51,7 +56,15 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     DUPLICATE_NICKNAME(5002, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 닉네임입니다."),
     USER_NOT_FOUND(5003, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 계정입니다."),
     UNAUTHORIZED_USER_REQUEST(5004, HttpStatus.BAD_REQUEST.value(), "권한이 없는 사용자의 요청입니다."),
-    USER_DORMANT_STATUS(5004, HttpStatus.BAD_REQUEST.value(), "휴면상태 계정입니다.");
+    USER_KEYWORD_NOT_FOUND(5005, HttpStatus.BAD_REQUEST.value(), "요청하신 사용자의 최근 검색어가 없습니다."),
+    USER_DORMANT_STATUS(5006, HttpStatus.BAD_REQUEST.value(), "휴면상태 계정입니다."),
+    COMMENT_NOT_FOUND(5007, HttpStatus.BAD_REQUEST.value(), "요청하신 댓글이 존재하지 않습니다."),
+
+    /**
+     * 6000: UserScrap 오류
+     */
+    DUPLICATE_USER_SCRAP(6000, HttpStatus.CONFLICT.value(), "이미 스크랩한 게시물입니다."),
+    USER_SCRAP_NOT_FOUND(6001, HttpStatus.BAD_REQUEST.value(), "스크랩을 찾을 수 없습니다.");
 
     private final int code;
     private final int status;

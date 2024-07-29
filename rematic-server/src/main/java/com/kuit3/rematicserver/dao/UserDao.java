@@ -1,7 +1,7 @@
 package com.kuit3.rematicserver.dao;
 
 
-import com.kuit3.rematicserver.dto.UpdateUserInfoRequest;
+import com.kuit3.rematicserver.dto.user.UpdateUserInfoRequest;
 import com.kuit3.rematicserver.dto.auth.CreateUserDTO;
 import com.kuit3.rematicserver.dto.user.UserCheckDto;
 import com.kuit3.rematicserver.dto.user.UserMyPageResponse;
@@ -15,7 +15,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
