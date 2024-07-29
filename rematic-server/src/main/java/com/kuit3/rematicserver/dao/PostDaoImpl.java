@@ -115,7 +115,7 @@ public class PostDaoImpl implements PostDao{
 
         return jdbcTemplate.queryForObject(sql, param, postRowMapper());
     }
-
+    
     private RowMapper<Post> postRowMapper(){
         return (ResultSet rs, int rowNum)->{
            Post post = Post.builder()
@@ -175,6 +175,7 @@ public class PostDaoImpl implements PostDao{
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("post_id", postId);
         jdbcTemplate.update(sql, param);
+    }
 
     public int modifyStatusDormant(Long postId) {
         String sql = "UPDATE Post SET status='dormant' WHERE post_id = :post_id";
