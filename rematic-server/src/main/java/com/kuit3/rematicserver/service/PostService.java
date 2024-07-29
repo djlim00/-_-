@@ -408,5 +408,4 @@ public class PostService {
         }
         return hasNext;
     }
-
 }

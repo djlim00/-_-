@@ -115,4 +115,5 @@ public class BulletinDaoImpl implements BulletinDao{
                 rs.getString("nameGroup")
         );
     }
+
 }

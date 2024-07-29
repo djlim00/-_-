@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -145,6 +146,36 @@ public class PostDaoImpl implements PostDao{
     }
 
     @Override
+    public void incrementLikes(Long postId) {
+        String sql = "UPDATE Post SET likes = likes + 1 WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        jdbcTemplate.update(sql, param);
+    }
+
+    @Override
+    public void decrementLikes(Long postId) {
+        String sql = "UPDATE Post SET likes = likes - 1 WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        jdbcTemplate.update(sql, param);
+    }
+
+    @Override
+    public void incrementHates(Long postId) {
+        String sql = "UPDATE Post SET hates = hates + 1 WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        jdbcTemplate.update(sql, param);
+    }
+
+    @Override
+    public void decrementHates(Long postId) {
+        String sql = "UPDATE Post SET hates = hates - 1 WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        jdbcTemplate.update(sql, param);
+
     public int modifyStatusDormant(Long postId) {
         String sql = "UPDATE Post SET status='dormant' WHERE post_id = :post_id";
         MapSqlParameterSource param = new MapSqlParameterSource()
