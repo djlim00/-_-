@@ -108,6 +108,11 @@ public class PostDaoImpl implements PostDao{
     }
 
     @Override
+    public boolean hasPostWithId(Long postId) {
+        return false;
+    }
+
+    @Override
     public Post findById(Long postId) {
         String sql = "select * from Post where post_id = :post_id";
         MapSqlParameterSource param = new MapSqlParameterSource()

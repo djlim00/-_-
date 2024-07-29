@@ -11,6 +11,8 @@ public interface PostDao {
     public boolean hasNextPage(String keyword, String category, Long lastId);
     public long createPost(CreatePostRequest request);
 
+
+    boolean hasPostWithId(Long postId);
     void incrementLikes(Long postId);
     void decrementLikes(Long postId);
     void incrementHates(Long postId);
