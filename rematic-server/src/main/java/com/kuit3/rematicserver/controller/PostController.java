@@ -30,26 +30,26 @@ public class PostController {
     private final PostService postService;
     private final PostDeletionService postDeletionService;
     @PostMapping("newpost")
-    //    public BaseResponse<CreatePostResponse> createPost(@PreAuthorizedUser long userId,
-        public BaseResponse<CreatePostResponse> createPost(
+        public BaseResponse<CreatePostResponse> createPost(@PreAuthorizedUser long userId,
+//        public BaseResponse<CreatePostResponse> createPost(
                                                        @RequestBody CreatePostRequest request){
         log.info("PostController::createPost()");
 
-        long userId = 1;
+//        long userId = 1;
 
         request.setUser_id(userId);
         return new BaseResponse<>(postService.createPost(request));
     }
 
     @PostMapping("{post_id}/image")
-//    public BaseResponse<UploadPostImageResponse> uploadImage(@PreAuthorizedUser long userId,
-    public BaseResponse<UploadPostImageResponse> uploadImage(
+    public BaseResponse<UploadPostImageResponse> uploadImage(@PreAuthorizedUser long userId,
+//    public BaseResponse<UploadPostImageResponse> uploadImage(
                                                              @PathVariable("post_id") Long postId,
                                                              @RequestPart MultipartFile image,
                                                              @RequestPart(required = false) String description){
         log.info("PostController::uploadImage()");
 
-        long userId = 1;
+//        long userId = 1;
 
         if(!postService.existsById(postId)){
             throw new PostNotFoundException(POST_NOT_FOUND);
@@ -69,12 +69,12 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    //public BaseResponse<GetClickedPostResponse> showClickedPost(@PreAuthorizedUser long userId,
-    public BaseResponse<GetClickedPostResponse> showClickedPost(
+    public BaseResponse<GetClickedPostResponse> showClickedPost(@PreAuthorizedUser long userId,
+//    public BaseResponse<GetClickedPostResponse> showClickedPost(
                                                                 @PathVariable long postId) {
         log.info("PostController.showClickedPost");
 
-        long userId = 1;
+//        long userId = 1;
 
         return new BaseResponse<>(postService.getValidatedClickedPostInfo(userId, postId));
     }
