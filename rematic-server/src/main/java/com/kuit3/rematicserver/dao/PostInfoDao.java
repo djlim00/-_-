@@ -277,4 +277,12 @@ public class PostInfoDao {
         Map<String, Object> param = Map.of("userId", userId, "commentId", commentId);
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
     }
+
+    public List<Long> getDeniedUsers(long userId) {
+        String sql = "select block_id from Blocked_User_List where user_id = :userId;";
+        Map<String, Object> param = Map.of("userId", userId);
+        return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
+            return rs.getLong("block_id");
+        });
+    }
 }

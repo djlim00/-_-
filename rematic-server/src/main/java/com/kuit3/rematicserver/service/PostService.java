@@ -191,18 +191,23 @@ public class PostService {
         if(orderBy.equals("likeStandard")) {
             parentComments = postInfoDao.getLikeStandCommentsByPostId(postId);
         }
+        //사용자가 차단한 사용자ID 목록 가져오기
+        List<Long> deniedUserIds = postInfoDao.getDeniedUsers(userId);
+        parentComments.removeIf(parentComment -> deniedUserIds.contains(parentComment.getWriterId()));
+
         List<Long> parentCommentIds = parentComments.stream()
                 .map(CommentInfo::getCommentId)
                 .collect(Collectors.toList());
         Map<Long, Boolean> likesHistory = postInfoDao.getCommentLikesHistory(userId, parentCommentIds);
         Map<Long, Boolean> hatesHistory = postInfoDao.getCommentHatesHistory(userId, parentCommentIds);
-        //부모 댓글 좋아요 실어요 여부 매핑(ok)
+        //부모 댓글 좋아요 실어요 여부 매핑
         for(CommentInfo parentComment : parentComments) {
             parentComment.setIsLiked(likesHistory.getOrDefault(parentComment.getCommentId(), false));
             parentComment.setIsHated(hatesHistory.getOrDefault(parentComment.getCommentId(), false));
         }
         //자식 댓글 가져오기
         List<CommentInfo> childComments = postInfoDao.getChildCommentsWithPrefer(userId, parentCommentIds);
+        childComments.removeIf(childComment -> deniedUserIds.contains(childComment.getWriterId()));
         List<Long> childCommentIds = childComments.stream()
                 .map(CommentInfo::getCommentId)
                 .collect(Collectors.toList());
