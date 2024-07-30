@@ -91,13 +91,14 @@ public class BulletinDaoImpl implements BulletinDao{
     public RowMapper<Bulletin> bulletinRowMapper(){
         return (rs, rowNum) -> {
             Bulletin bulletin = Bulletin.builder()
-                    .bulletinId(Long.parseLong(rs.getString("bulletin_id")))
+                    .bulletinId(rs.getLong("bulletin_id"))
                     .name(rs.getString("name"))
                     .genre(rs.getString("genre"))
                     .category(rs.getString("category"))
                     .originCategory(rs.getString("origin_category"))
                     .thumbnailImageUrl(rs.getString("thumnail_image_url"))
-                    .PreviewVideoUrl(rs.getString("preview_video_url")).build();
+//                    .PreviewVideoUrl(rs.getString("preview_video_url"))
+                    .build();
             return bulletin;
         };
     }
@@ -114,4 +115,5 @@ public class BulletinDaoImpl implements BulletinDao{
                 rs.getString("nameGroup")
         );
     }
+
 }
