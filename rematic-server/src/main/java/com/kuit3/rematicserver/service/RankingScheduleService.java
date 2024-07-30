@@ -17,9 +17,9 @@ public class RankingScheduleService {
     @Scheduled(cron = "0 0 * * * *")
     public void resetRealtimeViewsEveryDay() {
         rankingDao.clearRealTimeRanking();
-        rankingDao.updateRealTimeRanking();
+//        rankingDao.updateRealTimeRanking();
         log.info("RankingScheduleService.realTimeRankingPostSave");
-        rankingDao.resetRealtimeViewsOnlyToday();
+//        rankingDao.resetRealtimeViewsOnlyToday();
         log.info("RankingScheduleService.resetRealtimeViewsEveryDay");
     }
 }
