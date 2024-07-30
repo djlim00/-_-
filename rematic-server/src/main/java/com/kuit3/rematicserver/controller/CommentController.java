@@ -32,6 +32,4 @@ public class CommentController {
         log.info("PostController.dormantUserComment");
         return new BaseResponse<>(commentService.dormantUserComment(userId, commentId));
     }
-
-
 }

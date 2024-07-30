@@ -52,7 +52,6 @@ public class PostController {
         log.info("PostController::showPage()");
         return new BaseResponse<>( postService.getPage(category, lastId));
     }
-
     @GetMapping("/{postId}")
     public BaseResponse<GetClickedPostResponse> showClickedPost(@PreAuthorizedUser long userId, @PathVariable long postId) {
         log.info("PostController.showClickedPost");
@@ -75,7 +74,7 @@ public class PostController {
     @GetMapping("/comments/guest/{postId}")
     public BaseResponse<GetScrolledCommentsResponse> showPostCommentsByGuestMode(@PathVariable long postId,
                                                                                  @RequestParam String orderBy) {
-        log.info("PostController.showPostComments");
+        log.info("PostController.showPostCommentsByGuestMode");
         return new BaseResponse<>(postService.getCommentsByPostId(postId, orderBy));
     }
 
