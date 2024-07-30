@@ -266,19 +266,6 @@ public class PostService {
         return commentsResponse;
     }
 
-    public String dormantUserComment(long userId, long commentId) {
-        log.info("PostService.dormantUserComment");
-        if (!postInfoDao.checkCommentExists(userId, commentId)) {
-            throw new UserCommentException(COMMENT_NOT_FOUND);
-        }
-        int result = postInfoDao.dormantValidatedComment(userId, commentId);
-        if (result == 1) {
-            return "complete deleting comment";
-        } else {
-            throw new DatabaseException(DATABASE_ERROR);
-        }
-    }
-
     public PostCommentResponse leaveNewComment(long userId, long postId, PostCommentRequest request) {
         log.info("PostService.leaveNewComment");
         //댓글 작성 중에 게시글이 삭제되었는 지 확인하는 것.

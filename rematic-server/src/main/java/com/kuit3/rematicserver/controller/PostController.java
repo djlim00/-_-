@@ -79,14 +79,6 @@ public class PostController {
         return new BaseResponse<>(postService.getCommentsByPostId(postId, orderBy));
     }
 
-
-    @PostMapping("/comment/{comment_id}")
-    public BaseResponse<String> dormantUserComment(@PreAuthorizedUser long userId,
-                                                   @PathVariable("comment_id") long commentId) {
-        log.info("PostController.dormantUserComment");
-        return new BaseResponse<>(postService.dormantUserComment(userId, commentId));
-    }
-
     @PostMapping("/{post_id}/comment")
     public BaseResponse<PostCommentResponse> leaveNewComment(@PreAuthorizedUser long userId,
                                                              @PathVariable("post_id") long postId,

@@ -243,18 +243,6 @@ public class PostInfoDao {
                 .collect(Collectors.toMap(commentId -> commentId, commentId -> true));
     }
 
-    public boolean checkCommentExists(long userId, long commentId) {
-        String sql = "select exists(select 1 from Comment where comment_id = :commentId and user_id = :userId and status = 'active');";
-        Map<String, Object> param = Map.of("commentId", commentId, "userId", userId);
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
-    }
-
-    public Integer dormantValidatedComment(long userId, long commentId) {
-        String sql = "update Comment set status = 'dormant' where user_id = :userId and comment_id = :commentId;";
-        Map<String ,Object> param = Map.of("userId", userId, "commentId", commentId);
-        return jdbcTemplate.update(sql, param);
-    }
-
     public List<Long> leaveCommentWrittenByUser(long userId, long postId, PostCommentRequest request) {
         String sql = "insert into Comment " +
                 "(sentences, likes, hates, comment_image_url, parent_id, alarm_status, status, created_at, post_id, user_id) " +

@@ -25,4 +25,13 @@ public class CommentController {
         commentService.hateComment(commentId, userId);
         return new BaseResponse<>("댓글 싫어요");
     }
+
+    @PostMapping("/comment/{comment_id}")
+    public BaseResponse<String> dormantUserComment(@PreAuthorizedUser long userId,
+                                                   @PathVariable("comment_id") long commentId) {
+        log.info("PostController.dormantUserComment");
+        return new BaseResponse<>(commentService.dormantUserComment(userId, commentId));
+    }
+
+
 }
