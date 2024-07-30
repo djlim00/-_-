@@ -3,14 +3,16 @@ package com.kuit3.rematicserver.service;
 
 import com.kuit3.rematicserver.aws.S3Uploader;
 import com.kuit3.rematicserver.common.exception.*;
+import com.kuit3.rematicserver.dto.post.*;
+import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
+import com.kuit3.rematicserver.dto.post.commentresponse.FamilyComment;
+import com.kuit3.rematicserver.dto.post.postresponse.PostInfo;
 import com.kuit3.rematicserver.dao.BulletinDao;
 import com.kuit3.rematicserver.dao.PostImageDao;
 import com.kuit3.rematicserver.dto.post.CreatePostResponse;
 import com.kuit3.rematicserver.dto.post.CreatePostRequest;
-import com.kuit3.rematicserver.dto.post.*;
 
 import com.kuit3.rematicserver.common.exception.S3FileNumberLimitExceededException;
-import com.kuit3.rematicserver.dto.post.postresponse.PostInfo;
 
 import com.kuit3.rematicserver.entity.Bulletin;
 import com.kuit3.rematicserver.entity.Post;
@@ -18,13 +20,9 @@ import com.kuit3.rematicserver.entity.Post;
 import com.kuit3.rematicserver.dao.PostDao;
 import com.kuit3.rematicserver.dao.PostInfoDao;
 import com.kuit3.rematicserver.dao.RecentKeywordDao;
-import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
-import com.kuit3.rematicserver.dto.post.commentresponse.FamilyComment;
 
 import com.kuit3.rematicserver.dto.search.SearchPostResponse;
-
 import com.kuit3.rematicserver.dto.post.postresponse.UserInfo;
-
 import com.kuit3.rematicserver.entity.PostImage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,13 +30,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-
 import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.*;
-import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.FILE_LIMIT_EXCEEDED;
-import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.POST_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -267,19 +264,6 @@ public class PostService {
         }
         commentsResponse.setCommentList(commentList);
         return commentsResponse;
-    }
-
-    public String dormantUserComment(long userId, long commentId) {
-        log.info("PostService.dormantUserComment");
-        if (!postInfoDao.checkCommentExists(userId, commentId)) {
-            throw new UserCommentException(COMMENT_NOT_FOUND);
-        }
-        int result = postInfoDao.dormantValidatedComment(userId, commentId);
-        if (result == 1) {
-            return "complete deleting comment";
-        } else {
-            throw new DatabaseException(DATABASE_ERROR);
-        }
     }
 
     public PostCommentResponse leaveNewComment(long userId, long postId, PostCommentRequest request) {

@@ -50,7 +50,6 @@ public class UserController {
         return new BaseResponse<>(null);
     }
 
-//    public BaseResponse<UserMyPageResponse> getUserInfoPage(@RequestParam long userId)
     @GetMapping("/mypage")
     public BaseResponse<UserMyPageResponse> getUserInfoPage(@PreAuthorizedUser long userId) {
         log.info("UserController.getUserInfoPage");
