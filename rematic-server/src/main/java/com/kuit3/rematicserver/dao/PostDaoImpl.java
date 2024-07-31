@@ -259,5 +259,20 @@ public class PostDaoImpl implements PostDao{
         };
     }
 
+    @Override
+    public void incrementScraps(Long postId) {
+        String sql = "UPDATE Post SET scraps = scraps + 1 WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        jdbcTemplate.update(sql, param);
+    }
+
+    @Override
+    public void decrementScraps(Long postId) {
+        String sql = "UPDATE Post SET scraps = scraps - 1 WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        jdbcTemplate.update(sql, param);
+    }
 }
 

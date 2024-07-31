@@ -28,4 +28,8 @@ public interface PostDao {
     public boolean hasNextBulletinPage(Long bulletinId, String keyword, Long lastPostId);
 
     List<Ranking> findRankingByCategory(String category);
+
+    void incrementScraps(Long postId);
+
+    void decrementScraps(Long postId);
 }
