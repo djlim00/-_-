@@ -22,8 +22,8 @@ public class RankingSchedulingService {
     private final PostDao postDao;
 
     //정각마다 실행
-//    @Scheduled(cron = "0 0 * * * *")
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(cron = "0 0 * * * *")
+//    @Scheduled(fixedDelay = 30000)
 
     @Transactional
     public void saveRankingEveryHour() {
