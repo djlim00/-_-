@@ -11,5 +11,6 @@ import lombok.Setter;
 public class UserRecentKeywordResponse {
 
     private String keyWord;
+    private Long keyWordId;
 
 }

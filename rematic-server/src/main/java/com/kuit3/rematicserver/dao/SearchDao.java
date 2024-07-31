@@ -21,11 +21,13 @@ public class SearchDao {
     }
     public List<UserRecentKeywordResponse> getKeywordsByUserId(long userId) {
         log.info("SearchDao.getKeywordsByUserId");
-        String sql = "select keyword from Recent_Keyword where user_id = :userId and status = 'active' order by created_at DESC limit 10";
+        String sql = "select keyword, recent_keyword_id from Recent_Keyword where user_id = :userId and " +
+                "status = 'active' order by created_at DESC limit 10";
         Map<String, Object> param = Map.of("userId", userId);
         return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
             UserRecentKeywordResponse keywordResponse = new UserRecentKeywordResponse(
-                    rs.getString("keyword")
+                    rs.getString("keyword"),
+                    rs.getLong("recent_keyword_id")
             );
             return keywordResponse;
         });
@@ -41,7 +43,7 @@ public class SearchDao {
     }
 
 
-    public Long hasUserRecentVisitedBulletin(long userId) {
+    public Long getUserRecentVisitedBulletin(long userId) {
         log.info("SearchDao.hasUserRecentVisitedBulletin");
         String sql = "select bulletin_id from User where user_id = :userId";
         Map<String, Object> param = Map.of("userId", userId);
