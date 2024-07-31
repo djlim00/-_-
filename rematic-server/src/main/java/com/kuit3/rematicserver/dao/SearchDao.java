@@ -43,7 +43,7 @@ public class SearchDao {
     }
 
 
-    public Long hasUserRecentVisitedBulletin(long userId) {
+    public Long getUserRecentVisitedBulletin(long userId) {
         log.info("SearchDao.hasUserRecentVisitedBulletin");
         String sql = "select bulletin_id from User where user_id = :userId";
         Map<String, Object> param = Map.of("userId", userId);

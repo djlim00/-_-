@@ -22,7 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(jwtAuthenticationInterceptor)
                 .order(1)
                 .addPathPatterns("/auth/test")
-                .addPathPatterns("/search/**")
+                //.addPathPatterns("/search/**")
                 .excludePathPatterns("/search/post/guest")
                 .addPathPatterns("/bulletin/*/posts")
                 .addPathPatterns("/post/**")
