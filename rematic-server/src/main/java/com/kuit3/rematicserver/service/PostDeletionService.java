@@ -24,8 +24,8 @@ public class PostDeletionService {
         userScrapService.deleteScrapsOfPost(postId);
         commentService.deleteCommentsOfPost(postId);
 
-        // 랭킹 기능 수정 시 구현할 코드
-        //rankingService.deletePostFromRanking(postId);
+        rankingService.deletePostFromRanking(postId);
+
         postService.deletePost(postId);
     }
 }

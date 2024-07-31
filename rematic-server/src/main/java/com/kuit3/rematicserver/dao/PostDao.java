@@ -3,6 +3,7 @@ package com.kuit3.rematicserver.dao;
 import com.kuit3.rematicserver.dto.post.CreatePostRequest;
 import com.kuit3.rematicserver.dto.post.SearchPostDto;
 import com.kuit3.rematicserver.entity.Post;
+import com.kuit3.rematicserver.entity.Ranking;
 
 import java.util.List;
 
@@ -10,9 +11,7 @@ public interface PostDao {
     public List<SearchPostDto> getPage(String keyword, String category, Long lastId, Long limit);
     public boolean hasNextPage(String keyword, String category, Long lastId);
     public long createPost(CreatePostRequest request);
-
-
-    boolean hasPostWithId(Long postId);
+    
     void incrementLikes(Long postId);
     void decrementLikes(Long postId);
     void incrementHates(Long postId);
@@ -28,4 +27,5 @@ public interface PostDao {
 
     public boolean hasNextBulletinPage(Long bulletinId, String keyword, Long lastPostId);
 
+    List<Ranking> findRankingByCategory(String category);
 }
