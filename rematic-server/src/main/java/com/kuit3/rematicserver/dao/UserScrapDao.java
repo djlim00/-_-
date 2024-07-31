@@ -1,6 +1,9 @@
 package com.kuit3.rematicserver.dao;
 
+import com.kuit3.rematicserver.entity.UserScrap;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -57,5 +60,19 @@ public class UserScrapDao {
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("scrapId", scrapId);
         return jdbcTemplate.update(sql, param);
+    }
+
+    public UserScrap findById(Long scrapId) {
+        String sql = "SELECT * FROM UserScrap WHERE scrap_id = :scrapId";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("scrapId", scrapId);
+        return jdbcTemplate.queryForObject(sql, param, userScrapRowMapper());
+    }
+
+    private RowMapper<UserScrap> userScrapRowMapper() {
+        return (rs, rowNum) -> {
+            UserScrap userScrap = new UserScrap(rs.getLong("scrap_id"), rs.getLong("user_id"), rs.getLong("post_id"));
+            return userScrap;
+        };
     }
 }
