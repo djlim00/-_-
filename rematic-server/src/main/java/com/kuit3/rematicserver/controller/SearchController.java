@@ -50,9 +50,9 @@ public class SearchController {
         return new BaseResponse<>(searchService.getUserRecommendableKeywords(userId));
     }
 
-    @PostMapping("/keyword/{keywordId}/delete")
-    public BaseResponse<String> deactivateUserKeyword(@PreAuthorizedUser long userId, @PathVariable long keywordId) {
+    @PostMapping("/keyword/{keyword}/delete")
+    public BaseResponse<String> deactivateUserKeyword(@PreAuthorizedUser long userId, @PathVariable long keyword) {
         log.info("SearchController.deactivateUserKeyword");
-        return new BaseResponse<>(searchService.deactivateUserKeyword(userId, keywordId));
+        return new BaseResponse<>(searchService.deactivateUserKeyword(userId, keyword));
     }
 }
