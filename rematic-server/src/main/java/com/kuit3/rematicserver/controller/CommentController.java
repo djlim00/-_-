@@ -25,4 +25,10 @@ public class CommentController {
         commentService.hateComment(commentId, userId);
         return new BaseResponse<>("댓글 싫어요");
     }
+
+    @PostMapping("/block")
+    public BaseResponse<String> blockUser(@RequestParam("userId") Long userId, @RequestParam("blockId") Long blockId){//@PreAuthorizedUser Long userId, @RequestParam("blockId") Long blockId
+        commentService.blockUser(userId,blockId);
+        return new BaseResponse<>(userId+"가 "+blockId+"를 차단했습니다.");
+    }
 }
