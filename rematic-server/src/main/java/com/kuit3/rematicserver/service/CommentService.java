@@ -38,16 +38,16 @@ public class CommentService {
 
     @Transactional
     public void likeComment(Long commentId, Long userId) {
-        if (commentReactionDao.isLiked(commentId, userId)) { // 이미 해당 유저가 해당 게시물에 좋아요를 눌렀다면
+        if (commentReactionDao.isLiked(commentId, userId)) { // 이미 해당 유저가 해당 댓글에 좋아요를 눌렀다면
             commentReactionDao.removeLike(commentId, userId); // 해당 유저 좋아요 내역 삭제
-            commentDao.decrementLikes(commentId); // 게시물 좋아요 수 감소
-        } else { // 해당 유저가 해당 게시물에 좋아요를 누른 적이 없다면
+            commentDao.decrementLikes(commentId); // 댓글 좋아요 수 감소
+        } else { // 해당 유저가 해당 댓글에 좋아요를 누른 적이 없다면
             if (commentReactionDao.isHated(commentId, userId)) { // 싫어요를 누른 상태라면
-                commentReactionDao.removeHate(commentId, userId); // 먼저 해당 유저의 해당 게시물 싫어요 내역 삭제
-                commentDao.decrementHates(commentId); // 해당 게시물의 싫어요 개수 감수
+                commentReactionDao.removeHate(commentId, userId); // 먼저 해당 유저의 해당 댓글 싫어요 내역 삭제
+                commentDao.decrementHates(commentId); // 해당 댓글의 싫어요 개수 감수
             }
-            commentReactionDao.addLike(commentId, userId); // 게시물에 좋아요 내역 추가
-            commentDao.incrementLikes(commentId); // 게시물 좋아요 수 증가
+            commentReactionDao.addLike(commentId, userId); // 댓글에 좋아요 내역 추가
+            commentDao.incrementLikes(commentId); // 댓글 좋아요 수 증가
         }
     }
 
@@ -64,6 +64,11 @@ public class CommentService {
             commentReactionDao.addHate(commentId, userId);
             commentDao.incrementHates(commentId);
         }
+    }
+
+
+    public void blockUser(Long userId, Long blockId) {
+        commentReactionDao.blockUser(userId,blockId);
     }
 
     public String dormantUserComment(long userId, long commentId) {
