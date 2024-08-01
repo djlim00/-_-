@@ -1,5 +1,7 @@
 package com.kuit3.rematicserver.service;
 
+import com.kuit3.rematicserver.common.exception.DatabaseException;
+import com.kuit3.rematicserver.common.exception.UserCommentException;
 import com.kuit3.rematicserver.dao.CommentDao;
 import com.kuit3.rematicserver.dao.CommentHatesDao;
 import com.kuit3.rematicserver.dao.CommentLikesDao;
@@ -10,6 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.COMMENT_NOT_FOUND;
+import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.DATABASE_ERROR;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -61,7 +66,21 @@ public class CommentService {
         }
     }
 
+
     public void blockUser(Long userId, Long blockId) {
         commentReactionDao.blockUser(userId,blockId);
+    }
+
+    public String dormantUserComment(long userId, long commentId) {
+        log.info("PostService.dormantUserComment");
+        if (!commentDao.checkCommentExists(userId, commentId)) {
+            throw new UserCommentException(COMMENT_NOT_FOUND);
+        }
+        int result = commentDao.dormantValidatedComment(userId, commentId);
+        if (result == 1) {
+            return "complete deleting comment";
+        } else {
+            throw new DatabaseException(DATABASE_ERROR);
+        }
     }
 }

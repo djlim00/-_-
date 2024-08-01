@@ -3,22 +3,16 @@ package com.kuit3.rematicserver.controller;
 import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.exception.PostNotFoundException;
 import com.kuit3.rematicserver.common.exception.UnauthorizedUserRequestException;
-
 import com.kuit3.rematicserver.common.exception.UserCommentException;
 import com.kuit3.rematicserver.common.response.BaseResponse;
-
 import com.kuit3.rematicserver.dto.post.*;
 import com.kuit3.rematicserver.dto.search.SearchPostResponse;
 import com.kuit3.rematicserver.service.PostDeletionService;
-import org.springframework.web.multipart.MultipartFile;
-import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
-import com.kuit3.rematicserver.dto.post.GetScrolledCommentsResponse;
-import com.kuit3.rematicserver.dto.post.PostCommentRequest;
-import com.kuit3.rematicserver.dto.post.PostCommentResponse;
 import com.kuit3.rematicserver.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.*;
 
@@ -32,6 +26,9 @@ public class PostController {
     @PostMapping("newpost")
     public BaseResponse<CreatePostResponse> createPost(@PreAuthorizedUser long userId, @RequestBody CreatePostRequest request){
         log.info("PostController::createPost()");
+
+        log.info("userId=" + userId);
+        log.info("request = " + request);
         request.setUser_id(userId);
         return new BaseResponse<>(postService.createPost(request));
     }
@@ -42,6 +39,9 @@ public class PostController {
                                                              @RequestPart MultipartFile image,
                                                              @RequestPart(required = false) String description){
         log.info("PostController::uploadImage()");
+        log.info("userId=" + userId);
+        log.info("postId=" + postId);
+
         if(!postService.existsById(postId)){
             throw new PostNotFoundException(POST_NOT_FOUND);
         }
@@ -56,43 +56,54 @@ public class PostController {
     public BaseResponse<SearchPostResponse> showPage(@RequestParam String category,
                                                      @RequestParam(required = false) Long lastId){
         log.info("PostController::showPage()");
+        log.info("category=" + category);
+        log.info("lastId=" + lastId);
+
         return new BaseResponse<>( postService.getPage(category, lastId));
     }
-
     @GetMapping("/{postId}")
-    public BaseResponse<GetClickedPostResponse> showClickedPost(@PreAuthorizedUser long userId, @PathVariable long postId) {
+    public BaseResponse<GetClickedPostResponse> showClickedPost(@PreAuthorizedUser long userId,
+                                                                @PathVariable long postId) {
         log.info("PostController.showClickedPost");
+        log.info("userId = " + userId);
+        log.info("postId = " + postId);
         return new BaseResponse<>(postService.getValidatedClickedPostInfo(userId, postId));
     }
     @GetMapping("/guest/{postId}")
     public BaseResponse<GetClickedPostResponse> showClickedPostByGuestMode(@PathVariable long postId) {
         log.info("PostController.showClickedPostByGuestMode");
+        log.info("postId = " + postId);
+
         return new BaseResponse<>(postService.getClickedPostInfo(postId));
     }
 
     @GetMapping("/comments/{postId}")
-    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PreAuthorizedUser long userId, @PathVariable long postId, @RequestParam String orderBy) {
+    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PreAuthorizedUser long userId,
+                                                                      @PathVariable long postId,
+                                                                      @RequestParam String orderBy) {
         log.info("PostController.showPostComments");
+        log.info("userId = " + userId);
+        log.info("postId = " + postId);
         return new BaseResponse<>(postService.getValidatedCommentsByPostId(postId, userId, orderBy));
     }
 
     @GetMapping("/comments/guest/{postId}")
-    public BaseResponse<GetScrolledCommentsResponse> showPostCommentsByGuestMode(@PathVariable long postId, @RequestParam String orderBy) {
-        log.info("PostController.showPostComments");
+    public BaseResponse<GetScrolledCommentsResponse> showPostCommentsByGuestMode(@PathVariable long postId,
+                                                                                 @RequestParam String orderBy) {
+        log.info("PostController.showPostCommentsByGuestMode");
+        log.info("postId = " + postId);
+
         return new BaseResponse<>(postService.getCommentsByPostId(postId, orderBy));
     }
 
-
-    @PostMapping("/comments/{comment_id}")
-    public BaseResponse<String> dormantUserComment(@PreAuthorizedUser long userId, @PathVariable("comment_id") long commentId) {
-        log.info("PostController.dormantUserComment");
-        return new BaseResponse<>(postService.dormantUserComment(userId, commentId));
-    }
-
     @PostMapping("/{post_id}/comment")
-    public BaseResponse<PostCommentResponse> leaveNewComment(@PreAuthorizedUser long userId, @PathVariable("post_id") long postId,
+    public BaseResponse<PostCommentResponse> leaveNewComment(@PreAuthorizedUser long userId,
+                                                             @PathVariable("post_id") long postId,
                                                              @RequestBody PostCommentRequest request) {
         log.info("PostController.leaveNewComment");
+        log.info("userId = " + userId);
+        log.info("postId = " + postId);
+
         return new BaseResponse<>(postService.leaveNewComment(userId, postId, request));
     }
 
@@ -101,6 +112,9 @@ public class PostController {
                                                    @PathVariable("comment_id") long commentId,
                                                    @RequestPart MultipartFile image) {
         log.info("PostController.uploadCommentImage");
+        log.info("userId = " + userId);
+        log.info("postId = " + commentId);
+
         if(!postService.isUserMatchesComment(userId, commentId)) {
             throw new UserCommentException(USER_COMMENT_MISMATCH);
         }
@@ -110,6 +124,9 @@ public class PostController {
     @DeleteMapping("{postId}")
     public BaseResponse<Object> deletePost(@PreAuthorizedUser long userId, @PathVariable Long postId){
         log.info("PostController::deletePost()");
+        log.info("userId = " + userId);
+        log.info("postId = " + postId);
+
         if(!postService.existsById(postId)){
             throw new PostNotFoundException(POST_NOT_FOUND);
         }
@@ -124,6 +141,9 @@ public class PostController {
     public BaseResponse<GetPostUpdateFormDto> getUpdateForm(@PreAuthorizedUser long userId,
                                                             @PathVariable("post_id") Long postId){
         log.info("PostController::getUpdateForm()");
+        log.info("userId = " + userId);
+        log.info("postId = " + postId);
+
         if(!postService.existsById(postId)){
             throw new PostNotFoundException(POST_NOT_FOUND);
         }
@@ -134,9 +154,12 @@ public class PostController {
     }
 
     @PatchMapping("{post_id}")
-    public BaseResponse<Object> patchPost(@PathVariable("post_id") Long postId,
+    public BaseResponse<Object> patchPost(@PreAuthorizedUser long userId,
+                                          @PathVariable("post_id") Long postId,
                                           @RequestBody PatchPostDto dto){
         log.info("PostController::updatePost()");
+        log.info("userId = " + userId);
+        log.info("postId = " + postId);
 
         postService.modifyPost(postId, dto);
         return new BaseResponse<>(null);

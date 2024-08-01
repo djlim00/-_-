@@ -45,7 +45,7 @@ public class SearchService {
 
     private Long validateUserRecentVisitedBulletin(long userId) {
         log.info("SearchService.validateUserRecentVisitedBulletin");
-        return searchDao.hasUserRecentVisitedBulletin(userId);
+        return searchDao.getUserRecentVisitedBulletin(userId);
     }
 
 
