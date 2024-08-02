@@ -296,10 +296,11 @@ public class PostService {
     }
 
     private void validateAndSetPostWriter(long postId, GetClickedPostResponse postResponse) {
+        UserInfo userInfo = postInfoDao.getWriterInfo(postId);
         if(!checkAnonymity(postId)) {
-            postResponse.setUserInfo(new UserInfo("익명", null));
+            postResponse.setUserInfo(new UserInfo("익명", userInfo.getWriterId(), null));
         } else {
-            postResponse.setUserInfo(postInfoDao.getWriterInfo(postId));
+            postResponse.setUserInfo(userInfo);
         }
     }
 

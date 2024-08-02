@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserInfo {
     private String writer;
+    private Long writerId;
     private String writerImage;
 }
 

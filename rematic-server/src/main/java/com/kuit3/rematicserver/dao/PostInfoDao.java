@@ -44,13 +44,14 @@ public class PostInfoDao {
     }
 
     public UserInfo getWriterInfo(long postId) {
-        String sql = "select u.nickname, u.profile_image_url from User u " +
+        String sql = "select u.nickname, p.user_id, u.profile_image_url from User u " +
                 "join Post p on u.user_id = p.user_id " +
                 "where p.post_id = :postId;";
         Map<String, Object> param = Map.of("postId", postId);
         return jdbcTemplate.queryForObject(sql, param, (rs, rowNum) -> {
             return new UserInfo(
                     rs.getString("nickname"),
+                    rs.getLong("user_id"),
                     rs.getString("profile_image_url")
             );
         });
