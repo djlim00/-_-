@@ -55,6 +55,7 @@ public class SearchService {
             throw new UserKeywordException(USER_KEYWORD_NOT_FOUND);
         }
         int isSuccess = searchDao.modifyUserRecentKeyword(userId, keywordId);
+        log.info(String.valueOf(isSuccess));
         if(isSuccess == 1) {
             return "deleted keyword successfully";
         }

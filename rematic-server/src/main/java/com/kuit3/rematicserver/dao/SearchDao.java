@@ -88,9 +88,9 @@ public class SearchDao {
         });
     }
 
-    public boolean checkUserRecentKeyword(long userId, long keywordId) {
-        String sql = "select exists (select 1 from Recent_keyword where user_id = :userId and recent_keyword_id = :keywordId);";
-        Map<String, Object> param = Map.of("userId", userId, "keywordId", keywordId);
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
-    }
+        public boolean checkUserRecentKeyword(long userId, long keywordId) {
+            String sql = "select exists (select 1 from Recent_Keyword where user_id = :userId and recent_keyword_id = :keywordId);";
+            Map<String, Object> param = Map.of("userId", userId, "keywordId", keywordId);
+            return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
+        }
 }
