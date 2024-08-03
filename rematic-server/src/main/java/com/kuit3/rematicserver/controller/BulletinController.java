@@ -26,7 +26,7 @@ public class BulletinController {
         return new BaseResponse<>(bulletins);
     }
 
-    @GetMapping("{bulletin_id}/posts")
+    @GetMapping("{bulletin_id}/search")
     public BaseResponse<SearchPostResponse> getBulletinPostsByKeyword(@PreAuthorizedUser long userId,
                                                                       @PathVariable("bulletin_id") Long bulletinId,
                                                                       @RequestParam String keyword,
@@ -35,7 +35,7 @@ public class BulletinController {
         return new BaseResponse<>(postService.searchBulletinPage(userId, bulletinId, keyword, lastId));
     }
 
-    @GetMapping("{bulletin_id}/posts/guest")
+    @GetMapping("{bulletin_id}/search/guest")
     public BaseResponse<SearchPostResponse> getBulletinPostsByKeyword_guestmode(@PathVariable("bulletin_id") Long bulletinId,
                                                                       @RequestParam String keyword,
                                                                       @RequestParam(required = false) Long lastId){
@@ -43,5 +43,11 @@ public class BulletinController {
         return new BaseResponse<>(postService.searchBulletinPage_guestmode(bulletinId, keyword, lastId));
     }
 
+    @GetMapping("{bulletin_id}/posts")
+    public BaseResponse<SearchPostResponse> getBulletinPosts(@PathVariable("bulletin_id") Long bulletinId,
+                                                             @RequestParam(required = false) Long lastId){
+        log.info("BulletinController::getBulletinPosts()");
+        return new BaseResponse<>(postService.searchBulletinPage_guestmode(bulletinId, "", lastId));
+    }
 
 }
