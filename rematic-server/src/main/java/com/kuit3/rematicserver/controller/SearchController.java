@@ -27,6 +27,11 @@ public class SearchController {
                                                    @RequestParam String category,
                                                    @RequestParam(required = false) Long lastId){
         log.info("PostController::search()");
+
+        log.info("keyword =" + keyword );
+        log.info("category =" + category );
+        log.info("lastId =" + lastId );
+
         return new BaseResponse<>(postService.searchPage(userId, keyword, category, lastId));
     }
 
