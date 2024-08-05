@@ -121,7 +121,7 @@ public class PostInfoDao {
                 "u.profile_image_url as parent_image_url, c.sentences as parent_comment, c.parent_id as parent_id, " +
                 "c.created_at as parent_time, c.likes as parent_likes, c.hates as parent_hates " +
                 "from Comment c join User u on c.user_id = u.user_id " +
-                "where c.post_id = :postId and c.parent_id = 0 and c.status = 'active' " +
+                "where c.post_id = :postId and c.parent_id = 0 and c.status = 'active' and u.user_id = 'active' " +
                 "order by c.created_at desc limit 10;";
         Map<String, Object> param = Map.of("postId", postId);
         return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
