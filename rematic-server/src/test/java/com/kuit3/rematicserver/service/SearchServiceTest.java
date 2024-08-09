@@ -42,7 +42,7 @@ public class SearchServiceTest {
     @Test
     @Transactional
     @DisplayName("최근 검색어가 없을 때 검색어 삭제")
-    void KeywordDeletionFailTest() {
+    void keywordDeletionFailTest() {
         Long userId = 0L;
         Long keywordId = 0L;
         //given
