@@ -42,4 +42,9 @@ public class UserScrapService {
         postDao.decrementScraps(userScrap.getPostId());
         userScrapDao.deleteById(scrapId);
     }
+
+    public void deleteByUserId(long userId) {
+        log.info("UserScrapService::deleteByUserId()");
+        userScrapDao.deleteByUserId(userId);
+    }
 }
