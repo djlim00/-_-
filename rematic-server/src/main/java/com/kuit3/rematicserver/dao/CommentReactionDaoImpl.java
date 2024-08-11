@@ -69,4 +69,13 @@ public class CommentReactionDaoImpl implements CommentReactionDao{
                 .addValue("user_id", userId);
         jdbcTemplate.update(sql, param);
     }
+
+    @Override
+    public void blockUser(Long userId, Long blockId) {
+        String sql ="INSERT INTO Blocked_User_List (user_id,block_id) VALUES (:user_id,:block_id)";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("user_id", userId)
+                .addValue("block_id", blockId);
+        jdbcTemplate.update(sql, param);
+    }
 }

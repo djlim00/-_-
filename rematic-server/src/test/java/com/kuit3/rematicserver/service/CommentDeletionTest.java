@@ -22,30 +22,22 @@ public class CommentDeletionTest {
     @Autowired
     private PostDao postDao;
 
-    @DisplayName("댓글 정상 삭제")
-    @Test
-    @Transactional
-    void commentDeletionSuccess() {
-        //1번 유저가 0L 게시물의 부모 댓글을 삭제했을 때 자식 댓글 까지 조회가 불가능한지 테스트
-        //given
-
-        Long postId = postDao.createPost(CreatePostRequest.builder()
-                .title("댓글 등록 게시글")
-                .content("게시글 내용")
-                .category("카테고리")
-                .genre("장르")
-                .anonymity(true)
-                .has_image(false)
-                .bulletin_id(1L)
-                .user_id(1L).build());
-        assertEquals(0L, postId);
-//        PostCommentRequest parentComment = new PostCommentRequest("this is test parentComment", 0L);
-//        PostCommentRequest childComment = new PostCommentRequest("this is test childComment", 1L);
-//        postInfoDao.leaveCommentWrittenByUser(1L, postId, parentComment);
-//        postInfoDao.leaveCommentWrittenByUser(1L, postId, childComment);
-//        //when
-//        commentDao.dormantValidatedComment(1L, 0L);
-//        //then
-//        assertEquals(postInfoDao.getCountOfComments(postId), 0);
+        @DisplayName("댓글 정상 삭제")
+        @Test
+        @Transactional
+        void commentDeletionSuccess() {
+            //1번 유저가 0L 게시물의 부모 댓글을 삭제했을 때 자식 댓글 까지 조회가 불가능한지 테스트
+            //given
+            Long postId = postDao.createPost(new CreatePostRequest("댓글 등록 게시글", "게시글 내용",
+                    true, "카테고리", "장르", true,  1L, 1L));
+            assertEquals(0L, postId);
+            PostCommentRequest parentComment = new PostCommentRequest("this is test parentComment", 0L);
+            PostCommentRequest childComment = new PostCommentRequest("this is test childComment", 1L);
+            postInfoDao.leaveCommentWrittenByUser(1L, postId, parentComment);
+            postInfoDao.leaveCommentWrittenByUser(1L, postId, childComment);
+            //when
+            commentDao.dormantValidatedComment(1L, 0L);
+            //then
+            assertEquals(postInfoDao.getCountOfComments(postId), 0);
     }
 }

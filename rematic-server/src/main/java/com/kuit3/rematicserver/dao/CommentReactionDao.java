@@ -7,4 +7,6 @@ public interface CommentReactionDao {
     void removeLike(Long postId, Long userId);
     void addHate(Long postId, Long userId);
     void removeHate(Long postId, Long userId);
+
+    void blockUser(Long userId, Long blockId);
 }

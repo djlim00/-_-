@@ -13,13 +13,13 @@ public class PostReactionController {
     private final PostReactionService postReactionService;
 
     @PostMapping("/{post_id}/like")
-    public BaseResponse<String> likePost(@PathVariable("post_id") Long postId, @PreAuthorizedUser Long userId) {
+    public BaseResponse<String> likePost(@PathVariable("post_id") Long postId, @PreAuthorizedUser long userId) {
         postReactionService.likePost(postId, userId);
         return new BaseResponse<>("좋아요");
     }
 
     @PostMapping("/{post_id}/hate")
-    public BaseResponse<String> hatePost(@PathVariable("post_id") Long postId, @PreAuthorizedUser Long userId) {
+    public BaseResponse<String> hatePost(@PathVariable("post_id") Long postId, @PreAuthorizedUser long userId) {
         postReactionService.hatePost(postId, userId);
         return new BaseResponse<>("싫어요");
     }

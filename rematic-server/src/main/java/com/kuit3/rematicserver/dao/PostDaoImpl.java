@@ -4,6 +4,7 @@ import com.kuit3.rematicserver.dto.post.CreatePostRequest;
 import com.kuit3.rematicserver.dto.post.SearchPostDto;
 import com.kuit3.rematicserver.entity.Post;
 
+import com.kuit3.rematicserver.entity.Ranking;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -11,7 +12,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -105,11 +105,6 @@ public class PostDaoImpl implements PostDao{
         jdbcTemplate.update(sql, param, keyHolder);
 
         return Objects.requireNonNull(keyHolder.getKey()).longValue();
-    }
-
-    @Override
-    public boolean hasPostWithId(Long postId) {
-        return false;
     }
 
     @Override
@@ -234,6 +229,50 @@ public class PostDaoImpl implements PostDao{
                 .addValue("lastId", lastId);
 
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
+    }
+
+    @Override
+    public List<Ranking> findRankingByCategory(String category) {
+        String sql = "SELECT realtime_likes.post_id AS post_id, category, recent_likes, IFNULL(recnet_hates, 0) AS recent_hates FROM (\n" +
+                "    SELECT active_post.post_id, active_post.category ,IFNULL(clicked_likes.likes, 0) AS recent_likes FROM (\n" +
+                "        SELECT post_id, category FROM Post WHERE status = 'active' AND likes >= hates AND category = :category) AS active_post\n" +
+                "               LEFT OUTER JOIN (SELECT post_id, count(*) AS likes FROM PostLikes WHERE created_at >= now() - interval 12 hour GROUP BY post_id) AS clicked_likes\n" +
+                "                               ON active_post.post_id = clicked_likes.post_id) AS realtime_likes\n" +
+                "         LEFT OUTER JOIN (SELECT h.post_id, count(*) AS recnet_hates FROM PostHates AS h WHERE h.created_at >= now() - interval 12 hour GROUP BY h.post_id) AS realtime_hates\n" +
+                "                         ON realtime_likes.post_id = realtime_hates.post_id\n" +
+                "ORDER BY recent_likes DESC LIMIT 10";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("category", category);
+
+       return jdbcTemplate.query(sql, param, rankingRowMapper());
+    }
+
+    private RowMapper<Ranking> rankingRowMapper() {
+        return (rs, rowNum) -> {
+            Ranking ranking = Ranking.builder()
+                    .recentLikes(rs.getLong("recent_likes"))
+                    .recentHates(rs.getLong("recent_hates"))
+                    .category(rs.getString("category"))
+                    .postId(rs.getLong("post_id"))
+                    .build();
+            return ranking;
+        };
+    }
+
+    @Override
+    public void incrementScraps(Long postId) {
+        String sql = "UPDATE Post SET scraps = scraps + 1 WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        jdbcTemplate.update(sql, param);
+    }
+
+    @Override
+    public void decrementScraps(Long postId) {
+        String sql = "UPDATE Post SET scraps = scraps - 1 WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        jdbcTemplate.update(sql, param);
     }
 }
 

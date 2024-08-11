@@ -65,42 +65,34 @@ public class CommentServiceTest {
         //then
         assertEquals(result, "complete deleting comment");
     }
-
     @Test
     @Transactional
-    @DisplayName("검색어 정상 삭제 V2")
+    @DisplayName("검색어 정상 삭제 v2")
     void commentDeletionSuccessV2() {
-        //댓글을 적용할 게시글 생성
-        Long userId = 1L;
-        //게시글 생성Id = 0L
-        Long postId = postDao.createPost(CreatePostRequest.builder()
-                .title("댓글 등록 게시글")
-                .content("게시글 내용")
-                .category("카테고리")
-                .genre("장르")
-                .anonymity(true)
-                .has_image(false)
-                .bulletin_id(1L)
-                .user_id(userId).build());
-        List<Long> respect = new ArrayList<>();
-        respect.add(0L);
-        respect.add(1L);
+        //1번 유저가 0L 게시물의 부모 댓글을 삭제했을 때 자식 댓글 까지 조회가 불가능한지 테스트
         //given
-        given(postInfoDao.isPostExists(postId)).willReturn(true);
-        //부모댓글 생성
+        //게시글 생성
+        Long postId = postDao.createPost(new CreatePostRequest("댓글 등록 게시글", "게시글 내용",
+                true, "카테고리", "장르", true,  1L, 1L));
+        Long newPost = postDao.createPost(new CreatePostRequest("댓글 등록 게시글", "게시글 내용",
+                true, "카테고리", "장르", true,  1L, 1L));
+        //댓글 생성
         PostCommentRequest parentComment = new PostCommentRequest("this is test parentComment", 0L);
-        given(postInfoDao.leaveCommentWrittenByUser(userId, postId, parentComment)).willReturn(respect);
-        //댓글 삭제 전제 조건
-        given(commentDao.checkCommentExists(userId, 1L)).willReturn(true);
-        //when
-        commentDao.dormantValidatedComment(userId, 1L);
-        //then
-        assertEquals(postInfoDao.getCountOfComments(1L), 0);
-//        //자식댓글 생성
         PostCommentRequest childComment = new PostCommentRequest("this is test childComment", 1L);
-        postService.leaveNewComment(userId, postId, childComment);
-
-
+        List<Long> result1 = new ArrayList<>();
+        List<Long> result2 = new ArrayList<>();
+        result1.add(0L);
+        result2.add(0L);
+        result1.add(1L);
+        result2.add(1L);
+        //when
+        lenient().when(postInfoDao.leaveCommentWrittenByUser(1L, postId, parentComment))
+                .thenReturn(result1);
+        lenient().when(postInfoDao.leaveCommentWrittenByUser(1L, postId, childComment))
+                .thenReturn(result2);
+        lenient().when(commentDao.dormantValidatedComment(1L, 0L)).thenReturn(1);
+        //then
+        assertEquals(0L, postInfoDao.getCountOfComments(postId));
     }
 
     @Test
