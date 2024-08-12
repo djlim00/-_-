@@ -8,7 +8,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -31,21 +30,5 @@ public class RecentKeywordDaoImpl implements RecentKeywordDao{
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(sql, param, keyHolder);
         return Objects.requireNonNull(keyHolder.getKey()).longValue();
-    }
-
-    @Override
-    public int deleteByUserId(long userId) {
-        String sql = "DELETE FROM Recent_Keyword WHERE user_id = :userId";
-        MapSqlParameterSource param = new MapSqlParameterSource()
-                .addValue("userId", userId);
-        return jdbcTemplate.update(sql, param);
-    }
-
-    @Override
-    public List<Long> findByUserId(long userId) {
-        String sql = "SELECT recent_keyword_id FROM Recent_Keyword WHERE user_id = :user_id";
-        MapSqlParameterSource param = new MapSqlParameterSource()
-                .addValue("user_id", userId);
-        return jdbcTemplate.query(sql, param, (rs, rowNum) -> rs.getLong("recent_keyword_id"));
     }
 }

@@ -1,5 +1,6 @@
 package com.kuit3.rematicserver.dao;
 
+import com.kuit3.rematicserver.entity.Post;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -25,8 +26,8 @@ public class CommentDao {
         return jdbcTemplate.update(sql, param);
     }
 
-    public List<Long> findByPostId(Long postId) {
-        String sql = "select comment_id from Comment WHERE status='active' AND post_id = :post_id";
+    public List<Long> findAllByPostId(Long postId) {
+        String sql = "select comment_id from Comment WHERE post_id = :post_id";
         MapSqlParameterSource param  = new MapSqlParameterSource()
                 .addValue("post_id", postId);
         return jdbcTemplate.query(sql, param, (rs, r)->rs.getLong("comment_id"));

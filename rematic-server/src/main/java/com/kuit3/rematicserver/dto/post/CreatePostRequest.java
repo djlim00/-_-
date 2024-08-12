@@ -8,7 +8,6 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class CreatePostRequest {
     @JsonProperty("title")
     private String title;

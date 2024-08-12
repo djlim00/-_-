@@ -135,4 +135,3 @@ spring:
 
   messages:
     basename: errors
-
