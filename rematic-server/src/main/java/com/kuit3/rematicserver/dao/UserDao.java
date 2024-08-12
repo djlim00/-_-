@@ -8,6 +8,7 @@ import com.kuit3.rematicserver.dto.user.UserMyPageResponse;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -28,7 +29,7 @@ public class UserDao {
     }
 
     public Boolean hasUserWithDuplicateEmail(String email) {
-        String sql = "select exists(select * from User where user_email = :email)";
+        String sql = "select exists(select * from User where status='active' and user_email = :email)";
         Map<String, String> param = Map.of("email", email);
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, Boolean.class));
     }
@@ -96,5 +97,13 @@ public class UserDao {
             );
         });
 
+    }
+
+    public int modifyStatus(long userId, String status) {
+        String sql = "UPDATE User SET status = :status where user_id = :userId ";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("status", status)
+                .addValue("userId", userId);
+        return jdbcTemplate.update(sql, param);
     }
 }

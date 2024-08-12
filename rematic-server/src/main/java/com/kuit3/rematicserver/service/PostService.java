@@ -186,10 +186,10 @@ public class PostService {
         //부모 리스트 가져오기(ok)
         List<CommentInfo> parentComments = null;
         if(orderBy.equals("timeStandard")) {
-            parentComments = postInfoDao.getTimeStandCommentsByPostId(postId);
+            parentComments = postInfoDao.getTimeStandCommentsByPostId(postId); // ***
         }
         if(orderBy.equals("likeStandard")) {
-            parentComments = postInfoDao.getLikeStandCommentsByPostId(postId);
+            parentComments = postInfoDao.getLikeStandCommentsByPostId(postId); // ***
         }
         //사용자가 차단한 사용자ID 목록 가져오기
         List<Long> deniedUserIds = postInfoDao.getDeniedUsers(userId);
@@ -206,7 +206,7 @@ public class PostService {
             parentComment.setIsHated(hatesHistory.getOrDefault(parentComment.getCommentId(), false));
         }
         //자식 댓글 가져오기
-        List<CommentInfo> childComments = postInfoDao.getChildCommentsWithPrefer(userId, parentCommentIds);
+        List<CommentInfo> childComments = postInfoDao.getChildCommentsWithPrefer(userId, parentCommentIds); // ***
         childComments.removeIf(childComment -> deniedUserIds.contains(childComment.getWriterId()));
         List<Long> childCommentIds = childComments.stream()
                 .map(CommentInfo::getCommentId)
@@ -257,7 +257,7 @@ public class PostService {
                 .collect(Collectors.toList());
 
         //자식 댓글 가져오기
-        Map<Long, List<CommentInfo>> childComments = postInfoDao.getChildCommentsWithoutPrefer(parentCommentIds)
+        Map<Long, List<CommentInfo>> childComments = postInfoDao.getChildCommentsWithoutPrefer(parentCommentIds)// ***
                 .stream()
                 .collect(Collectors.groupingBy(CommentInfo::getParentId));
 
@@ -397,5 +397,11 @@ public class PostService {
             hasNext = postDao.hasNextBulletinPage(bulletinId, keyword, lastPostId);
         }
         return hasNext;
+    }
+
+    public List<Long> findByUserId(long userId) {
+        log.info("PostService::findByUserId()");
+        List<Post> posts = postDao.findByUserId(userId);
+        return posts.stream().map(Post::getPostId).collect(Collectors.toList());
     }
 }
