@@ -6,19 +6,16 @@ import com.kuit3.rematicserver.dao.PostDao;
 import com.kuit3.rematicserver.dao.PostInfoDao;
 import com.kuit3.rematicserver.dto.post.CreatePostRequest;
 import com.kuit3.rematicserver.dto.post.PostCommentRequest;
-import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.mockito.BDDMockito.*;
@@ -31,30 +28,14 @@ public class CommentServiceTest {
     private CommentService commentService;
     @Mock
     private CommentDao commentDao;
-    @InjectMocks
-    private PostService postService;
     @Mock
     private PostInfoDao postInfoDao;
     @Mock
     private PostDao postDao;
 
-//    @BeforeEach
-//    @DisplayName("댓글 테스트 환경 설정")
-//    void init() {
-//        Date currentTime = new Date(System.currentTimeMillis());
-//        //부모댓글 2개, 첫번째 부모에 자식 댓글 2개인 상황
-//        CommentInfo parent1 = new CommentInfo(1L, "parent1", 1L, "image1.jpg", "부모댓글1",
-//                0L, new Timestamp(currentTime.getTime()), 0L, false, 0L, false, true);
-//        CommentInfo firstChild1 = new CommentInfo(2L, "child1", 2L, "image1.jpg", "자식댓글1",
-//                1L, new Timestamp(currentTime.getTime()-3600*1000), 0L, false, 0L, false, false);
-//        CommentInfo secondChild1 = new CommentInfo(3L, "child2", 3L, "image1.jpg", "자식댓글2",
-//                1L, new Timestamp(currentTime.getTime()-3600*1000), 0L, false, 0L, false, false);
-//        CommentInfo parent2 = new CommentInfo(4L, "parent2", 4L, "image1.jpg", "부모댓글2",
-//                0L, new Timestamp(currentTime.getTime()), 0L, false, 0L, false, true);
-//    }
     @Test
     @Transactional
-    @DisplayName("검색어 정상 삭제")
+    @DisplayName("댓글 정상 삭제")
     void commentDeletionSuccess() {
         Long userId = 1L;
         //given
@@ -67,7 +48,7 @@ public class CommentServiceTest {
     }
     @Test
     @Transactional
-    @DisplayName("검색어 정상 삭제 v2")
+    @DisplayName("댓글 정상 삭제 v2")
     void commentDeletionSuccessV2() {
         //1번 유저가 0L 게시물의 부모 댓글을 삭제했을 때 자식 댓글 까지 조회가 불가능한지 테스트
         //given
@@ -97,7 +78,7 @@ public class CommentServiceTest {
 
     @Test
     @Transactional
-    @DisplayName("검색어 삭제 실패")
+    @DisplayName("댓글 삭제 실패")
     void commentDeletionFail() {
         //given
         Long userId = 1L;
