@@ -32,4 +32,6 @@ public interface PostDao {
     void incrementScraps(Long postId);
 
     void decrementScraps(Long postId);
+
+    List<Post> findByUserId(long userId);
 }

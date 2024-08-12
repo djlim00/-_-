@@ -13,6 +13,7 @@ import com.kuit3.rematicserver.dto.user.PutNickNameRequest;
 import com.kuit3.rematicserver.dto.user.UserMyPageResponse;
 
 import com.kuit3.rematicserver.service.PostService;
+import com.kuit3.rematicserver.service.UserDeletionService;
 import com.kuit3.rematicserver.service.UserScrapService;
 import com.kuit3.rematicserver.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class UserController {
     private final UserService userService;
     private final UserScrapService userScrapService;
     private final PostService postService;
+    private final UserDeletionService userDeletionService;
 
     @PutMapping("/nickname")
     public BaseResponse<Object> changeNickname(@PreAuthorizedUser long userId, @RequestBody PutNickNameRequest request){
@@ -80,6 +82,14 @@ public class UserController {
             throw new UserScrapNotFoundException(USER_SCRAP_NOT_FOUND);
         }
         userScrapService.deleteById(scrapId);
+        return new BaseResponse<>(null);
+    }
+
+    @DeleteMapping("info")
+    public BaseResponse<Object> deleteUserInfo(@PreAuthorizedUser long userId){
+        log.info("UserController::deleteUserInfo()");
+        log.info("userId=" + userId);
+        userDeletionService.handle(userId);
         return new BaseResponse<>(null);
     }
 }
