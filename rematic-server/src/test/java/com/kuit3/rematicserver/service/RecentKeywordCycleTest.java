@@ -25,6 +25,8 @@ public class RecentKeywordCycleTest {
     private KakaoAuthApiClient kakaoAuthApiClient;
 
     @Autowired
+    private SearchService searchService;
+    @Autowired
     private RecentKeywordDaoImpl recentKeywordDao;
     @Autowired
     private SearchDao searchDao;
@@ -39,7 +41,7 @@ public class RecentKeywordCycleTest {
         long secondWord = recentKeywordDao.saveKeyword(userId, "사용자 검색어 2");
         long thirdWord = recentKeywordDao.saveKeyword(userId, "사용자 검색어 3");
         //when
-        searchDao.modifyUserRecentKeyword(userId, secondWord);
+        searchService.deactivateUserKeyword(userId, secondWord);
         //then
         List<UserRecentKeywordResponse> result = searchDao.getKeywordsByUserId(userId);
         assertThat(result.size()).isEqualTo(2);
