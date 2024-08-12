@@ -109,7 +109,7 @@ public class PostDaoImpl implements PostDao{
 
     @Override
     public Post findById(Long postId) {
-        String sql = "select * from Post where status = 'active' and post_id = :post_id";
+        String sql = "select * from Post where post_id = :post_id";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("post_id", postId);
 
@@ -274,14 +274,5 @@ public class PostDaoImpl implements PostDao{
                 .addValue("post_id", postId);
         jdbcTemplate.update(sql, param);
     }
-
-    @Override
-    public List<Post> findByUserId(long userId) {
-        String sql = "select * from Post where status='active' and user_id = :user_id";
-        MapSqlParameterSource param = new MapSqlParameterSource()
-                .addValue("user_id", userId);
-        return jdbcTemplate.query(sql, param, postRowMapper());
-    }
-
 }
 

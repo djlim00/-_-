@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.util.List;
 
 @Slf4j
 @Repository
@@ -25,13 +24,4 @@ public class PostLikesDao {
                 .addValue("post_id", postId);
         return jdbcTemplate.update(sql, param);
     }
-
-    public List<Long> findByPostId(long postId) {
-        String sql = "SELECT post_likes_id FROM PostLikes WHERE post_id = :postId";
-        MapSqlParameterSource param = new MapSqlParameterSource()
-                .addValue("postId", postId);
-        return jdbcTemplate.query(sql, param, (rs, rowNum) -> rs.getLong("post_likes_id"));
-    }
-
-
 }

@@ -27,7 +27,7 @@ public class CommentService {
 
     public void deleteCommentsOfPost(Long postId) {
         log.info("CommentService::deleteCommentsOfPost()");
-        List<Long> postCommentIds = commentDao.findByPostId(postId);
+        List<Long> postCommentIds = commentDao.findAllByPostId(postId);
         for(Long commentId : postCommentIds) {
             commentLikesDao.deleteByCommentId(commentId);
             commentHatesDao.deleteByCommentId(commentId);
@@ -65,6 +65,7 @@ public class CommentService {
             commentDao.incrementHates(commentId);
         }
     }
+
 
     public void blockUser(Long userId, Long blockId) {
         commentReactionDao.blockUser(userId,blockId);
