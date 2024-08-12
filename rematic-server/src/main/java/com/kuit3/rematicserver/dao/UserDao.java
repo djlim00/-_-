@@ -99,10 +99,11 @@ public class UserDao {
 
     }
 
-    public int modifyStatus(String status) {
-        String sql = "UPDATE User SET status = :status";
+    public int modifyStatus(long userId, String status) {
+        String sql = "UPDATE User SET status = :status where user_id = :userId ";
         MapSqlParameterSource param = new MapSqlParameterSource()
-                .addValue("status", status);
+                .addValue("status", status)
+                .addValue("userId", userId);
         return jdbcTemplate.update(sql, param);
     }
 }
