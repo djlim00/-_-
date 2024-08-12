@@ -49,7 +49,12 @@ public class UserService {
         }
         if(result.getIsActive() == 0) {
             throw new UserDormantException(USER_DORMANT_STATUS);
-
         }
+    }
+
+    public void deleteUser(long userId) {
+        log.info("UserService::deleteUser()");
+        checkUserExistsOrDormant(userId);
+        userDao.modifyStatus("dormant"); // 회원 탈퇴시에 dormant로 변경하는 게 맞는가?
     }
 }

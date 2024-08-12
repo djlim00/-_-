@@ -11,6 +11,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -71,8 +72,31 @@ public class UserScrapDao {
 
     private RowMapper<UserScrap> userScrapRowMapper() {
         return (rs, rowNum) -> {
-            UserScrap userScrap = new UserScrap(rs.getLong("scrap_id"), rs.getLong("user_id"), rs.getLong("post_id"));
+            UserScrap userScrap = new UserScrap(rs.getLong("scrap_id"),
+                    rs.getLong("user_id"),
+                    rs.getLong("post_id"));
             return userScrap;
         };
+    }
+
+    public int deleteByUserId(long userId) {
+        String sql = "DELETE FROM UserScrap WHERE user_id = :userId";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("userId", userId);
+        return jdbcTemplate.update(sql, param);
+    }
+
+    public List<UserScrap> findByPostId(long postId) {
+        String sql = "SELECT scrap_id FROM UserScrap WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        return jdbcTemplate.query(sql, param, userScrapRowMapper());
+    }
+
+    public List<UserScrap> findByUserId(long userId) {
+        String sql = "SELECT scrap_id FROM UserScrap WHERE user_id = :user_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("user_id", userId);
+        return jdbcTemplate.query(sql, param, userScrapRowMapper());
     }
 }
