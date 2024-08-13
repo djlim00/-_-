@@ -97,7 +97,7 @@ public class PostDaoImpl implements PostDao{
                .addValue("has_image", request.getHas_image() ? "있음" : "없음")
                .addValue("category", request.getCategory())
                .addValue("genre", request.getGenre())
-               .addValue("anonymity", request.getAnonymity() ? "공개" : "익명")
+               .addValue("anonymity", request.getAnonymity() ? "익명" : "공개")
                .addValue("user_id", request.getUser_id())
                .addValue("bulletin_id", request.getBulletin_id());
 
@@ -122,14 +122,14 @@ public class PostDaoImpl implements PostDao{
                    .postId(rs.getLong("post_id"))
                    .title(rs.getString("title"))
                    .content(rs.getString("content"))
-                   .hasImage(rs.getString("has_image") == "있음")
+                   .hasImage(rs.getString("has_image").equals("있음"))
                    .category(rs.getString("category"))
                    .hates(rs.getLong("hates"))
                    .likes(rs.getLong("likes"))
                    .scraps(rs.getLong("scraps"))
                    .views(rs.getLong("views"))
                    .realtimeViews(rs.getLong("realtime_views"))
-                   .anonymity(rs.getString("anonymity") == "공개")
+                   .anonymity(rs.getString("anonymity").equals("익명"))
                    .status(rs.getString("status"))
                    .userId(rs.getLong("user_id"))
                    .bulletinId(rs.getLong("bulletin_id")).build();
