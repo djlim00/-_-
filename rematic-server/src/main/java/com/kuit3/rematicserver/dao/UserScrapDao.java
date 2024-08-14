@@ -99,4 +99,12 @@ public class UserScrapDao {
                 .addValue("user_id", userId);
         return jdbcTemplate.query(sql, param, userScrapRowMapper());
     }
+
+    public Long findByUserIdAndPostId(long userId, long postId) {
+        String sql = "SELECT scrap_id FROM UserScrap WHERE user_id = :user_id AND post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("user_id", userId)
+                .addValue("post_id", postId);
+        return jdbcTemplate.queryForObject(sql, param, long.class);
+    }
 }

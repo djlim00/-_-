@@ -1,5 +1,6 @@
 package com.kuit3.rematicserver.service;
 
+import com.kuit3.rematicserver.common.exception.InvalidScrapUserIdException;
 import com.kuit3.rematicserver.dao.PostDao;
 import com.kuit3.rematicserver.dao.UserScrapDao;
 import com.kuit3.rematicserver.entity.Post;
@@ -7,6 +8,8 @@ import com.kuit3.rematicserver.entity.UserScrap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.INVALID_SCRAP_USERID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -22,6 +25,9 @@ public class UserScrapService {
     public long create(long userId, Long postId) {
         log.info("UserScrapService::create()");
         Post post = postDao.findById(postId);
+        if(post.getUserId() == userId){
+            throw new InvalidScrapUserIdException(INVALID_SCRAP_USERID);
+        }
         postDao.incrementScraps(postId);
         return userScrapDao.save(userId, postId);
     }

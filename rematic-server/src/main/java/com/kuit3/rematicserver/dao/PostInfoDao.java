@@ -76,7 +76,8 @@ public class PostInfoDao {
                     rs.getLong("hates"),
                     false,
                     rs.getLong("scraps"),
-                    false
+                    false,
+                    null
             );
         });
     }

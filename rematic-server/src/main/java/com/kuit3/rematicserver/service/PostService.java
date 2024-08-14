@@ -3,12 +3,11 @@ package com.kuit3.rematicserver.service;
 
 import com.kuit3.rematicserver.aws.S3Uploader;
 import com.kuit3.rematicserver.common.exception.*;
+import com.kuit3.rematicserver.dao.*;
 import com.kuit3.rematicserver.dto.post.*;
 import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
 import com.kuit3.rematicserver.dto.post.commentresponse.FamilyComment;
 import com.kuit3.rematicserver.dto.post.postresponse.PostInfo;
-import com.kuit3.rematicserver.dao.BulletinDao;
-import com.kuit3.rematicserver.dao.PostImageDao;
 import com.kuit3.rematicserver.dto.post.CreatePostResponse;
 import com.kuit3.rematicserver.dto.post.CreatePostRequest;
 
@@ -16,10 +15,6 @@ import com.kuit3.rematicserver.common.exception.S3FileNumberLimitExceededExcepti
 
 import com.kuit3.rematicserver.entity.Bulletin;
 import com.kuit3.rematicserver.entity.Post;
-
-import com.kuit3.rematicserver.dao.PostDao;
-import com.kuit3.rematicserver.dao.PostInfoDao;
-import com.kuit3.rematicserver.dao.RecentKeywordDao;
 
 import com.kuit3.rematicserver.dto.search.SearchPostResponse;
 import com.kuit3.rematicserver.dto.post.postresponse.UserInfo;
@@ -48,6 +43,7 @@ public class PostService {
     private final PostImageDao postImageDao;
     private final S3Uploader s3Uploader;
     private final PostInfoDao postInfoDao;
+    private final UserScrapDao userScrapDao;
     private final int MAX_IMAGE_NUMBER = 30;
 
     public SearchPostResponse getPage(String category, Long lastId){
@@ -123,6 +119,7 @@ public class PostService {
     public boolean existsById(Long postId) {
         return postDao.existsById(postId);
     }
+
     //로그인 사용자용
     public GetClickedPostResponse getValidatedClickedPostInfo(long userId, long postId) {
         log.info("PostService.getValidatedClickedPostInfo");
@@ -146,6 +143,9 @@ public class PostService {
         postInfo.setIsLiked(userPreference.get(0));
         postInfo.setIsHated(userPreference.get(1));
         postInfo.setIsScraped(userPreference.get(2));
+        if(postInfo.getIsScraped()){ // 스크랩이 있다면 id를 저장
+            postInfo.setScrapId(userScrapDao.findByUserIdAndPostId(userId, postId));
+        }
         postResponse.setPostInfo(postInfo);
         return postResponse;
     }
