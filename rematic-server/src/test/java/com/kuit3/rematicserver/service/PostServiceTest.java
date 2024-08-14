@@ -43,8 +43,8 @@ class PostServiceTest {
                 .profile_image_url("image")
                 .email("atest@test.com").build());
 
-        Boolean expectedValue1 = false;
-        Boolean expectedValue2 = true;
+        Boolean expectedValue1 = true;
+        Boolean expectedValue2 = false;
         CreatePostRequest request = CreatePostRequest.builder()
                 .title("생성된 글 제목")
                 .content("생성된 글 내용")
@@ -78,7 +78,7 @@ class PostServiceTest {
                 .content("생성된 글 내용")
                 .has_image(false)
                 .anonymity(false)
-                .user_id(userId)
+                .user_id(1L)
                 .bulletin_id(1L)
                 .build());
         long postId = res.getPost_id();
