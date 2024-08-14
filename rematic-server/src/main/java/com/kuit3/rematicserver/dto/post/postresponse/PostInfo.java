@@ -22,4 +22,5 @@ public class PostInfo {
     private Boolean isHated;
     private Long scraps;
     private Boolean isScraped;
+    private Long scrapId;
 }

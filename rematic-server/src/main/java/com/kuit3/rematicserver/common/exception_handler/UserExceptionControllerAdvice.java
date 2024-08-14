@@ -72,4 +72,11 @@ public class UserExceptionControllerAdvice {
         log.error("[handle_UserScrapNotFoundException]", e);
         return new BaseErrorResponse(USER_SCRAP_NOT_FOUND);
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidScrapUserIdException.class)
+    public BaseErrorResponse handle_InvalidScrapUserIdException(Exception e) {
+        log.error("[handle_InvalidScrapUserIdException]", e);
+        return new BaseErrorResponse(INVALID_SCRAP_USERID);
+    }
 }
