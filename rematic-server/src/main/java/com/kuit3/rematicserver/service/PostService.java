@@ -214,7 +214,6 @@ public class PostService {
                 .map(CommentInfo::getCommentId)
                 .collect(Collectors.toList());
         //자식 댓글 좋아요 싫어요 여부 매핑
-        //리스트가 비어 있을 때 에러가 남.
         if(!childCommentIds.isEmpty()){
             Map<Long, Boolean> childLikeHistory = postInfoDao.getCommentLikesHistory(userId, childCommentIds);
             Map<Long, Boolean> childHateHistory = postInfoDao.getCommentHatesHistory(userId, childCommentIds);

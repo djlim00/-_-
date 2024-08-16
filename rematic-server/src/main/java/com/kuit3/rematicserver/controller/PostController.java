@@ -78,7 +78,7 @@ public class PostController {
     }
 
     @GetMapping("/comments/{postId}")
-    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@RequestParam long userId,
+    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PreAuthorizedUser long userId,
                                                                       @PathVariable long postId,
                                                                       @RequestParam(defaultValue = "likeStandard")
                                                                           String orderBy) {
