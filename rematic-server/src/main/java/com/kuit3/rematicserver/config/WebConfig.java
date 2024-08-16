@@ -25,7 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/search/**")
                 .excludePathPatterns("/search/post/guest")
                 .addPathPatterns("/bulletin/search")
-                .addPathPatterns("/post/**")
+                //.addPathPatterns("/post/**")
                 .excludePathPatterns("/post")
                 .excludePathPatterns("/post/guest/**")
                 .excludePathPatterns("/post/comments/guest/**")

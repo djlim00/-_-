@@ -2,7 +2,6 @@ package com.kuit3.rematicserver.dao;
 
 import com.kuit3.rematicserver.dto.post.PostCommentRequest;
 import com.kuit3.rematicserver.dto.post.commentresponse.CommentInfo;
-import com.sun.jdi.ObjectReference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -123,7 +122,7 @@ public class PostInfoDao {
                 "c.created_at as parent_time, c.likes as parent_likes, c.hates as parent_hates " +
                 "from Comment c left join (select * from User where status = 'active') as u on c.user_id = u.user_id " +
                 "where c.post_id = :postId and c.parent_id = 0 and c.status = 'active'" +
-                "order by c.created_at desc limit 10;";
+                "order by c.created_at desc;";
         Map<String, Object> param = Map.of("postId", postId);
         return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
             CommentInfo parentComment = new CommentInfo
@@ -154,7 +153,7 @@ public class PostInfoDao {
                 "c.created_at as parent_time, c.likes as parent_likes, c.hates as parent_hates " +
                 "from Comment c left join (select * from User where status = 'active') as u on c.user_id = u.user_id " +
                 "where c.post_id = :postId and c.parent_id = 0 and c.status = 'active'" +
-                "order by c.likes desc limit 10;";
+                "order by c.likes desc;";
         Map<String, Object> param = Map.of("postId", postId);
         return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
             CommentInfo parentComment = new CommentInfo
@@ -298,5 +297,11 @@ public class PostInfoDao {
         return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
             return rs.getLong("block_id");
         });
+    }
+
+    public void increaseView(long postId) {
+        String sql = "update Post set views = views + 1 where post_id = :postId;";
+        Map<String, Object> param = Map.of("postId", postId);
+        jdbcTemplate.update(sql, param);
     }
 }

@@ -78,9 +78,10 @@ public class PostController {
     }
 
     @GetMapping("/comments/{postId}")
-    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@PreAuthorizedUser long userId,
+    public BaseResponse<GetScrolledCommentsResponse> showPostComments(@RequestParam long userId,
                                                                       @PathVariable long postId,
-                                                                      @RequestParam String orderBy) {
+                                                                      @RequestParam(defaultValue = "likeStandard")
+                                                                          String orderBy) {
         log.info("PostController.showPostComments");
         log.info("userId = " + userId);
         log.info("postId = " + postId);
@@ -89,7 +90,8 @@ public class PostController {
 
     @GetMapping("/comments/guest/{postId}")
     public BaseResponse<GetScrolledCommentsResponse> showPostCommentsByGuestMode(@PathVariable long postId,
-                                                                                 @RequestParam String orderBy) {
+                                                                                 @RequestParam(defaultValue = "likeStandard")
+                                                                                 String orderBy) {
         log.info("PostController.showPostCommentsByGuestMode");
         log.info("postId = " + postId);
 

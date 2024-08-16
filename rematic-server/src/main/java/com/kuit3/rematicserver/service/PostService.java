@@ -127,6 +127,7 @@ public class PostService {
         if(!checkPostExists(postId)) {
             throw new DatabaseException(POST_NOT_FOUND);
         }
+        postInfoDao.increaseView(postId);
         GetClickedPostResponse postResponse = new GetClickedPostResponse();
         //게시물 익명성 여부 확인
         validateAndSetPostWriter(postId, postResponse);
@@ -157,6 +158,7 @@ public class PostService {
         if(!checkPostExists(postId)) {
             throw new DatabaseException(POST_NOT_FOUND);
         }
+        postInfoDao.increaseView(postId);
         //게시물 익명성 여부 확인
         GetClickedPostResponse postResponse = new GetClickedPostResponse();
         validateAndSetPostWriter(postId, postResponse);
@@ -183,7 +185,7 @@ public class PostService {
             commentsResponse.setCommentList(null);
             return commentsResponse;
         }
-        //부모 리스트 가져오기(ok)
+        //부모 리스트 가져오기
         List<CommentInfo> parentComments = null;
         if(orderBy.equals("timeStandard")) {
             parentComments = postInfoDao.getTimeStandCommentsByPostId(postId); // ***
@@ -212,13 +214,15 @@ public class PostService {
                 .map(CommentInfo::getCommentId)
                 .collect(Collectors.toList());
         //자식 댓글 좋아요 싫어요 여부 매핑
-        Map<Long, Boolean> childLikeHistory = postInfoDao.getCommentLikesHistory(userId, childCommentIds);
-        Map<Long, Boolean> childHateHistory = postInfoDao.getCommentHatesHistory(userId, childCommentIds);
-        for(CommentInfo childComment : childComments) {
-            childComment.setIsLiked(childLikeHistory.getOrDefault(childComment.getCommentId(), false));
-            childComment.setIsHated(childHateHistory.getOrDefault(childComment.getCommentId(), false));
+        //리스트가 비어 있을 때 에러가 남.
+        if(!childCommentIds.isEmpty()){
+            Map<Long, Boolean> childLikeHistory = postInfoDao.getCommentLikesHistory(userId, childCommentIds);
+            Map<Long, Boolean> childHateHistory = postInfoDao.getCommentHatesHistory(userId, childCommentIds);
+            for(CommentInfo childComment : childComments) {
+                childComment.setIsLiked(childLikeHistory.getOrDefault(childComment.getCommentId(), false));
+                childComment.setIsHated(childHateHistory.getOrDefault(childComment.getCommentId(), false));
+            }
         }
-
         Map<Long, List<CommentInfo>> groupedChildComments = childComments.stream()
                 .collect(Collectors.groupingBy(CommentInfo::getParentId));
 

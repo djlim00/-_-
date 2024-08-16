@@ -33,7 +33,7 @@ public class CommentController {
         return new BaseResponse<>(userId+"가 "+blockId+"를 차단했습니다.");
     }
   
-    @PostMapping("/comment/{comment_id}")
+    @PostMapping("/{comment_id}")
     public BaseResponse<String> dormantUserComment(@PreAuthorizedUser long userId,
                                                    @PathVariable("comment_id") long commentId) {
         log.info("PostController.dormantUserComment");
