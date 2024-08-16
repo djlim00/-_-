@@ -15,20 +15,20 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/{comment_id}/like")
-    public BaseResponse<String> likeComment(@PathVariable("comment_id") Long commentId, @PreAuthorizedUser Long userId){ //  @RequestParam("user_id") Long userId
+    public BaseResponse<String> likeComment(@PathVariable("comment_id") Long commentId, @PreAuthorizedUser long userId){ //  @RequestParam("user_id") Long userId
         commentService.likeComment(commentId, userId);
         return new BaseResponse<>("댓글 좋아요");
     }
 
     @PostMapping("/{comment_id}/hate")
-    public BaseResponse<String> hateComment(@PathVariable("comment_id") Long commentId,  @PreAuthorizedUser Long userId){
+    public BaseResponse<String> hateComment(@PathVariable("comment_id") Long commentId,  @PreAuthorizedUser long userId){
         commentService.hateComment(commentId, userId);
         return new BaseResponse<>("댓글 싫어요");
     }
 
 
     @PostMapping("/block")
-    public BaseResponse<String> blockUser(@PreAuthorizedUser Long userId, @RequestParam("blockId") Long blockId){//@PreAuthorizedUser Long userId, @RequestParam("blockId") Long blockId
+    public BaseResponse<String> blockUser(@PreAuthorizedUser long userId, @RequestParam("blockId") Long blockId){//@PreAuthorizedUser Long userId, @RequestParam("blockId") Long blockId
         commentService.blockUser(userId,blockId);
         return new BaseResponse<>(userId+"가 "+blockId+"를 차단했습니다.");
     }
