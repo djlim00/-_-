@@ -6,6 +6,7 @@ import com.kuit3.rematicserver.dao.CommentDao;
 import com.kuit3.rematicserver.dao.CommentHatesDao;
 import com.kuit3.rematicserver.dao.CommentLikesDao;
 import com.kuit3.rematicserver.dao.CommentReactionDao;
+import com.kuit3.rematicserver.entity.Comment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,9 @@ public class CommentService {
 
     public void deleteCommentsOfPost(Long postId) {
         log.info("CommentService::deleteCommentsOfPost()");
-        List<Long> postCommentIds = commentDao.findByPostId(postId);
-        for(Long commentId : postCommentIds) {
+        List<Comment> postComments = commentDao.findByPostId(postId);
+        for(Comment comment : postComments) {
+            long commentId = comment.getCommentId();
             commentLikesDao.deleteByCommentId(commentId);
             commentHatesDao.deleteByCommentId(commentId);
         }

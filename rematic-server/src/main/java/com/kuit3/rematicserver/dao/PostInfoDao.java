@@ -119,7 +119,7 @@ public class PostInfoDao {
     public List<CommentInfo> getTimeStandCommentsByPostId(long postId) {
         String sql = "select c.comment_id as parent_comment_id, u.nickname as parent_writer, u.user_id as writer_id, " +
                 "u.profile_image_url as parent_image_url, c.sentences as parent_comment, c.parent_id as parent_id, " +
-                "c.created_at as parent_time, c.likes as parent_likes, c.hates as parent_hates " +
+                "c.created_at as parent_time, c.likes as parent_likes, c.hates as parent_hates, c.anonymity as anonymity " +
                 "from Comment c left join (select * from User where status = 'active') as u on c.user_id = u.user_id " +
                 "where c.post_id = :postId and c.parent_id = 0 and c.status = 'active'" +
                 "order by c.created_at desc;";
@@ -128,7 +128,7 @@ public class PostInfoDao {
             CommentInfo parentComment = new CommentInfo
                     (
                             rs.getLong("parent_comment_id"),
-                            rs.getString("parent_writer"),
+                            rs.getString("anonymity").equals("공개") ? rs.getString("parent_writer") : "익명",
                             rs.getLong("writer_id"),
                             rs.getString("parent_image_url"),
                             rs.getString("parent_comment"),
@@ -141,7 +141,7 @@ public class PostInfoDao {
                             true
                     );
             if(parentComment.getWriter() == null) {
-                parentComment.setWriter("알수없음");
+                parentComment.setWriter("(알수없음)");
             }
             return parentComment;
         });
@@ -150,7 +150,7 @@ public class PostInfoDao {
     public List<CommentInfo> getLikeStandCommentsByPostId(long postId) {
         String sql = "select c.comment_id as parent_comment_id, u.nickname as parent_writer, u.user_id as writer_id, " +
                 "u.profile_image_url as parent_image_url, c.sentences as parent_comment, c.parent_id as parent_id, " +
-                "c.created_at as parent_time, c.likes as parent_likes, c.hates as parent_hates " +
+                "c.created_at as parent_time, c.likes as parent_likes, c.hates as parent_hates, c.anonymity as anonymity " +
                 "from Comment c left join (select * from User where status = 'active') as u on c.user_id = u.user_id " +
                 "where c.post_id = :postId and c.parent_id = 0 and c.status = 'active'" +
                 "order by c.likes desc;";
@@ -159,7 +159,7 @@ public class PostInfoDao {
             CommentInfo parentComment = new CommentInfo
                     (
                             rs.getLong("parent_comment_id"),
-                            rs.getString("parent_writer"),
+                            rs.getString("anonymity").equals("공개") ? rs.getString("parent_writer") : "익명",
                             rs.getLong("writer_id"),
                             rs.getString("parent_image_url"),
                             rs.getString("parent_comment"),
@@ -172,7 +172,7 @@ public class PostInfoDao {
                             true
                     );
             if(parentComment.getWriter() == null) {
-                parentComment.setWriter("알수없음");
+                parentComment.setWriter("(알수없음)");
             }
             return parentComment;
         });
@@ -181,7 +181,7 @@ public class PostInfoDao {
     public List<CommentInfo> getChildCommentsWithPrefer(long userId, List<Long> parentIds) {
         String sql = "SELECT c.comment_id AS child_comment_id, u.nickname AS child_writer, u.user_id as writer_id, " +
                 "u.profile_image_url AS child_image_url, c.sentences AS child_comment, c.parent_id AS parent_id, " +
-                "c.created_at AS child_time, c.likes AS child_likes, c.hates AS child_hates " +
+                "c.created_at AS child_time, c.likes AS child_likes, c.hates AS child_hates, c.anonymity as anonymity " +
                 "FROM Comment c LEFT JOIN (select * from User where status = 'active') as u  ON c.user_id = u.user_id " +
                 "WHERE c.parent_id IN (:parentIds) AND c.status = 'active' " +
                 "ORDER BY c.created_at ASC";
@@ -190,7 +190,7 @@ public class PostInfoDao {
             CommentInfo commentInfo = new CommentInfo
                     (
                             rs.getLong("child_comment_id"),
-                            rs.getString("child_writer"),
+                            rs.getString("anonymity").equals("공개") ? rs.getString("child_writer") : "익명",
                             rs.getLong("writer_id"),
                             rs.getString("child_image_url"),
                             rs.getString("child_comment"),
@@ -203,7 +203,7 @@ public class PostInfoDao {
                             false
                     );
             if(commentInfo.getWriter() == null){
-                commentInfo.setWriter("알수없음");
+                commentInfo.setWriter("(알수없음)");
             }
             return commentInfo;
         });
@@ -212,7 +212,7 @@ public class PostInfoDao {
     public List<CommentInfo> getChildCommentsWithoutPrefer(List<Long> parentIds) {
         String sql = "SELECT c.comment_id AS child_comment_id, u.nickname AS child_writer, u.user_id as writer_id, " +
                 "u.profile_image_url AS child_image_url, c.sentences AS child_comment, c.parent_id AS parent_id, " +
-                "c.created_at AS child_time, c.likes AS child_likes, c.hates AS child_hates " +
+                "c.created_at AS child_time, c.likes AS child_likes, c.hates AS child_hates, c.anonymity as anonymity " +
                 "FROM Comment c LEFT JOIN (select * from User where status = 'active') as u  ON c.user_id = u.user_id " +
                 "WHERE c.parent_id IN (:parentIds) AND c.status = 'active' " +
                 "ORDER BY c.created_at ASC";
@@ -221,7 +221,7 @@ public class PostInfoDao {
             CommentInfo commentInfo = new CommentInfo
                     (
                     rs.getLong("child_comment_id"),
-                    rs.getString("child_writer"),
+                    rs.getString("anonymity").equals("공개") ? rs.getString("child_writer") : "익명",
                     rs.getLong("writer_id"),
                     rs.getString("child_image_url"),
                     rs.getString("child_comment"),
@@ -234,7 +234,7 @@ public class PostInfoDao {
                     false
             );
             if(commentInfo.getWriter() == null){
-                commentInfo.setWriter("알수없음");
+                commentInfo.setWriter("(알수없음)");
             }
             return commentInfo;
         });
@@ -258,13 +258,14 @@ public class PostInfoDao {
 
     public List<Long> leaveCommentWrittenByUser(long userId, long postId, PostCommentRequest request) {
         String sql = "insert into Comment " +
-                "(sentences, likes, hates, comment_image_url, parent_id, alarm_status, status, created_at, post_id, user_id) " +
-                "values (:sentences, 0, 0, null, :parent_id, 'on', 'active', now(), :post_id, :user_id);";
+                "(sentences, likes, hates, comment_image_url, parent_id, alarm_status, status, created_at, post_id, user_id, anonymity) " +
+                "values (:sentences, 0, 0, null, :parent_id, 'on', 'active', now(), :post_id, :user_id, :anonymity);";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("sentences", request.getSentences())
                 .addValue("parent_id", request.getParentCommentId())
                 .addValue("post_id", postId)
-                .addValue("user_id", userId);
+                .addValue("user_id", userId)
+                .addValue("anonymity", request.getAnonymity() ? "익명" : "공개" );
         KeyHolder keyHolder = new GeneratedKeyHolder();
         long result = jdbcTemplate.update(sql, param, keyHolder);
         List<Long> response = new ArrayList<>();

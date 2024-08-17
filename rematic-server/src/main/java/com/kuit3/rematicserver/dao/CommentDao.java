@@ -1,6 +1,8 @@
 package com.kuit3.rematicserver.dao;
 
+import com.kuit3.rematicserver.entity.Comment;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -25,11 +27,36 @@ public class CommentDao {
         return jdbcTemplate.update(sql, param);
     }
 
-    public List<Long> findByPostId(Long postId) {
-        String sql = "select comment_id from Comment WHERE status='active' AND post_id = :post_id";
+    public List<Comment> findByPostId(Long postId) {
+        String sql = "select * from Comment WHERE status='active' AND post_id = :post_id";
         MapSqlParameterSource param  = new MapSqlParameterSource()
                 .addValue("post_id", postId);
-        return jdbcTemplate.query(sql, param, (rs, r)->rs.getLong("comment_id"));
+        return jdbcTemplate.query(sql, param, commentRowMapper());
+    }
+
+    public List<Comment> findById(Long commentId) {
+        String sql = "select * from Comment WHERE status='active' AND comment_id = :comment_id";
+        MapSqlParameterSource param  = new MapSqlParameterSource()
+                .addValue("comment_id", commentId);
+        return jdbcTemplate.query(sql, param, commentRowMapper());
+    }
+
+    private static RowMapper<Comment> commentRowMapper() {
+        return (rs, r) -> {
+            return Comment.builder()
+                    .commentId(rs.getLong("comment_id"))
+                    .sentences(rs.getString("sentences"))
+                    .likes(rs.getLong("likes"))
+                    .hates(rs.getLong("hates"))
+                    .commentImageUrl(rs.getString("comment_image_url"))
+                    .parentId(rs.getLong("parent_id"))
+                    .status(rs.getString("status"))
+                    .anonymity(rs.getString("anonymity"))
+                    .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+                    .postId(rs.getLong("post_id"))
+                    .userId(rs.getLong("user_id"))
+                    .build();
+        };
     }
 
 
@@ -75,4 +102,6 @@ public class CommentDao {
         Map<String ,Object> param = Map.of("userId", userId, "commentId", commentId);
         return jdbcTemplate.update(sql, param);
     }
+
+
 }
