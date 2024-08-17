@@ -75,4 +75,28 @@ public class CommentDao {
         Map<String ,Object> param = Map.of("userId", userId, "commentId", commentId);
         return jdbcTemplate.update(sql, param);
     }
+
+    public boolean isCommentExists(long commentId) {
+        String sql = "select exists(select 1 from Comment where comment_id = :commentId and status = 'active');";
+        Map<String, Object> param = Map.of("commentId", commentId);
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
+    }
+
+    public long getWriterId(long commentId) {
+        String sql = "select user_id from Comment where comment_id = :commentId and status = 'active';";
+        Map<String, Object> param = Map.of("commentId", commentId);
+        return jdbcTemplate.queryForObject(sql, param, long.class);
+    }
+
+    public int reportViolatedComment(long commentId, long userId, long reportedUser, String type) {
+        String sql = "insert into Comment_Report(reporter_id, reported_user_id, comment_id, created_at, type) " +
+                "values(:userId, :reportedUser, :commentId, now(), :type);";
+        Map<String, Object> param = Map.of(
+                "userId", userId,
+                "reportedUser", reportedUser,
+                "commentId", commentId,
+                "type", type
+        );
+        return jdbcTemplate.update(sql, param);
+    }
 }

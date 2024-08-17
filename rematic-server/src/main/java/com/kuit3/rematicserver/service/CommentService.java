@@ -1,5 +1,6 @@
 package com.kuit3.rematicserver.service;
 
+import com.kuit3.rematicserver.common.exception.CommentNotFoundException;
 import com.kuit3.rematicserver.common.exception.DatabaseException;
 import com.kuit3.rematicserver.common.exception.UserCommentException;
 import com.kuit3.rematicserver.dao.CommentDao;
@@ -80,6 +81,21 @@ public class CommentService {
             return "complete deleting comment";
         } else {
             throw new DatabaseException(DATABASE_ERROR);
+        }
+    }
+
+    public String reportUserComment(long userId, long commentId, String type) {
+        log.info("CommentService.reportUserComment");
+        if(!commentDao.isCommentExists(commentId)) {
+            throw new CommentNotFoundException(COMMENT_NOT_FOUND);
+        }
+        long reportedUser = commentDao.getWriterId(commentId);
+        int result = commentDao.reportViolatedComment(commentId, userId, reportedUser, type);
+        if(result != 1) {
+            throw new DatabaseException(DATABASE_ERROR);
+        } else {
+            //신고 횟수 확인 후 punishment 테이블에 데이터 삽입 여부 메서드 넣을 자리
+            return "complete reporting violated Comment";
         }
     }
 }
