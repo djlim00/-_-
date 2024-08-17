@@ -58,8 +58,8 @@ public class CommentServiceTest {
         Long newPost = postDao.createPost(new CreatePostRequest("댓글 등록 게시글", "게시글 내용",
                 true, "카테고리", "장르", true,  1L, 1L));
         //댓글 생성
-        PostCommentRequest parentComment = new PostCommentRequest("this is test parentComment", 0L);
-        PostCommentRequest childComment = new PostCommentRequest("this is test childComment", 1L);
+        PostCommentRequest parentComment = new PostCommentRequest("this is test parentComment", 0L, false);
+        PostCommentRequest childComment = new PostCommentRequest("this is test childComment", 1L, false);
         List<Long> result1 = new ArrayList<>();
         List<Long> result2 = new ArrayList<>();
         result1.add(0L);

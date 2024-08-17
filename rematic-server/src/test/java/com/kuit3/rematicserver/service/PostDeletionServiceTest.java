@@ -47,7 +47,7 @@ class PostDeletionServiceTest {
         postDao.incrementLikes(createdPostId);
         postDao.incrementHates(createdPostId);
         userScrapDao.save(1L, createdPostId);
-        postInfoDao.leaveCommentWrittenByUser(2L, createdPostId, new PostCommentRequest("댓글", 0L));
+        postInfoDao.leaveCommentWrittenByUser(2L, createdPostId, new PostCommentRequest("댓글", 0L, false));
 
         //when
         postDeletionService.handle(createdPostId);
