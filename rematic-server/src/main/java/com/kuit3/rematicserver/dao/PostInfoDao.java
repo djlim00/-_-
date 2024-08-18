@@ -258,14 +258,13 @@ public class PostInfoDao {
 
     public List<Long> leaveCommentWrittenByUser(long userId, long postId, PostCommentRequest request) {
         String sql = "insert into Comment " +
-                "(sentences, likes, hates, comment_image_url, parent_id, alarm_status, status, created_at, post_id, user_id, anonymity) " +
-                "values (:sentences, 0, 0, null, :parent_id, 'on', 'active', now(), :post_id, :user_id, :anonymity);";
+                "(sentences, likes, hates, comment_image_url, parent_id, alarm_status, status, created_at, post_id, user_id) " +
+                "values (:sentences, 0, 0, null, :parent_id, 'on', 'active', now(), :post_id, :user_id);";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("sentences", request.getSentences())
                 .addValue("parent_id", request.getParentCommentId())
                 .addValue("post_id", postId)
-                .addValue("user_id", userId)
-                .addValue("anonymity", request.getAnonymity() ? "익명" : "공개" );
+                .addValue("user_id", userId);
         KeyHolder keyHolder = new GeneratedKeyHolder();
         long result = jdbcTemplate.update(sql, param, keyHolder);
         List<Long> response = new ArrayList<>();

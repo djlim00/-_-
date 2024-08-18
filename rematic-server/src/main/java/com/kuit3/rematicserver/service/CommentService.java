@@ -2,12 +2,10 @@ package com.kuit3.rematicserver.service;
 
 import com.kuit3.rematicserver.common.exception.DatabaseException;
 import com.kuit3.rematicserver.common.exception.UserCommentException;
-import com.kuit3.rematicserver.dao.CommentDao;
-import com.kuit3.rematicserver.dao.CommentHatesDao;
-import com.kuit3.rematicserver.dao.CommentLikesDao;
-import com.kuit3.rematicserver.dao.CommentReactionDao;
+import com.kuit3.rematicserver.dao.*;
 import com.kuit3.rematicserver.dto.comment.CommentReactionResponse;
 import com.kuit3.rematicserver.entity.Comment;
+import com.kuit3.rematicserver.entity.Punishment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +24,7 @@ public class CommentService {
     private final CommentLikesDao commentLikesDao;
     private final CommentHatesDao commentHatesDao;
     private final CommentReactionDao commentReactionDao;
+    private final PunishmentDao punishmentDao;
 
     public void deleteCommentsOfPost(Long postId) {
         log.info("CommentService::deleteCommentsOfPost()");
@@ -100,14 +99,17 @@ public class CommentService {
         }
     }
 
+    @Transactional
     public String reportUserComment(long userId, long commentId, String type) {
         log.info("CommentService.reportUserComment");
         if(!commentDao.isCommentExists(commentId)) {
             throw new UserCommentException(COMMENT_NOT_FOUND);
         }
-        long reportedUser = commentDao.getWriterId(commentId);
-        long result = commentDao.reportViolatedComment(commentId, userId, reportedUser, type);
-        //신고 횟수 확인 후 punishment 테이블에 데이터 삽입 여부 메서드 넣을 자리
+        long reportedUserId = commentDao.getWriterId(commentId);
+        long result = commentDao.reportViolatedComment(commentId, userId, reportedUserId, type);
+
+        List<Punishment> list = punishmentDao.findByUserId(reportedUserId);
+        long punishmentCount = list.size();
         return "complete reporting violated Comment";
     }
 }

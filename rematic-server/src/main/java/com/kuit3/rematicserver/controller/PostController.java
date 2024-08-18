@@ -101,7 +101,7 @@ public class PostController {
     }
 
     @PostMapping("/{post_id}/comment")
-    public BaseResponse<PostCommentResponse> leaveNewComment(@PreAuthorizedUser long userId,
+    public BaseResponse<PostCommentResponse> leaveNewComment(@RequestParam long userId,
                                                              @PathVariable("post_id") long postId,
                                                              @RequestBody PostCommentRequest request) {
         log.info("PostController.leaveNewComment");
