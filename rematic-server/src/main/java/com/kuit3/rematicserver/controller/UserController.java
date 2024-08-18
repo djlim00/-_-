@@ -91,9 +91,15 @@ public class UserController {
     }
 
     @GetMapping("/reports")
-    public BaseResponse<GetUserPunishmentsResponse> getUserPunishmentList(@RequestParam long userId) {
+    public BaseResponse<GetUserPunishmentsResponse> getUserPunishmentList(@PreAuthorizedUser long userId) {
         log.info("UserController.getUserPunishmentList");
         log.info("userId=" + userId);
         return new BaseResponse<>(userService.getUserPunishmentList(userId));
+    }
+
+    @GetMapping("/punishment")
+    public BaseResponse<GetUserPunishmentValidResponse> getUserPunishmentValidation(@PreAuthorizedUser long userId) {
+        log.info("UserController.getUserPunishmentValidation");
+        return new BaseResponse<>(userService.validateUserPunishment(userId));
     }
 }

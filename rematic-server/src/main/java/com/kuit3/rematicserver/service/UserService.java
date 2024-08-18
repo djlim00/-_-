@@ -78,4 +78,18 @@ public class UserService {
         response.setPunishmentInfos(infoList);
         return response;
     }
+
+    public GetUserPunishmentValidResponse validateUserPunishment(long userId) {
+        log.info("UserService.validateUserPunishment");
+        checkUserExistsOrDormant(userId);
+        GetUserPunishmentValidResponse response = new GetUserPunishmentValidResponse();
+        List<Boolean> result = userDao.validateUserPunishment(userId);
+        if (result.contains(true)) {
+            response.setIsRestricted(true);
+        } else {
+            response.setIsRestricted(false);
+        }
+        response.setUserId(userId);
+        return response;
+    }
 }

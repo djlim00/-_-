@@ -129,4 +129,13 @@ public class UserDao {
             );
         });
     }
+
+    public List<Boolean> validateUserPunishment(long userId) {
+        String sql = "SELECT CASE WHEN CURRENT_TIMESTAMP <= end_at THEN TRUE ELSE FALSE END AS is_restricted " +
+                "FROM Punishment WHERE user_id = :userId;";
+        MapSqlParameterSource param = new MapSqlParameterSource().addValue("userId", userId);
+        return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
+            return rs.getBoolean("is_restricted");
+        });
+    }
 }
