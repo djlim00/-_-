@@ -79,4 +79,11 @@ public class UserExceptionControllerAdvice {
         log.error("[handle_InvalidScrapUserIdException]", e);
         return new BaseErrorResponse(INVALID_SCRAP_USERID);
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PunishReasonException.class)
+    public BaseErrorResponse handle_PunishReasonException(Exception e) {
+        log.error("[handle_PunishReasonException]", e);
+        return new BaseErrorResponse(UNCATEGORIZED_PUNISHMENT);
+    }
 }

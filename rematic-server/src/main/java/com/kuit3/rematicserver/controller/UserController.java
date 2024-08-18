@@ -91,7 +91,7 @@ public class UserController {
     }
 
     @GetMapping("/reports")
-    public BaseResponse<GetUserPunishmentsResponse> getUserPunishmentList(@PreAuthorizedUser long userId) {
+    public BaseResponse<GetUserPunishmentsResponse> getUserPunishmentList(@RequestParam long userId) {
         log.info("UserController.getUserPunishmentList");
         log.info("userId=" + userId);
         return new BaseResponse<>(userService.getUserPunishmentList(userId));

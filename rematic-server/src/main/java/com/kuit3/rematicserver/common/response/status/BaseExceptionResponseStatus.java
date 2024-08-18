@@ -65,7 +65,11 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
      */
     DUPLICATE_USER_SCRAP(6000, HttpStatus.CONFLICT.value(), "이미 스크랩한 게시물입니다."),
     USER_SCRAP_NOT_FOUND(6001, HttpStatus.BAD_REQUEST.value(), "스크랩을 찾을 수 없습니다."),
-    INVALID_SCRAP_USERID(6002, HttpStatus.BAD_REQUEST.value(), "자신이 작성한 게시물은 스크랩할 수 없습니다.");
+    INVALID_SCRAP_USERID(6002, HttpStatus.BAD_REQUEST.value(), "자신이 작성한 게시물은 스크랩할 수 없습니다."),
+    /**
+     * 7000: 처벌 관련 오류
+     */
+    UNCATEGORIZED_PUNISHMENT(7000, HttpStatus.BAD_REQUEST.value(), "알 수 없는 처벌 및 신고 유형입니다.");
 
     private final int code;
     private final int status;
