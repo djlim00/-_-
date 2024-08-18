@@ -177,6 +177,7 @@ public class PostDaoImpl implements PostDao{
         jdbcTemplate.update(sql, param);
     }
 
+
     public int modifyStatusDormant(Long postId) {
         String sql = "UPDATE Post SET status='dormant' WHERE post_id = :post_id";
         MapSqlParameterSource param = new MapSqlParameterSource()
@@ -283,6 +284,22 @@ public class PostDaoImpl implements PostDao{
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("user_id", userId);
         return jdbcTemplate.query(sql, param, postRowMapper());
+    }
+
+    @Override
+    public int getLikeCount(Long postId) {
+        String sql = "SELECT likes FROM Post WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        return jdbcTemplate.queryForObject(sql, param, Integer.class);
+    }
+
+    @Override
+    public int getHateCount(Long postId) {
+        String sql = "SELECT hates FROM Post WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        return jdbcTemplate.queryForObject(sql, param, Integer.class);
     }
 
 }
