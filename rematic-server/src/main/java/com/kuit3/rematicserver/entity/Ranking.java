@@ -13,4 +13,5 @@ public class Ranking {
     private Long recentHates;
     private String category;
     private Long postId;
+    private Long likes;
 }

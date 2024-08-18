@@ -32,6 +32,9 @@ class PostDeletionServiceTest {
     private PostInfoDao postInfoDao;
     @Autowired
     private CommentDao commentDao;
+    @Autowired
+    private PostReactionDao postReactionDao
+            ;
     @Test
     public void 게시물_삭제(){
         //given
@@ -44,8 +47,8 @@ class PostDeletionServiceTest {
                 .has_image(true)
                 .bulletin_id(1L)
                 .user_id(2L).build());
-        postDao.incrementLikes(createdPostId);
-        postDao.incrementHates(createdPostId);
+        postReactionDao.addLike(createdPostId, 1L);
+        postReactionDao.addHate(createdPostId, 1L);
         userScrapDao.save(1L, createdPostId);
         postInfoDao.leaveCommentWrittenByUser(2L, createdPostId, new PostCommentRequest("댓글", 0L, false));
 

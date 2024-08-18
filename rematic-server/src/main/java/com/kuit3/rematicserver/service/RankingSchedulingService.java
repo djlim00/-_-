@@ -22,8 +22,8 @@ public class RankingSchedulingService {
     private final PostDao postDao;
 
     //정각마다 실행
-    @Scheduled(cron = "0 0 * * * *")
-//    @Scheduled(fixedDelay = 30000)
+//    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(fixedDelay = 60000)
 
     @Transactional
     public void saveRankingEveryHour() {
@@ -31,6 +31,7 @@ public class RankingSchedulingService {
         rankingDao.deleteAll();
         List<String> categories = Arrays.asList("webtoon", "webnovel", "novel");
         for(String category : categories){
+
             List<Ranking> rankingList = postDao.findRankingByCategory(category);
             rankingList.forEach(ranking -> rankingDao.save(ranking));
         }
