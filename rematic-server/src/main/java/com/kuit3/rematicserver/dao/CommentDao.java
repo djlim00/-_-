@@ -3,11 +3,14 @@ package com.kuit3.rematicserver.dao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Repository
@@ -88,15 +91,16 @@ public class CommentDao {
         return jdbcTemplate.queryForObject(sql, param, long.class);
     }
 
-    public int reportViolatedComment(long commentId, long userId, long reportedUser, String type) {
+    public long reportViolatedComment(long commentId, long userId, long reportedUser, String type) {
         String sql = "insert into Comment_Report(reporter_id, reported_user_id, comment_id, created_at, type) " +
                 "values(:userId, :reportedUser, :commentId, now(), :type);";
-        Map<String, Object> param = Map.of(
-                "userId", userId,
-                "reportedUser", reportedUser,
-                "commentId", commentId,
-                "type", type
-        );
-        return jdbcTemplate.update(sql, param);
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("reportedUser", reportedUser)
+                .addValue("commentId", commentId)
+                .addValue("type", type);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(sql, param, keyHolder);
+        return Objects.requireNonNull(keyHolder.getKey()).longValue();
     }
 }
