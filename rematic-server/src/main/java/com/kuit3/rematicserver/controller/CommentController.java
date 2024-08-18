@@ -2,6 +2,7 @@ package com.kuit3.rematicserver.controller;
 
 import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.response.BaseResponse;
+import com.kuit3.rematicserver.dto.comment.CommentReactionResponse;
 import com.kuit3.rematicserver.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,22 +16,22 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/{comment_id}/like")
-    public BaseResponse<String> likeComment(@PathVariable("comment_id") Long commentId, @PreAuthorizedUser long userId){ //  @RequestParam("user_id") Long userId
-        commentService.likeComment(commentId, userId);
-        return new BaseResponse<>("댓글 좋아요");
+    public BaseResponse<CommentReactionResponse> likeComment(@PathVariable("comment_id") Long commentId, @PreAuthorizedUser long userId) {
+        CommentReactionResponse response = commentService.likeComment(commentId, userId);
+        return new BaseResponse<>(response);
     }
 
     @PostMapping("/{comment_id}/hate")
-    public BaseResponse<String> hateComment(@PathVariable("comment_id") Long commentId,  @PreAuthorizedUser long userId){
-        commentService.hateComment(commentId, userId);
-        return new BaseResponse<>("댓글 싫어요");
+    public BaseResponse<CommentReactionResponse> hateComment(@PathVariable("comment_id") Long commentId, @PreAuthorizedUser long userId) {
+        CommentReactionResponse response = commentService.hateComment(commentId, userId);
+        return new BaseResponse<>(response);
     }
 
 
     @PostMapping("/block")
     public BaseResponse<String> blockUser(@PreAuthorizedUser long userId, @RequestParam("blockId") Long blockId){//@PreAuthorizedUser Long userId, @RequestParam("blockId") Long blockId
         commentService.blockUser(userId,blockId);
-        return new BaseResponse<>(userId+"가 "+blockId+"를 차단했습니다.");
+        return new BaseResponse<>("차단 요청이 성공적으로 처리되었습니다.");
     }
   
     @PostMapping("/{comment_id}")

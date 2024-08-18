@@ -34,4 +34,6 @@ public interface PostDao {
     void decrementScraps(Long postId);
 
     List<Post> findByUserId(long userId);
+    int getLikeCount(Long postId);
+    int getHateCount(Long postId);
 }

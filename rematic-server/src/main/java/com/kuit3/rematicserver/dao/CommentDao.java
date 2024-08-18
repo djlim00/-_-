@@ -103,5 +103,19 @@ public class CommentDao {
         return jdbcTemplate.update(sql, param);
     }
 
+    public int getLikeCount(Long commentId) {
+        String sql = "SELECT likes FROM Comment WHERE comment_id = :comment_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("comment_id", commentId);
+        return jdbcTemplate.queryForObject(sql, param, Integer.class);
+    }
+
+    public int getHateCount(Long commentId) {
+        String sql = "SELECT hates FROM Comment WHERE comment_id = :comment_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("comment_id", commentId);
+        return jdbcTemplate.queryForObject(sql, param, Integer.class);
+    }
+
 
 }
