@@ -1,10 +1,8 @@
 package com.kuit3.rematicserver.dao;
 
 
-import com.kuit3.rematicserver.dto.user.UpdateUserInfoRequest;
+import com.kuit3.rematicserver.dto.user.*;
 import com.kuit3.rematicserver.dto.auth.CreateUserDTO;
-import com.kuit3.rematicserver.dto.user.UserCheckDto;
-import com.kuit3.rematicserver.dto.user.UserMyPageResponse;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -16,6 +14,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -105,5 +104,29 @@ public class UserDao {
                 .addValue("status", status)
                 .addValue("userId", userId);
         return jdbcTemplate.update(sql, param);
+    }
+
+
+    public String getUserNickName(long userId) {
+        String sql = "select nickname from User where user_id = :userId;";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("userId", userId);
+        return jdbcTemplate.queryForObject(sql, param, String.class);
+    }
+
+    public List<UserPunishmentInfo> getUserPunishmentsList(long userId) {
+        String sql = "select p.punishment_id, p.content, b.name as bulletin_name, p.reason, p.created_at " +
+                "from Punishment p join Bulletin b on p.bulletin_id = b.bulletin_id where p.user_id = :userId;";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("userId", userId);
+        return jdbcTemplate.query(sql, param, (rs, rowNum) -> {
+            return new UserPunishmentInfo(
+                    rs.getLong("punishment_id"),
+                    rs.getString("content"),
+                    rs.getString("bulletin_name"),
+                    rs.getString("reason"),
+                    rs.getTimestamp("created_at")
+            );
+        });
     }
 }

@@ -7,10 +7,7 @@ import com.kuit3.rematicserver.common.exception.UserScrapNotFoundException;
 import com.kuit3.rematicserver.common.response.BaseResponse;
 
 import com.kuit3.rematicserver.dto.post.PostUserScrapResponse;
-import com.kuit3.rematicserver.dto.user.PostUserScrapRequest;
-import com.kuit3.rematicserver.dto.user.UpdateUserInfoRequest;
-import com.kuit3.rematicserver.dto.user.PutNickNameRequest;
-import com.kuit3.rematicserver.dto.user.UserMyPageResponse;
+import com.kuit3.rematicserver.dto.user.*;
 
 import com.kuit3.rematicserver.service.PostService;
 import com.kuit3.rematicserver.service.UserDeletionService;
@@ -91,5 +88,12 @@ public class UserController {
         log.info("userId=" + userId);
         userDeletionService.handle(userId);
         return new BaseResponse<>(null);
+    }
+
+    @GetMapping("/reports")
+    public BaseResponse<GetUserPunishmentsResponse> getUserPunishmentList(@PreAuthorizedUser long userId) {
+        log.info("UserController.getUserPunishmentList");
+        log.info("userId=" + userId);
+        return new BaseResponse<>(userService.getUserPunishmentList(userId));
     }
 }
