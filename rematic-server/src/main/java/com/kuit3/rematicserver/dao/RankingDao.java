@@ -47,12 +47,14 @@ public class RankingDao {
     }
 
     public long save(Ranking ranking) {
-        String sql = "insert into Ranking(recent_likes, recent_hates, category, post_id) values(:recentLikes, :recentHates, :category, :postId)";
+        String sql = "insert into Ranking(recent_likes, recent_hates, category, post_id, likes) values(:recentLikes, :recentHates, :category, :postId, :likes)";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("recentLikes", ranking.getRecentLikes())
                 .addValue("recentHates", ranking.getRecentHates())
                 .addValue("category", ranking.getCategory())
-                .addValue("postId", ranking.getPostId());
+                .addValue("postId", ranking.getPostId())
+                .addValue("likes", ranking.getLikes());
+
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(sql, param, keyHolder);
         return Objects.requireNonNull(keyHolder.getKey()).longValue();
@@ -68,7 +70,7 @@ public class RankingDao {
     }
 
     public List<Ranking> findAllLimit(Long limit) {
-        String sql = "SELECT * FROM Ranking ORDER BY recent_likes DESC, ranking_id ASC LIMIT :limit";
+        String sql = "SELECT * FROM Ranking ORDER BY recent_likes DESC, likes DESC LIMIT :limit";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("limit", limit);
         return jdbcTemplate.query(sql, param, rankingRowMapper());
