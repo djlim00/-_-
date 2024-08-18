@@ -23,9 +23,7 @@ public class PostDeletionService {
         postHatesService.deleteHatesOfPost(postId);
         userScrapService.deleteScrapsOfPost(postId);
         commentService.deleteCommentsOfPost(postId);
-
-        rankingService.deletePostFromRanking(postId);
-
         postService.deletePost(postId);
+        rankingService.deletePostFromRanking(postId);
     }
 }

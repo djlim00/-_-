@@ -8,6 +8,7 @@ import com.kuit3.rematicserver.common.response.BaseResponse;
 import com.kuit3.rematicserver.dto.post.*;
 import com.kuit3.rematicserver.dto.search.SearchPostResponse;
 import com.kuit3.rematicserver.service.PostDeletionService;
+import com.kuit3.rematicserver.service.PostReportService;
 import com.kuit3.rematicserver.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import static com.kuit3.rematicserver.common.response.status.BaseExceptionRespon
 public class PostController {
     private final PostService postService;
     private final PostDeletionService postDeletionService;
+    private final PostReportService postReportService;
     @PostMapping("newpost")
     public BaseResponse<CreatePostResponse> createPost(@PreAuthorizedUser long userId, @RequestBody CreatePostRequest request){
         log.info("PostController::createPost()");
@@ -164,6 +166,18 @@ public class PostController {
         log.info("postId = " + postId);
 
         postService.modifyPost(postId, dto);
+        return new BaseResponse<>(null);
+    }
+
+    @PostMapping("{postId}/report")
+    public BaseResponse<Object> reportViolatingPost(@PreAuthorizedUser long userId,
+                                                    @PathVariable long postId,
+                                                    @RequestParam String type){
+        log.info("PostController::reportViolatingPost()");
+        log.info("postId=" + postId + ", type=" + type);
+
+        postReportService.report(userId, postId, type);
+
         return new BaseResponse<>(null);
     }
 }

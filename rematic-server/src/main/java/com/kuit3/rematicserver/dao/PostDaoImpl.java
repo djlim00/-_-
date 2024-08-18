@@ -177,6 +177,7 @@ public class PostDaoImpl implements PostDao{
         jdbcTemplate.update(sql, param);
     }
 
+
     public int modifyStatusDormant(Long postId) {
         String sql = "UPDATE Post SET status='dormant' WHERE post_id = :post_id";
         MapSqlParameterSource param = new MapSqlParameterSource()
@@ -233,14 +234,15 @@ public class PostDaoImpl implements PostDao{
 
     @Override
     public List<Ranking> findRankingByCategory(String category) {
-        String sql = "SELECT realtime_likes.post_id AS post_id, category, recent_likes, IFNULL(recnet_hates, 0) AS recent_hates FROM (\n" +
-                "    SELECT active_post.post_id, active_post.category ,IFNULL(clicked_likes.likes, 0) AS recent_likes FROM (\n" +
-                "        SELECT post_id, category FROM Post WHERE status = 'active' AND likes >= hates AND category = :category) AS active_post\n" +
-                "               LEFT OUTER JOIN (SELECT post_id, count(*) AS likes FROM PostLikes WHERE created_at >= now() - interval 12 hour GROUP BY post_id) AS clicked_likes\n" +
-                "                               ON active_post.post_id = clicked_likes.post_id) AS realtime_likes\n" +
-                "         LEFT OUTER JOIN (SELECT h.post_id, count(*) AS recnet_hates FROM PostHates AS h WHERE h.created_at >= now() - interval 12 hour GROUP BY h.post_id) AS realtime_hates\n" +
-                "                         ON realtime_likes.post_id = realtime_hates.post_id\n" +
-                "ORDER BY recent_likes DESC LIMIT 10";
+        String sql = "SELECT realtime_likes.post_id AS post_id, likes, category, recent_likes, IFNULL(recnet_hates, 0) AS recent_hates FROM " +
+                "    (SELECT active_post.post_id, active_post.likes, active_post.category ,IFNULL(clicked_likes.likes, 0) AS recent_likes FROM " +
+                "         (SELECT post_id, category, likes FROM Post WHERE status = 'active' AND likes >= hates AND category = :category) AS active_post\n" +
+                "         LEFT OUTER JOIN (SELECT post_id, count(*) AS likes FROM PostLikes WHERE created_at >= now() - interval 12 hour GROUP BY post_id) AS clicked_likes\n" +
+                "         ON active_post.post_id = clicked_likes.post_id" +
+                "    ) AS realtime_likes\n" +
+                "    LEFT OUTER JOIN (SELECT h.post_id, count(*) AS recnet_hates FROM PostHates AS h WHERE h.created_at >= now() - interval 12 hour GROUP BY h.post_id) AS realtime_hates\n" +
+                "    ON realtime_likes.post_id = realtime_hates.post_id\n" +
+                "ORDER BY recent_likes DESC, likes DESC LIMIT 10";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("category", category);
 
@@ -254,6 +256,7 @@ public class PostDaoImpl implements PostDao{
                     .recentHates(rs.getLong("recent_hates"))
                     .category(rs.getString("category"))
                     .postId(rs.getLong("post_id"))
+                    .likes(rs.getLong("likes"))
                     .build();
             return ranking;
         };
@@ -281,6 +284,22 @@ public class PostDaoImpl implements PostDao{
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("user_id", userId);
         return jdbcTemplate.query(sql, param, postRowMapper());
+    }
+
+    @Override
+    public int getLikeCount(Long postId) {
+        String sql = "SELECT likes FROM Post WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        return jdbcTemplate.queryForObject(sql, param, Integer.class);
+    }
+
+    @Override
+    public int getHateCount(Long postId) {
+        String sql = "SELECT hates FROM Post WHERE post_id = :post_id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("post_id", postId);
+        return jdbcTemplate.queryForObject(sql, param, Integer.class);
     }
 
 }

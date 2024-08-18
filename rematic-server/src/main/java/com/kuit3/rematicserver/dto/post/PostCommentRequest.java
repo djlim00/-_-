@@ -12,5 +12,5 @@ public class PostCommentRequest {
 
     private String sentences;
     private Long parentCommentId;
-
+    private Boolean anonymity;
 }

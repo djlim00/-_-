@@ -1,17 +1,19 @@
 package com.kuit3.rematicserver.service;
 
+import com.kuit3.rematicserver.dao.CommentDao;
 import com.kuit3.rematicserver.dao.PostDao;
 import com.kuit3.rematicserver.dao.UserDao;
 import com.kuit3.rematicserver.dao.UserScrapDao;
 import com.kuit3.rematicserver.dto.auth.CreateUserDTO;
-import com.kuit3.rematicserver.dto.post.CreatePostRequest;
-import com.kuit3.rematicserver.dto.post.CreatePostResponse;
-import com.kuit3.rematicserver.dto.post.GetClickedPostResponse;
+import com.kuit3.rematicserver.dto.post.*;
+import com.kuit3.rematicserver.entity.Comment;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,10 +32,10 @@ class PostServiceTest {
     private PostDao postDao;
 
     @Autowired
-    private UserScrapDao userScrapDao;
+    private UserScrapService userScrapService;
 
     @Autowired
-    private UserScrapService userScrapService;
+    private CommentDao commentDao;
 
     @Test
     public void 게시글_생성(){
@@ -93,5 +95,42 @@ class PostServiceTest {
         assertThat(response.getPostInfo().getIsScraped()).isEqualTo(true);
         assertThat(response.getPostInfo().getScrapId()).isEqualTo(scrapId);
         assertThat(response.getPostInfo().getScraps()).isEqualTo(1L);
+    }
+
+    @Test
+    public void 댓글_작성(){
+        //given
+        long userId = userDao.createUser(CreateUserDTO.builder()
+                .nickname("이름")
+                .profile_image_url("image")
+                .email("atest@test.com").build());
+
+        CreatePostResponse response = postService.createPost(CreatePostRequest.builder()
+                .title("생성된 글 제목")
+                .content("생성된 글 내용")
+                .has_image(false)
+                .anonymity(false)
+                .user_id(1L)
+                .bulletin_id(1L)
+                .build());
+        long postId = response.getPost_id();
+
+        //when
+        postService.leaveNewComment(userId, postId, new PostCommentRequest("댓글", 0L, true));
+        postService.leaveNewComment(userId, postId, new PostCommentRequest("댓글", 0L, false));
+
+
+        //then
+        List<Comment> comments = commentDao.findByPostId(postId);
+        assertThat(comments.get(0).getAnonymity()).isEqualTo("익명");
+        assertThat(comments.get(1).getAnonymity()).isEqualTo("공개");
+
+
+        GetScrolledCommentsResponse likeStandard = postService.getCommentsByPostId(postId, "likeStandard");
+        String writer = likeStandard.getCommentList().get(0).getParentComment().getWriter();
+        assertThat(writer).isEqualTo("익명");
+
+        writer = likeStandard.getCommentList().get(1).getParentComment().getWriter();
+        assertThat(writer).isEqualTo("이름");
     }
 }

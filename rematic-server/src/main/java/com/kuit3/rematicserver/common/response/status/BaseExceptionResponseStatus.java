@@ -26,6 +26,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     POST_NOT_FOUND(2009, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 게시물입니다."),
     FILE_LIMIT_EXCEEDED(2010, HttpStatus.BAD_REQUEST.value(), "업로드할 수 있는 파일 수 제한을 초과했습니다."),
     WRONG_COMMENT_REGISTER(2011, HttpStatus.BAD_REQUEST.value(), "댓글 등록에 오류가 발생했습니다."),
+    INVALID_PARAM(2012, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 파라미터 값이 전달되었습니다."),
 
     /**
      * 3000: Server, Database 오류 (INTERNAL_SERVER_ERROR)

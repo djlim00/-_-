@@ -1,12 +1,13 @@
 package com.kuit3.rematicserver.service;
 
-import com.kuit3.rematicserver.common.exception.CommentNotFoundException;
 import com.kuit3.rematicserver.common.exception.DatabaseException;
 import com.kuit3.rematicserver.common.exception.UserCommentException;
 import com.kuit3.rematicserver.dao.CommentDao;
 import com.kuit3.rematicserver.dao.CommentHatesDao;
 import com.kuit3.rematicserver.dao.CommentLikesDao;
 import com.kuit3.rematicserver.dao.CommentReactionDao;
+import com.kuit3.rematicserver.dto.comment.CommentReactionResponse;
+import com.kuit3.rematicserver.entity.Comment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,8 +29,9 @@ public class CommentService {
 
     public void deleteCommentsOfPost(Long postId) {
         log.info("CommentService::deleteCommentsOfPost()");
-        List<Long> postCommentIds = commentDao.findByPostId(postId);
-        for(Long commentId : postCommentIds) {
+        List<Comment> postComments = commentDao.findByPostId(postId);
+        for(Comment comment : postComments) {
+            long commentId = comment.getCommentId();
             commentLikesDao.deleteByCommentId(commentId);
             commentHatesDao.deleteByCommentId(commentId);
         }
@@ -38,33 +40,47 @@ public class CommentService {
 
 
     @Transactional
-    public void likeComment(Long commentId, Long userId) {
-        if (commentReactionDao.isLiked(commentId, userId)) { // 이미 해당 유저가 해당 댓글에 좋아요를 눌렀다면
-            commentReactionDao.removeLike(commentId, userId); // 해당 유저 좋아요 내역 삭제
-            commentDao.decrementLikes(commentId); // 댓글 좋아요 수 감소
-        } else { // 해당 유저가 해당 댓글에 좋아요를 누른 적이 없다면
-            if (commentReactionDao.isHated(commentId, userId)) { // 싫어요를 누른 상태라면
-                commentReactionDao.removeHate(commentId, userId); // 먼저 해당 유저의 해당 댓글 싫어요 내역 삭제
-                commentDao.decrementHates(commentId); // 해당 댓글의 싫어요 개수 감수
+    public CommentReactionResponse likeComment(Long commentId, Long userId) {
+        boolean isLiked = commentReactionDao.isLiked(commentId, userId);
+        boolean isHated = commentReactionDao.isHated(commentId, userId);
+
+        if (isLiked) {
+            commentReactionDao.removeLike(commentId, userId);
+            commentDao.decrementLikes(commentId);
+        } else {
+            if (isHated) {
+                commentReactionDao.removeHate(commentId, userId);
+                commentDao.decrementHates(commentId);
             }
-            commentReactionDao.addLike(commentId, userId); // 댓글에 좋아요 내역 추가
-            commentDao.incrementLikes(commentId); // 댓글 좋아요 수 증가
+            commentReactionDao.addLike(commentId, userId);
+            commentDao.incrementLikes(commentId);
         }
+
+        int likeCount = commentDao.getLikeCount(commentId);
+
+        return new CommentReactionResponse(likeCount, null, !isLiked, null);
     }
 
     @Transactional
-    public void hateComment(Long commentId, Long userId) {
-        if (commentReactionDao.isHated(commentId, userId)) {
+    public CommentReactionResponse hateComment(Long commentId, Long userId) {
+        boolean isHated = commentReactionDao.isHated(commentId, userId);
+        boolean isLiked = commentReactionDao.isLiked(commentId, userId);
+
+        if (isHated) {
             commentReactionDao.removeHate(commentId, userId);
             commentDao.decrementHates(commentId);
         } else {
-            if (commentReactionDao.isLiked(commentId, userId)) {
+            if (isLiked) {
                 commentReactionDao.removeLike(commentId, userId);
                 commentDao.decrementLikes(commentId);
             }
             commentReactionDao.addHate(commentId, userId);
             commentDao.incrementHates(commentId);
         }
+
+        int hateCount = commentDao.getHateCount(commentId);
+
+        return new CommentReactionResponse(null, hateCount, null, !isHated);
     }
 
     public void blockUser(Long userId, Long blockId) {
