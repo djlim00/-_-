@@ -4,6 +4,7 @@ import com.kuit3.rematicserver.common.exception.DatabaseException;
 import com.kuit3.rematicserver.common.exception.PunishReasonException;
 import com.kuit3.rematicserver.common.exception.UserDormantException;
 import com.kuit3.rematicserver.common.exception.UserNotFoundException;
+import com.kuit3.rematicserver.dao.BulletinDaoImpl;
 import com.kuit3.rematicserver.dao.UserDao;
 
 import com.kuit3.rematicserver.dto.user.*;
@@ -21,6 +22,7 @@ import static com.kuit3.rematicserver.common.response.status.BaseExceptionRespon
 @RequiredArgsConstructor
 public class UserService {
     private final UserDao userDao;
+    private final BulletinDaoImpl bulletinDao;
     public void modifyNickname(long userId, String newNickname) {
         int affectedRow = userDao.changeUserNickname(userId, newNickname);
         if(affectedRow != 1){
@@ -72,7 +74,6 @@ public class UserService {
                 case "obscene" -> info.setReason("음란물/불건전 게시물");
                 case "unrelated" -> info.setReason("게시판 성격 부적절");
                 case "advertisement" -> info.setReason("상업성 광고 및 판매");
-                default -> throw new PunishReasonException(UNCATEGORIZED_PUNISHMENT);
             }
         }
         response.setPunishmentInfos(infoList);

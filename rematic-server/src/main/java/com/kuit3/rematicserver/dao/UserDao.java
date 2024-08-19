@@ -115,7 +115,7 @@ public class UserDao {
     }
 
     public List<UserPunishmentInfo> getUserPunishmentsList(long userId) {
-        String sql = "select p.punishment_id, p.content, b.name as bulletin_name, p.reason, p.created_at " +
+        String sql = "select p.punishment_id, p.content, b.bulletin_id as bulletin_id, p.reason, p.created_at " +
                 "from Punishment p join Bulletin b on p.bulletin_id = b.bulletin_id where p.user_id = :userId;";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("userId", userId);
@@ -123,7 +123,7 @@ public class UserDao {
             return new UserPunishmentInfo(
                     rs.getLong("punishment_id"),
                     rs.getString("content"),
-                    rs.getString("bulletin_name"),
+                    rs.getLong("bulletin_id"),
                     rs.getString("reason"),
                     rs.getTimestamp("created_at")
             );

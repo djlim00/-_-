@@ -15,7 +15,7 @@ public class UserPunishmentInfo {
     //처벌 내용
     private String content;
     //게시판이름
-    private String bulletinName;
+    private Long bulletinId;
     //처벌 이유(언어폭력행위)
     private String reason;
     //처벌시작시간

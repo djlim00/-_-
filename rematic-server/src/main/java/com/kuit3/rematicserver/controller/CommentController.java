@@ -42,7 +42,7 @@ public class CommentController {
     }
 
     @PostMapping("/{comment_id}/report")
-    public BaseResponse<String> reportUserComment(@RequestParam long userId,
+    public BaseResponse<String> reportUserComment(@PreAuthorizedUser long userId,
                                                   @PathVariable("comment_id") long commentId,
                                                   @RequestParam("type") String type) {
         log.info("CommentController.reportUserComment");
