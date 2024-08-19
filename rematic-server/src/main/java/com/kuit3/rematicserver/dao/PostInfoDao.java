@@ -266,7 +266,7 @@ public class PostInfoDao {
                 .addValue("parent_id", request.getParentCommentId())
                 .addValue("post_id", postId)
                 .addValue("user_id", userId)
-                .addValue("anonymity", request.getAnonymity());
+                .addValue("anonymity", request.getAnonymity() ? "익명" : "공개");
         KeyHolder keyHolder = new GeneratedKeyHolder();
         long result = jdbcTemplate.update(sql, param, keyHolder);
         List<Long> response = new ArrayList<>();
