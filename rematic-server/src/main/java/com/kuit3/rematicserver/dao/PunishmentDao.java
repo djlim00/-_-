@@ -44,12 +44,11 @@ public class PunishmentDao {
 
 
     public long create(Punishment punishment) {
-        String sql = "INSERT INTO Punishment(reason, content, created_at, end_at, user_id, bulletin_id) VALUES(:reason, :content, now(), :endAt, :userId, :bulletinId)";
+        String sql = "INSERT INTO Punishment(reason, content, created_at, end_at, user_id) VALUES(:reason, :content, now(), :endAt, :userId)";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("reason", punishment.getReason())
                 .addValue("content", punishment.getContent())
                 .addValue("endAt", Timestamp.valueOf(punishment.getEndAt()))
-                .addValue("bulletinId",punishment.getBulletinId())
                 .addValue("userId", punishment.getUserId());
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(sql, param, keyHolder);

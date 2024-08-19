@@ -179,7 +179,6 @@ public class CommentService {
                 .content(content)
                 .endAt(endAt)
                 .userId(reportedUserId)
-                .bulletinId(bulletin.getBulletinId())
                 .build();
 
         punishmentDao.create(punishment);
