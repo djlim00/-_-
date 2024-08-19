@@ -1,5 +1,6 @@
 package com.kuit3.rematicserver.dao;
 
+import com.kuit3.rematicserver.entity.Bulletin;
 import com.kuit3.rematicserver.entity.Comment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.RowMapper;
@@ -142,6 +143,38 @@ public class CommentDao {
         String sql = "SELECT hates FROM Comment WHERE comment_id = :comment_id";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("comment_id", commentId);
+        return jdbcTemplate.queryForObject(sql, param, Integer.class);
+    }
+
+    public Bulletin findBulletinIdByCommentId(long commentId) {
+        String sql = "select b.* from Bulletin b " +
+                "join Post p on b.bulletin_id = p.bulletin_id " +
+                "join Comment c on p.post_id = c.post_id " +
+                "where c.comment_id = :commentId;";
+        MapSqlParameterSource param = new MapSqlParameterSource().addValue("commentId", commentId);
+        return jdbcTemplate.queryForObject(sql, param, bulletinRowMapper());
+    }
+
+    public RowMapper<Bulletin> bulletinRowMapper(){
+        return (rs, rowNum) -> {
+            Bulletin bulletin = Bulletin.builder()
+                    .bulletinId(rs.getLong("bulletin_id"))
+                    .name(rs.getString("name"))
+                    .genre(rs.getString("genre"))
+                    .category(rs.getString("category"))
+                    .originCategory(rs.getString("origin_category"))
+                    .thumbnailImageUrl(rs.getString("thumnail_image_url"))
+//                    .PreviewVideoUrl(rs.getString("preview_video_url"))
+                    .build();
+            return bulletin;
+        };
+    }
+
+    public int countReportByCommentId(long userId, long commentId) {
+            String sql = "select count(*) from Comment_Report where comment_id = :commentId and reported_user_id = :userId;";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("commentId", commentId)
+                .addValue("userId", userId);
         return jdbcTemplate.queryForObject(sql, param, Integer.class);
     }
 }

@@ -60,6 +60,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     USER_KEYWORD_NOT_FOUND(5005, HttpStatus.BAD_REQUEST.value(), "요청하신 사용자의 최근 검색어가 없습니다."),
     USER_DORMANT_STATUS(5006, HttpStatus.BAD_REQUEST.value(), "휴면상태 계정입니다."),
     COMMENT_NOT_FOUND(5007, HttpStatus.BAD_REQUEST.value(), "요청하신 댓글이 존재하지 않습니다."),
+    COMMENT_REPORT_EXISTS(5008, HttpStatus.BAD_REQUEST.value(), "이미 신고 기록이 있습니다."),
 
     /**
      * 6000: UserScrap 오류

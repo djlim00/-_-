@@ -44,4 +44,11 @@ public class CommentExceptionControllerAdvice {
         log.error("[handle_UserMisMatchCommentException]", e);
         return new BaseErrorResponse(USER_COMMENT_MISMATCH);
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ReportCommentException.class)
+    public BaseErrorResponse handle_ReportCommentException(Exception e) {
+        log.error("[handle_ReportCommentException]", e);
+        return new BaseErrorResponse(COMMENT_REPORT_EXISTS);
+    }
 }

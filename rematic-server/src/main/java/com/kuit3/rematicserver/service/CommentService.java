@@ -1,9 +1,11 @@
 package com.kuit3.rematicserver.service;
 
 import com.kuit3.rematicserver.common.exception.DatabaseException;
+import com.kuit3.rematicserver.common.exception.ReportCommentException;
 import com.kuit3.rematicserver.common.exception.UserCommentException;
 import com.kuit3.rematicserver.dao.*;
 import com.kuit3.rematicserver.dto.comment.CommentReactionResponse;
+import com.kuit3.rematicserver.entity.Bulletin;
 import com.kuit3.rematicserver.entity.Comment;
 import com.kuit3.rematicserver.entity.Punishment;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.COMMENT_NOT_FOUND;
-import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.DATABASE_ERROR;
+import static com.kuit3.rematicserver.common.response.status.BaseExceptionResponseStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,6 +27,8 @@ public class CommentService {
     private final CommentHatesDao commentHatesDao;
     private final CommentReactionDao commentReactionDao;
     private final PunishmentDao punishmentDao;
+
+    private final int REPORT_THRESHOLD = 5;
 
     public void deleteCommentsOfPost(Long postId) {
         log.info("CommentService::deleteCommentsOfPost()");
@@ -105,11 +109,79 @@ public class CommentService {
         if(!commentDao.isCommentExists(commentId)) {
             throw new UserCommentException(COMMENT_NOT_FOUND);
         }
+        if(punishmentDao.hasUserReportedSameComment(commentId, userId)) {
+            throw new ReportCommentException(COMMENT_REPORT_EXISTS);
+        }
         long reportedUserId = commentDao.getWriterId(commentId);
         long result = commentDao.reportViolatedComment(commentId, userId, reportedUserId, type);
+        int cnt = commentDao.countReportByCommentId(reportedUserId, commentId);
+        log.info("count of report = " + cnt);
 
+        if(cnt == REPORT_THRESHOLD) {
+            log.info("punishTargetUser method called");
+            log.info("Add Punishment + userId = " + userId + " commentId = " + commentId);
+            punishTargetUser(commentId, type, reportedUserId);
+        }
+        return "complete reporting violated Comment";
+    }
+
+    private void punishTargetUser(long commentId, String type, long reportedUserId) {
         List<Punishment> list = punishmentDao.findByUserId(reportedUserId);
         long punishmentCount = list.size();
-        return "complete reporting violated Comment";
+        LocalDateTime endAt;
+        log.info("list.size() = " + list.size());
+
+        if(!list.isEmpty()){
+            endAt = list.get(list.size() - 1).getEndAt();
+        }
+        else{
+            endAt = LocalDateTime.now();
+        }
+
+        String content = "경고";
+        if(punishmentCount + 1 == 6){
+            endAt = endAt.plusDays(14);
+            content = "이용정지 14일";
+        }
+        else if(punishmentCount + 1 == 4){
+            endAt = endAt.plusDays(7);
+            content = "이용정지 7일";
+        }
+        else if(punishmentCount + 1 == 3){
+            endAt = endAt.plusDays(3);
+            content = "이용정지 3일";
+        }
+        else if(punishmentCount + 1 == 2){
+            endAt = endAt.plusDays(1);
+            content = "이용정지 1일";
+        }
+
+        String reason;
+        Bulletin bulletin = commentDao.findBulletinIdByCommentId(commentId);
+        reason = bulletin.getName() + " 게시판 (";
+        if(type.equals("abuse")){
+            reason += "욕설/비하";
+        }
+        else if(type.equals("obscene")){
+            reason += "음란물/불건전 내용";
+        }
+        else if(type.equals("unrelated")){
+            reason += "게시판 성격 부적절";
+        }
+        else if(type.equals("advertisement")){
+            reason += "상업성 광고 및 판매";
+        }
+        reason += ")";
+
+        Punishment punishment = Punishment
+                .builder()
+                .reason(reason)
+                .content(content)
+                .endAt(endAt)
+                .userId(reportedUserId)
+                .bulletinId(bulletin.getBulletinId())
+                .build();
+
+        punishmentDao.create(punishment);
     }
 }
