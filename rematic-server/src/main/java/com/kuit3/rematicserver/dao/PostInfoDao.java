@@ -128,7 +128,7 @@ public class PostInfoDao {
             CommentInfo parentComment = new CommentInfo
                     (
                             rs.getLong("parent_comment_id"),
-                            rs.getString("anonymity").equals("공개") ? rs.getString("parent_writer") : "익명",
+                            rs.getString("parent_writer"),
                             rs.getLong("writer_id"),
                             rs.getString("parent_image_url"),
                             rs.getString("parent_comment"),
@@ -142,6 +142,11 @@ public class PostInfoDao {
                     );
             if(parentComment.getWriter() == null) {
                 parentComment.setWriter("(알수없음)");
+            }
+            else{
+                if(rs.getString("anonymity").equals("익명")){
+                    parentComment.setWriter("익명");
+                }
             }
             return parentComment;
         });
@@ -159,7 +164,7 @@ public class PostInfoDao {
             CommentInfo parentComment = new CommentInfo
                     (
                             rs.getLong("parent_comment_id"),
-                            rs.getString("anonymity").equals("공개") ? rs.getString("parent_writer") : "익명",
+                            rs.getString("parent_writer"),
                             rs.getLong("writer_id"),
                             rs.getString("parent_image_url"),
                             rs.getString("parent_comment"),
@@ -173,6 +178,11 @@ public class PostInfoDao {
                     );
             if(parentComment.getWriter() == null) {
                 parentComment.setWriter("(알수없음)");
+            }
+            else{
+                if(rs.getString("anonymity").equals("익명")){
+                    parentComment.setWriter("익명");
+                }
             }
             return parentComment;
         });
@@ -190,7 +200,7 @@ public class PostInfoDao {
             CommentInfo commentInfo = new CommentInfo
                     (
                             rs.getLong("child_comment_id"),
-                            rs.getString("anonymity").equals("공개") ? rs.getString("child_writer") : "익명",
+                            rs.getString("child_writer"),
                             rs.getLong("writer_id"),
                             rs.getString("child_image_url"),
                             rs.getString("child_comment"),
@@ -204,6 +214,11 @@ public class PostInfoDao {
                     );
             if(commentInfo.getWriter() == null){
                 commentInfo.setWriter("(알수없음)");
+            }
+            else{
+                if(rs.getString("anonymity").equals("익명")){
+                    commentInfo.setWriter("익명");
+                }
             }
             return commentInfo;
         });
@@ -221,7 +236,7 @@ public class PostInfoDao {
             CommentInfo commentInfo = new CommentInfo
                     (
                     rs.getLong("child_comment_id"),
-                    rs.getString("anonymity").equals("공개") ? rs.getString("child_writer") : "익명",
+                    rs.getString("child_writer"),
                     rs.getLong("writer_id"),
                     rs.getString("child_image_url"),
                     rs.getString("child_comment"),
@@ -235,6 +250,11 @@ public class PostInfoDao {
             );
             if(commentInfo.getWriter() == null){
                 commentInfo.setWriter("(알수없음)");
+            }
+            else{
+                if(rs.getString("anonymity").equals("익명")){
+                    commentInfo.setWriter("익명");
+                }
             }
             return commentInfo;
         });

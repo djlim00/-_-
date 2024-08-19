@@ -78,7 +78,7 @@ class UserDeletionServiceTest {
 
         String expectedComment = "댓글이야.";
         String expectedComment2 = "대댓글이야";
-        String expectedWriter = "알수없음";
+        String expectedWriter = "(알수없음)";
         List<Long> commentId = postInfoDao.leaveCommentWrittenByUser(createdUserId, postId, new PostCommentRequest(expectedComment, 0L, true));
         postInfoDao.leaveCommentWrittenByUser(createdUserId, postId, new PostCommentRequest(expectedComment2, commentId.get(0), false));
 
