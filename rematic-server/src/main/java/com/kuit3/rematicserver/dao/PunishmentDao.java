@@ -44,14 +44,24 @@ public class PunishmentDao {
 
 
     public long create(Punishment punishment) {
-        String sql = "INSERT INTO Punishment(reason, content, end_at, user_id) VALUES(:reason, :content, :endAt, :userId)";
+        String sql = "INSERT INTO Punishment(reason, content, created_at, end_at, user_id, bulletin_id) VALUES(:reason, :content, now(), :endAt, :userId, :bulletinId)";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("reason", punishment.getReason())
                 .addValue("content", punishment.getContent())
                 .addValue("endAt", Timestamp.valueOf(punishment.getEndAt()))
+                .addValue("bulletinId",punishment.getBulletinId())
                 .addValue("userId", punishment.getUserId());
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(sql, param, keyHolder);
         return Objects.requireNonNull(keyHolder.getKey()).longValue();
+    }
+
+    public boolean hasUserReportedSameComment(long commentId, long userId) {
+        String sql = "select exists (select 1 from Comment_Report where reporter_id = :userId " +
+                "and comment_id = :commentId);";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("commentId", commentId);
+        return jdbcTemplate.queryForObject(sql, param, boolean.class);
     }
 }

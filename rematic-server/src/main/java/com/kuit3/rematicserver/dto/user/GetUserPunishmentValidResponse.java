@@ -1,4 +1,4 @@
-package com.kuit3.rematicserver.dto.post;
+package com.kuit3.rematicserver.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,8 +8,8 @@ import lombok.Setter;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostCommentRequest {
+public class GetUserPunishmentValidResponse {
 
-    private String sentences;
-    private Long parentCommentId;
+    private Long userId;
+    private Boolean isRestricted;
 }

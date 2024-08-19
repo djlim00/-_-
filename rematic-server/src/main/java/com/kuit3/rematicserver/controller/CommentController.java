@@ -40,4 +40,12 @@ public class CommentController {
         log.info("PostController.dormantUserComment");
         return new BaseResponse<>(commentService.dormantUserComment(userId, commentId));
     }
+
+    @PostMapping("/{comment_id}/report")
+    public BaseResponse<String> reportUserComment(@PreAuthorizedUser long userId,
+                                                  @PathVariable("comment_id") long commentId,
+                                                  @RequestParam("type") String type) {
+        log.info("CommentController.reportUserComment");
+        return new BaseResponse<>(commentService.reportUserComment(userId, commentId, type));
+    }
 }

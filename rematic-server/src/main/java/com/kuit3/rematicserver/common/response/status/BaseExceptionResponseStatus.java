@@ -61,13 +61,18 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     USER_KEYWORD_NOT_FOUND(5005, HttpStatus.BAD_REQUEST.value(), "요청하신 사용자의 최근 검색어가 없습니다."),
     USER_DORMANT_STATUS(5006, HttpStatus.BAD_REQUEST.value(), "휴면상태 계정입니다."),
     COMMENT_NOT_FOUND(5007, HttpStatus.BAD_REQUEST.value(), "요청하신 댓글이 존재하지 않습니다."),
+    COMMENT_REPORT_EXISTS(5008, HttpStatus.BAD_REQUEST.value(), "이미 신고 기록이 있습니다."),
 
     /**
      * 6000: UserScrap 오류
      */
     DUPLICATE_USER_SCRAP(6000, HttpStatus.CONFLICT.value(), "이미 스크랩한 게시물입니다."),
     USER_SCRAP_NOT_FOUND(6001, HttpStatus.BAD_REQUEST.value(), "스크랩을 찾을 수 없습니다."),
-    INVALID_SCRAP_USERID(6002, HttpStatus.BAD_REQUEST.value(), "자신이 작성한 게시물은 스크랩할 수 없습니다.");
+    INVALID_SCRAP_USERID(6002, HttpStatus.BAD_REQUEST.value(), "자신이 작성한 게시물은 스크랩할 수 없습니다."),
+    /**
+     * 7000: 처벌 관련 오류
+     */
+    UNCATEGORIZED_PUNISHMENT(7000, HttpStatus.BAD_REQUEST.value(), "알 수 없는 처벌 및 신고 유형입니다.");
 
     private final int code;
     private final int status;
