@@ -128,9 +128,15 @@ class PostServiceTest {
 
         GetScrolledCommentsResponse likeStandard = postService.getCommentsByPostId(postId, "likeStandard");
         String writer = likeStandard.getCommentList().get(0).getParentComment().getWriter();
+        String imageUrl = likeStandard.getCommentList().get(0).getParentComment().getImageUrl();
         assertThat(writer).isEqualTo("익명");
+        assertThat(imageUrl).isNull();
+
 
         writer = likeStandard.getCommentList().get(1).getParentComment().getWriter();
+        imageUrl = likeStandard.getCommentList().get(1).getParentComment().getImageUrl();
         assertThat(writer).isEqualTo("이름");
+        assertThat(imageUrl).isNotNull();
+
     }
 }

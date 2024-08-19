@@ -146,6 +146,7 @@ public class PostInfoDao {
             else{
                 if(rs.getString("anonymity").equals("익명")){
                     parentComment.setWriter("익명");
+                    parentComment.setImageUrl(null);
                 }
             }
             return parentComment;
@@ -182,6 +183,7 @@ public class PostInfoDao {
             else{
                 if(rs.getString("anonymity").equals("익명")){
                     parentComment.setWriter("익명");
+                    parentComment.setImageUrl(null);
                 }
             }
             return parentComment;
@@ -218,6 +220,7 @@ public class PostInfoDao {
             else{
                 if(rs.getString("anonymity").equals("익명")){
                     commentInfo.setWriter("익명");
+                    commentInfo.setImageUrl(null);
                 }
             }
             return commentInfo;
@@ -254,6 +257,7 @@ public class PostInfoDao {
             else{
                 if(rs.getString("anonymity").equals("익명")){
                     commentInfo.setWriter("익명");
+                    commentInfo.setImageUrl(null);
                 }
             }
             return commentInfo;
