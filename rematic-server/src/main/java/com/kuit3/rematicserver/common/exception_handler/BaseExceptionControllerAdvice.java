@@ -2,6 +2,7 @@ package com.kuit3.rematicserver.common.exception_handler;
 
 import com.kuit3.rematicserver.common.exception.BadRequestException;
 import com.kuit3.rematicserver.common.exception.InternalServerErrorException;
+import com.kuit3.rematicserver.common.exception.InvalidParameterValueException;
 import com.kuit3.rematicserver.common.response.BaseErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 
@@ -72,5 +73,12 @@ public class BaseExceptionControllerAdvice {
     public BaseErrorResponse handle_MissingServletRequestParameterException(Exception e){
         log.error("[handle_MissingServletRequestParameterException]", e);
         return new BaseErrorResponse(MISSING_PARAM);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidParameterValueException.class)
+    public BaseErrorResponse handle_InvalidParameterValueException(Exception e){
+        log.error("[handle_InvalidParameterValueException]", e);
+        return new BaseErrorResponse(INVALID_PARAM_VALUE);
     }
 }

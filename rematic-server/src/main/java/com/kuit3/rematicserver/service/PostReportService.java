@@ -1,7 +1,7 @@
 package com.kuit3.rematicserver.service;
 
-import com.kuit3.rematicserver.common.exception.BadRequestException;
-import com.kuit3.rematicserver.common.exception.InvalidParameterException;
+import com.kuit3.rematicserver.common.exception.InvalidParameterValueException;
+import com.kuit3.rematicserver.common.exception.InvalidReporterUserIdException;
 import com.kuit3.rematicserver.common.exception.PostNotFoundException;
 import com.kuit3.rematicserver.dao.PostDao;
 import com.kuit3.rematicserver.dao.PostReportDao;
@@ -40,11 +40,11 @@ public class PostReportService {
         }
 
         if(!(type.equals("abuse") || type.equals("obscene") || type.equals("unrelated") || type.equals("advertisement"))){
-            throw new InvalidParameterException(INVALID_PARAM);
+            throw new InvalidParameterValueException(INVALID_PARAM_VALUE);
         }
 
         if(userId == reportedPost.getUserId()){
-            throw new InvalidParameterException(INVALID_PARAM);
+            throw new InvalidReporterUserIdException(INVALID_REPORTER_USER_ID);
         }
 
         PostReport request = PostReport.builder()

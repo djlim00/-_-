@@ -23,5 +23,10 @@ public class PostExceptionControllerAdvice {
         return new BaseErrorResponse(POST_NOT_FOUND);
     }
 
-
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidReporterUserIdException.class)
+    public BaseErrorResponse handle_InvalidReporterUserIdException(Exception e) {
+        log.error("[handle_InvalidReporterUserIdException]", e);
+        return new BaseErrorResponse(INVALID_REPORTER_USER_ID);
+    }
 }
