@@ -38,6 +38,7 @@ public class CommentController {
     public BaseResponse<String> dormantUserComment(@PreAuthorizedUser long userId,
                                                    @PathVariable("comment_id") long commentId) {
         log.info("PostController.dormantUserComment");
+        log.info("commentId = " + commentId);
         return new BaseResponse<>(commentService.dormantUserComment(userId, commentId));
     }
 
