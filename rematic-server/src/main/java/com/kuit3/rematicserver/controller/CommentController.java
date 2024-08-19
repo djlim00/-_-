@@ -34,7 +34,7 @@ public class CommentController {
         return new BaseResponse<>("차단 요청이 성공적으로 처리되었습니다.");
     }
   
-    @PostMapping("/{comment_id}")
+    @DeleteMapping("/{comment_id}")
     public BaseResponse<String> dormantUserComment(@PreAuthorizedUser long userId,
                                                    @PathVariable("comment_id") long commentId) {
         log.info("PostController.dormantUserComment");
