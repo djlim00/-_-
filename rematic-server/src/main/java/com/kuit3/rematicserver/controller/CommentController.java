@@ -2,6 +2,7 @@ package com.kuit3.rematicserver.controller;
 
 import com.kuit3.rematicserver.common.argument_resolver.PreAuthorizedUser;
 import com.kuit3.rematicserver.common.response.BaseResponse;
+import com.kuit3.rematicserver.dto.comment.BlockUserRequest;
 import com.kuit3.rematicserver.dto.comment.CommentReactionResponse;
 import com.kuit3.rematicserver.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,8 @@ public class CommentController {
 
 
     @PostMapping("/block")
-    public BaseResponse<String> blockUser(@PreAuthorizedUser long userId, @RequestParam("blockId") Long blockId){//@PreAuthorizedUser Long userId, @RequestParam("blockId") Long blockId
-        commentService.blockUser(userId,blockId);
+    public BaseResponse<String> blockUser(@PreAuthorizedUser long userId, @RequestBody BlockUserRequest request){
+        commentService.blockUser(userId, request.getBlockId());
         return new BaseResponse<>("차단 요청이 성공적으로 처리되었습니다.");
     }
   
